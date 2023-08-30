@@ -4,7 +4,7 @@ import logo from './our_assets/logo.png';
 
 const App = () => {
   return (
-    <View>
+    <View style={styles.container}> 
       <Image source={logo} style={styles.logo} />
       <Text style={styles.text}>Welcome to our app!</Text>
     </View>
@@ -14,23 +14,21 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center', // Center vertically
-    alignItems: 'center', // Center horizontally
-    backgroundColor: '#947EB0',
-  },text: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#353839',
+  },
+  text: {
     fontSize: 24,
-    justifyContent: 'center', // Center vertically
-    alignItems: 'center', // Center horizontally
     fontWeight: 'bold',
     color: '#947eb0',
-    marginTop: 20,
+    marginTop: -30,
   },
   logo: {
     width: 400,
     height: 300,
-    justifyContent: 'center', // Center vertically
-    alignItems: 'center', // Center horizontally
     resizeMode: 'contain',
+    marginTop: -100,
   },
 });
 
