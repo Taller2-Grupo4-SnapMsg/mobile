@@ -1,38 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableHighlight, StyleSheet, Image } from 'react-native'; // Add StyleSheet import
 import logo from './our_assets/logo.png'; 
 
-const ExampleScreen = ({ navigation }) => {
-    const [pongMessage, setPongMessage] = useState('');
+const HomeScreen = ({ navigation }) => {
+  const handleButtonPress = () => {
+    navigation.navigate('Example');
+  };
+  
+  const handleButtonSignInGoogle = () => {
+    navigation.navigate('WIP');
+  };
 
-  const handleButtonPresss = async () => {
-    try {
-      const response = await fetch('https://loginback-lg51.onrender.com/ping');
-      const data = await response.json();
-
-    if (data && data.message) { //para imprimir solamente el mensaje, no el json completo (necesito conocer el formato)
-      setPongMessage(data.message);
-    } else {
-      setPongMessage('Invalid response format');
-    }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setPongMessage('Error fetching data from: https://loginback-lg51.onrender.com/ping');
-    }
+  const handleButtonCreateAccount = () => {
+    navigation.navigate('CreateAccount');
   };
 
   return (
     <View style={styles.container}>
       <Image source={logo} style={styles.logo} />
-      <Text style={styles.text}>Welcome to our app!</Text>
+      <Text style={styles.text}>Join SnapMsg today!</Text>
+      
       <TouchableHighlight
-        onPress={handleButtonPresss}
+        onPress={handleButtonSignInGoogle}
         underlayColor="#a3a5c3"
         style={styles.button}
       >
-        <Text style={styles.buttonText}>Press Me</Text>
+      <Text style={styles.buttonText}>Sign up with Google</Text>
+      
       </TouchableHighlight>
-      <Text style={styles.pongMessage}>{pongMessage}</Text>
+      <TouchableHighlight
+        onPress={handleButtonCreateAccount}
+        underlayColor="#a3a5c3"
+        style={styles.button}
+      >
+      <Text style={styles.buttonText}>Create an account</Text>
+
+      </TouchableHighlight>
+      <TouchableHighlight
+        onPress={handleButtonPress}
+        underlayColor="#a3a5c3"
+        style={styles.button}
+      >
+      <Text style={styles.buttonText}>Check out an example</Text>
+      </TouchableHighlight>
+      
+      <Text style={styles.signInText}>Already have an account?</Text>
+      <TouchableHighlight
+        onPress={handleButtonPress}
+        underlayColor="#a3a5c3"
+        style={styles.button}
+      >
+      <Text style={styles.buttonText}>Log in</Text>
+      </TouchableHighlight>
     </View>
   );
 };
@@ -45,29 +64,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#353839',
   },
   text: {
-    fontSize: 24,
+    fontSize: 40,
     fontWeight: 'bold',
     color: '#947eb0',
     marginTop: -30,
   },
   button: {
-    backgroundColor: '#64B6AC',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: '#EDEDF4',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: 30,
   },
   buttonText: {
-    fontSize: 16,
-    color: '#DDFBD2',
+    fontSize: 20,
+    color: '#947EB0',
     fontWeight: 'bold',
   },
   logo: {
     width: 400,
     height: 300,
     resizeMode: 'contain',
-    marginTop: -100,
+    marginTop: -400,
   },
+  signInText: {
+    fontSize: 25,
+    marginTop: 50,
+    color: '#947eb0',
+  }
 });
 
-export default ExampleScreen;
+export default HomeScreen;
