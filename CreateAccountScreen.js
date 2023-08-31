@@ -4,10 +4,20 @@ import small_logo from './our_assets/small_logo.png';
 
 const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState(''); // Initialize the email state
+    const [emailValid, setEmailValid] = useState(true); // Initialize as true
+
+    const [dob, setDoB] = useState(''); // Initialize the dob state
+    const [username, setUsername] = useState(''); // Initialize the username state
+    const [password, setPassword] = useState(''); // Initialize the password state
 
   const handleButtonCreateAccount = () => {
     navigation.navigate('WIP');
   };
+
+  const validateEmail = (email) => {
+    const isValid = email.includes('@') && email.includes(".com");
+    setEmailValid(isValid);
+};
 
   return (
     <View style={styles.container}>
@@ -15,10 +25,42 @@ const CreateAccountScreen = ({ navigation }) => {
       <Text style={styles.text}>Sign up to SnapMsg today!</Text>
       
       <TextInput
-        placeholder="Enter your email"
+        placeholder="Email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => {
+            setEmail(text);
+            validateEmail(text); // Call the validation function
+        }}
+        placeholderTextColor="#EDEDF4" 
+        style={[styles.textInput, !emailValid && styles.invalidInput]}
+      />
+
+      <TextInput
+        placeholder="Date of Birth"
+        value={dob}
+        onChangeText={setDoB}
         style={styles.textInput}
+        placeholderStyle={styles.placeholderStyle} 
+        placeholderTextColor="#EDEDF4" 
+      />
+
+      <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+        style={styles.textInput}
+        placeholderStyle={styles.placeholderStyle} 
+        placeholderTextColor="#EDEDF4" 
+      />
+
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        style={styles.textInput}
+        secureTextEntry
+        placeholderStyle={styles.placeholderStyle}
+        placeholderTextColor="#EDEDF4"  
       />
       
       <TouchableHighlight
@@ -46,6 +88,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#947eb0',
     marginTop: 45,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#EDEDF4',
@@ -63,7 +106,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: 'contain',
-    marginTop: -450,
+    marginTop: -100,
   },
   signInText: {
     fontSize: 25,
@@ -71,14 +114,17 @@ const styles = StyleSheet.create({
     color: '#947eb0',
   },
   textInput: {
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderColor: '#EDEDF4',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    width: '80%', // Adjust the width as needed
+    width: '80%',
+    height: 60, // Adjust the height value
     marginBottom: 20,
+    color: '#947eb0',
+    fontSize: 20,
+    fontStyle: 'italic',
+  }, 
+  invalidInput: {
+    borderColor: '#ad343e', // pretty red for invalid input
   }
 });
 
