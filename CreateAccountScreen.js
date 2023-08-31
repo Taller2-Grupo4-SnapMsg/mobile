@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput } from 'react-native'; // Add StyleSheet import
+import DatePicker from 'react-native-datepicker';
+import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert } from 'react-native'; // Add StyleSheet import
 import small_logo from './our_assets/small_logo.png'; 
 
 const CreateAccountScreen = ({ navigation }) => {
@@ -11,6 +12,8 @@ const CreateAccountScreen = ({ navigation }) => {
     const [password, setPassword] = useState(''); // Initialize the password state
 
   const handleButtonCreateAccount = () => {
+    const userData = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
+    Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
     navigation.navigate('WIP');
   };
 
