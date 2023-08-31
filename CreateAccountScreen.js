@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import DatePicker from 'react-native-datepicker';
-import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert } from 'react-native'; // Add StyleSheet import
+import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert, DatePickerAndroid } from 'react-native'; // Add StyleSheet import
 import small_logo from './our_assets/small_logo.png'; 
 
 const CreateAccountScreen = ({ navigation }) => {
@@ -21,6 +20,8 @@ const CreateAccountScreen = ({ navigation }) => {
     const isValid = email.includes('@') && email.includes(".com");
     setEmailValid(isValid);
 };
+
+
 
   return (
     <View style={styles.container}>
@@ -47,7 +48,8 @@ const CreateAccountScreen = ({ navigation }) => {
         placeholderTextColor="#EDEDF4" 
       />
 
-      <TextInput
+     
+     <TextInput
         placeholder="Username"
         value={username}
         onChangeText={setUsername}

@@ -15,6 +15,10 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate('CreateAccount');
   };
 
+  const handleButtonSignIn = () => {
+    navigation.navigate('SignIn');
+  };
+
   return (
     <View style={styles.container}>
       <Image source={logo} style={styles.logo}/>
@@ -46,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
       
       <Text style={styles.signInText}>Already have an account?</Text>
       <TouchableHighlight
-        onPress={handleButtonPress}
+        onPress={handleButtonSignIn}
         underlayColor="#a3a5c3"
         style={styles.button}
       >

@@ -5,6 +5,7 @@ import HomeScreen from './HomeScreen';
 import ExampleScreen from './ExampleScreen';
 import WIPScreen from "./WIPScreen";
 import CreateAccountScreen from "./CreateAccountScreen";
+import SignInScreen from "./SignInScreen";
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const App = () => {
         <Stack.Screen name="Example" component={ExampleScreen} />
         <Stack.Screen name="WIP" component={WIPScreen} />
         <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
