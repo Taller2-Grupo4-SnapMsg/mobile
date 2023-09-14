@@ -14,6 +14,8 @@ const CreateAccountScreen = ({ navigation }) => {
     const userData = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
     Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
     navigation.navigate('WIP');
+
+    
   };
 
   const validateEmail = (email) => {
