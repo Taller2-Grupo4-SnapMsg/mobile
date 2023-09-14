@@ -15,7 +15,8 @@ const CreateAccountScreen = ({ navigation }) => {
     Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
     navigation.navigate('WIP');
 
-    
+    //acá debería tener un SignUpHandler que haga el fetch al backend
+
   };
 
   const validateEmail = (email) => {
