@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert } from 'react-native'; // Add StyleSheet import
 import small_logo from './our_assets/small_logo.png'; 
+import LogInHandler from '../handlers/LogInHandler';
 
 const SignInScreen = ({ navigation }) => {
     const [username, setUsername] = useState(''); // Initialize the username state
@@ -11,7 +12,12 @@ const SignInScreen = ({ navigation }) => {
     };
 
     const handleButtonSignIn = () => {
-        navigation.navigate('WIP');
+      const userData = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
+      Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
+  
+      //acá debería tener un SignUpHandler que haga el fetch al backend
+      LogInHandler(email, password, firstName, lastName, username);
+      navigation.navigate('WIP');
     };
 
     const handleButtonForgotPassword = () => {

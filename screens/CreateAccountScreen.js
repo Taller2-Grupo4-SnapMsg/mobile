@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert, DatePickerAndroid } from 'react-native'; // Add StyleSheet import
 import small_logo from './our_assets/small_logo.png'; 
+import RegisterHandler from '../handlers/RegisterHandler';
 
 const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState(''); // Initialize the email state
@@ -13,10 +14,10 @@ const CreateAccountScreen = ({ navigation }) => {
   const handleButtonCreateAccount = () => {
     const userData = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
     Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
-    navigation.navigate('WIP');
 
     //acá debería tener un SignUpHandler que haga el fetch al backend
-
+    RegisterHandler(email, password, firstName, lastName, username);
+    navigation.navigate('WIP');
   };
 
   const validateEmail = (email) => {
