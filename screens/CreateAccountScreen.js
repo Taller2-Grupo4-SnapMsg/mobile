@@ -1,140 +1,200 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert, DatePickerAndroid } from 'react-native'; // Add StyleSheet import
-import small_logo from './our_assets/small_logo.png'; 
-import RegisterHandler from '../handlers/RegisterHandler';
-
-const CreateAccountScreen = ({ navigation }) => {
-    const [email, setEmail] = useState(''); // Initialize the email state
-    const [emailValid, setEmailValid] = useState(true); // Initialize as true
-
-    const [dob, setDoB] = useState(''); // Initialize the dob state
-    const [username, setUsername] = useState(''); // Initialize the username state
-    const [password, setPassword] = useState(''); // Initialize the password state
-
-  const handleButtonCreateAccount = () => {
-    const userData = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
-    Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
-
-    //acá debería tener un SignUpHandler que haga el fetch al backend
-    RegisterHandler(email, password, firstName, lastName, username);
-    navigation.navigate('WIP');
-  };
-
-  const validateEmail = (email) => {
-    const isValid = email.includes('@') && email.includes(".com");
-    setEmailValid(isValid);
-};
+/* This file has been downloaded from rnexamples.com */
+/* If You want to help us please go here https://www.rnexamples.com/help-us */
+import React, { useState } from 'react'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
+import small_logo from './../our_assets/small_logo.png'; 
 
 
+export default SignUpScreen = () => {
+  const [name, setName] = useState()
+  const [email, setEmail] = useState()
+  const [password, setPassword] = useState()
+
+  onClickListener = viewId => {
+    Alert.alert('Alert', 'Button pressed ' + viewId)
+  }
 
   return (
+    <ImageBackground
+      source={{ uri: 'https://wallpaperaccess.com/full/2923163.jpg' }}
+      style={styles.container}
+    >
+      
     <View style={styles.container}>
-      <Image source={small_logo} style={styles.small_logo} />
-      <Text style={styles.text}>Sign up to SnapMsg today!</Text>
-      
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={(text) => {
-            setEmail(text);
-            validateEmail(text); // Call the validation function
-        }}
-        placeholderTextColor="#EDEDF4" 
-        style={[styles.textInput, !emailValid && styles.invalidInput]}
-      />
+    <Image style={styles.logo} source={small_logo} />
+    <Text style={styles.signupTitle}>Sign up to SnapMsg today!</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="First name"
+          underlineColorAndroid="transparent"
+          onChangeText={name => setName({ name })}
+        />
+      </View>
+        
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Last Name"
+          underlineColorAndroid="transparent"
+          onChangeText={name => setName({ name })}
+        />
+      </View>
 
-      <TextInput
-        placeholder="Date of Birth"
-        value={dob}
-        onChangeText={setDoB}
-        style={styles.textInput}
-        placeholderStyle={styles.placeholderStyle} 
-        placeholderTextColor="#EDEDF4" 
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Username"
+          underlineColorAndroid="transparent"
+          onChangeText={name => setName({ name })}
+        />
+      </View>
 
-     
-     <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        style={styles.textInput}
-        placeholderStyle={styles.placeholderStyle} 
-        placeholderTextColor="#EDEDF4" 
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Email"
+          keyboardType="email-address"
+          underlineColorAndroid="transparent"
+          onChangeText={email => setEmail({ email })}
+        />
+      </View>
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.textInput}
-        secureTextEntry
-        placeholderStyle={styles.placeholderStyle}
-        placeholderTextColor="#EDEDF4"  
-      />
-      
-      <TouchableHighlight
-        onPress={handleButtonCreateAccount}
-        underlayColor="#a3a5c3"
-        style={styles.button}
-      >
-      <Text style={styles.buttonText}>Create account!</Text>
-  
-      </TouchableHighlight>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Password"
+          secureTextEntry={true}
+          underlineColorAndroid="transparent"
+          onChangeText={password => setPassword({ password })}
+        />
+      </View>
+
+      <TouchableOpacity
+        style={[styles.buttonContainer, styles.signupButton]}
+        onPress={() => this.onClickListener('signup')}>
+        <Text style={styles.signupText}>Sign up!</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={() => this.onClickListener('signin')}>
+        <Text style={styles.btnText}>Already have an account? Sign in</Text>
+      </TouchableOpacity>
     </View>
-  );
-};
-
+    </ImageBackground>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#353839',
+    backgroundImage: 'url(https://wallpaperaccess.com/full/2923163.jpg)',
   },
-  text: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#947eb0',
-    marginTop: 45,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#EDEDF4',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginTop: 30,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#947EB0',
-    fontWeight: 'bold',
-  },
-  small_logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-    marginTop: -100,
-  },
-  signInText: {
-    fontSize: 25,
-    marginTop: 50,
-    color: '#947eb0',
-  },
-  textInput: {
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 30,
     borderBottomWidth: 1,
-    borderColor: '#EDEDF4',
-    width: '80%',
-    height: 60, // Adjust the height value
+    width: 300,
+    height: 45,
     marginBottom: 20,
-    color: '#947eb0',
-    fontSize: 20,
-    fontStyle: 'italic',
-  }, 
-  invalidInput: {
-    borderColor: '#ad343e', // pretty red for invalid input
-  }
-});
+    flexDirection: 'row',
+    alignItems: 'center',
 
-export default CreateAccountScreen;
+    shadowColor: '#808080',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5
+  },
+  inputs: {
+    height: 45,
+    marginLeft: 16,
+    borderBottomColor: '#FFFFFF',
+    flex: 1
+  },
+  inputIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 15,
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    height: 45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 300,
+    borderRadius: 30,
+    backgroundColor: 'transparent',
+  },
+  btnByRegister: {
+    height: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+    width: 300,
+    backgroundColor: 'transparent',
+  },
+  signupButton: {
+    backgroundColor: '#6B5A8E',
+
+    shadowColor: '#808080',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 12.35,
+
+    elevation: 19,
+  },
+  signupTitle: {
+    color: 'white', 
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 30,
+    marginBottom: 60,
+  },
+  signupText: {
+    color: 'white', 
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  btnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+  },
+  textByRegister: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    marginBottom: 10,
+  }
+})
