@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 import small_logo from './../our_assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import RegisterHandler from '../handlers/RegisterHandler';
 
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
+  const [last_name, setLastName] = useState();
+  const [username, setUserName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +18,21 @@ const SignUpScreen = ({ navigation }) => {
     setShowPassword(!showPassword);
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     // Your sign-up logic here
-    Alert.alert('Alert', 'Sign up action triggered')
+    //Alert.alert('Alert', 'Sign up action triggered')
+    try {
+      if (!email || !password || !name || !last_name || !username) {
+        Alert.alert('Alert', 'All fields are required.');
+        return;
+      }
+      await RegisterHandler(email, password, name, last_name, username)
+      //await RegisterHandler("brandi_broke@gmail.com", "GotSomeMoney?", "Brandi", "Broke", "BrandiNeedsSomeCash$$");
+    }
+    catch (error) {
+      // Handle any errors thrown by RegisterHandler
+      console.error('Error in registration:', error);
+    }
   };
   
   const handleSignIn = () => {
@@ -41,7 +56,7 @@ const SignUpScreen = ({ navigation }) => {
           placeholderTextColor={"black"}
           placeholder="First name"
           underlineColorAndroid="transparent"
-          onChangeText={name => setName({ name })}
+          onChangeText={text => setName(text)}
         />
       </View>
         
@@ -51,7 +66,7 @@ const SignUpScreen = ({ navigation }) => {
           placeholderTextColor={"black"}
           placeholder="Last Name"
           underlineColorAndroid="transparent"
-          onChangeText={name => setName({ name })}
+          onChangeText={text => setLastName(text)}
         />
       </View>
 
@@ -61,7 +76,7 @@ const SignUpScreen = ({ navigation }) => {
           placeholderTextColor={"black"}
           placeholder="Username"
           underlineColorAndroid="transparent"
-          onChangeText={name => setName({ name })}
+          onChangeText={text => setUserName(text)}
         />
       </View>
 
@@ -72,7 +87,7 @@ const SignUpScreen = ({ navigation }) => {
           placeholder="Email"
           keyboardType="email-address"
           underlineColorAndroid="transparent"
-          onChangeText={email => setEmail({ email })}
+          onChangeText={text => setEmail(text)}
         />
       </View>
 
@@ -83,7 +98,7 @@ const SignUpScreen = ({ navigation }) => {
           placeholder="Password"
           secureTextEntry={!showPassword}
           underlineColorAndroid="transparent"
-          onChangeText={password => setPassword({ password })}
+          onChangeText={text => setPassword(text)}
         />
 
       <TouchableOpacity onPress={togglePasswordVisibility} style={{ marginRight: 20 }}>

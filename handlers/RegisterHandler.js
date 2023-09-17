@@ -1,4 +1,5 @@
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert }  from 'react-native';
 
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
@@ -12,7 +13,7 @@ const RegisterHandler = async (email, password, firstName, lastName, username) =
         password: password,
         name: firstName,
         last_name: lastName,
-        nickname: nickname,
+        nickname: username,
         };
 
         const response = await fetch('https://loginback-lg51.onrender.com/register', {
@@ -25,9 +26,12 @@ const RegisterHandler = async (email, password, firstName, lastName, username) =
 
         if (response.status === 201) {
         // Registration successful
-        const token = responseData.token
+        const token = responseData.token;
+
         await AsyncStorage.setItem('token', token);
-        console.log('Sign up successful');
+
+        Alert.alert('Alert', 'Sign Up successful, token: ', token);
+
         // Redirect or perform any other action you need here
         //window.location.href = '/pin';
         } else {
