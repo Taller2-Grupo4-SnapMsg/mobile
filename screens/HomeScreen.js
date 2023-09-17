@@ -13,6 +13,10 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate('Sign In');
   };
 
+  const handleExampleButton = () => {
+    navigation.navigate('Example');
+  }
+  
   return (
     <View style={styles.container}>
       <Image source={logo} style={styles.logo}/>
@@ -32,6 +36,14 @@ const HomeScreen = ({ navigation }) => {
         style={styles.button}
       >
       <Text style={styles.buttonText}>Sign in</Text>
+      </TouchableHighlight>
+
+      <TouchableHighlight
+        onPress={handleExampleButton}
+        underlayColor="#a3a5c3"
+        style={styles.button}
+      >
+      <Text style={styles.buttonText}>Example</Text>
       </TouchableHighlight>
     </View>
   );
