@@ -17,20 +17,18 @@ const RegisterHandler = async (email, password, firstName, lastName, username) =
         };
 
         const response = await fetch('https://loginback-lg51.onrender.com/register', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(requestBody),
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestBody),
         });
 
         const responseData = await response.json();
 
         if (response.status === 201) {
-        // Registration successful
         const token = responseData.token;
-
         await AsyncStorage.setItem('token', token);
 
-        Alert.alert('Alert', 'Sign Up successful, token: ', token);
+        Alert.alert('Alert', 'Sign Up successful');
 
         // Redirect or perform any other action you need here
         //window.location.href = '/pin';

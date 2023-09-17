@@ -36,8 +36,6 @@ const SignUpScreen = ({ navigation }) => {
   };
   
   const handleSignIn = () => {
-    // Your sign-in logic here
-    //Alert.alert('Alert', 'Sign in action triggered')
     navigation.navigate('Sign In');
   };
 

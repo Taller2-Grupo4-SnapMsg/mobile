@@ -1,4 +1,5 @@
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert }  from 'react-native';
 
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
@@ -17,14 +18,15 @@ const headers = {
         headers: headers,
         body: JSON.stringify(requestBody),
       });
-  
+
       const responseData = await response.json();
-  
+      
       if (response.status === 200) {
-        // Registration successful
-        const token = responseData.token
+        const token = responseData.token;
         await AsyncStorage.setItem('token', token);
-        console.log('Sign in successful');
+
+        Alert.alert('Alert', 'Sign Up successful');
+
         
         //Redirect or perform any other action you need here
         //window.location.href = '/pin';

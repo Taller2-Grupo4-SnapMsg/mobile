@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 import small_logo from './../our_assets/small_logo.png'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import LogInHandler from '../handlers/LogInHandler';
 
 const SignInScreen = ({navigation}) => {
-  const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
@@ -15,14 +15,24 @@ const SignInScreen = ({navigation}) => {
   };
 
   const handleSignUp = () => {
-    // Your sign-up logic here
-    //Alert.alert('Alert', 'Sign up action triggered')
     navigation.navigate('Sign Up');
   };
   
-  const handleSignIn = () => {
-    // Your sign-in logic here
-    Alert.alert('Alert', 'Sign in action triggered');
+  const handleSignIn = async () => {
+    // Your sign-up logic here
+    //Alert.alert('Alert', 'Sign up action triggered')
+    try {
+      if (!email || !password) {
+        Alert.alert('Alert', 'All fields are required.');
+        return;
+      }
+      await LogInHandler(email, password)
+      //await LogInHandler("brandi_broke@gmail.com", "GotSomeMoney?");
+    }
+    catch (error) {
+      // Handle any errors thrown by RegisterHandler
+      console.error('Error in registration:', error);
+    }
   };
 
   return (
@@ -38,20 +48,10 @@ const SignInScreen = ({navigation}) => {
         <TextInput
           style={styles.inputs}
           placeholderTextColor={"black"}
-          placeholder="Username"
-          underlineColorAndroid="transparent"
-          onChangeText={name => setName({ name })}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputs}
-          placeholderTextColor={"black"}
           placeholder="Email"
           keyboardType="email-address"
           underlineColorAndroid="transparent"
-          onChangeText={email => setEmail({ email })}
+          onChangeText={text => setEmail(text)}
         />
       </View>
 
@@ -62,8 +62,9 @@ const SignInScreen = ({navigation}) => {
           placeholder="Password"
           secureTextEntry={!showPassword}
           underlineColorAndroid="transparent"
-          onChangeText={password => setPassword({ password })}
+          onChangeText={text => setPassword(text)}
         />
+
       <TouchableOpacity onPress={togglePasswordVisibility} style={{ marginRight: 20 }}>
         <Icon name={showPassword ? 'visibility-off' : 'visibility'} size={25} />
       </TouchableOpacity>
