@@ -19,15 +19,13 @@ const SignInScreen = ({navigation}) => {
   };
   
   const handleSignIn = async () => {
-    // Your sign-up logic here
-    //Alert.alert('Alert', 'Sign up action triggered')
     try {
       if (!email || !password) {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
       await LogInHandler(email, password)
-      //await LogInHandler("brandi_broke@gmail.com", "GotSomeMoney?");
+      //navigation.navigate('???');
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler

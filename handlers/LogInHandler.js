@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert }  from 'react-native';
 
+
+const OK = 200
+const USER_NOT_FOUND = 404
+
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
     'Access-Control-Allow-Origin': '*',
@@ -21,7 +25,7 @@ const headers = {
 
       const responseData = await response.json();
       
-      if (response.status === 200) {
+      if (response.status === OK) {
         const token = responseData.token;
         await AsyncStorage.setItem('token', token);
 
@@ -30,6 +34,8 @@ const headers = {
         
         //Redirect or perform any other action you need here
         //window.location.href = '/pin';
+      }  if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Alert', 'The user was not found. Check email and password.');
       } else {
         // Registration failed
         console.error('Sign in failed:', responseData);

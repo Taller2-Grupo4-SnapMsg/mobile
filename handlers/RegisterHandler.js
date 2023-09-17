@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert }  from 'react-native';
 
+const OK = 201
+const USERNAME_TAKEN = 400
+const EMAIL_TAKEN = 401
+
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
     'Access-Control-Allow-Origin': '*',
@@ -24,17 +28,18 @@ const RegisterHandler = async (email, password, firstName, lastName, username) =
 
         const responseData = await response.json();
 
-        if (response.status === 201) {
-        const token = responseData.token;
-        await AsyncStorage.setItem('token', token);
-
-        Alert.alert('Alert', 'Sign Up successful');
-
-        // Redirect or perform any other action you need here
-        //window.location.href = '/pin';
-        } else {
+        if (response.status === OK) {
+            const token = responseData.token;
+            await AsyncStorage.setItem('token', token);
+            Alert.alert('Alert', 'Sign Up successful');
+        } if (response.status === USERNAME_TAKEN) {
+            Alert.alert('Alert', 'Username already taken.');
+        } if (response.status === EMAIL_TAKEN) {
+            Alert.alert('Alert', 'Email already taken.');
+        }
+        else {
         // Registration failed
-        console.error('Registration failed:', responseData);
+            console.error('Registration failed:', responseData);
         }
     } catch (error) {
         const message =
