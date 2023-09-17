@@ -1,18 +1,30 @@
-/* This file has been downloaded from rnexamples.com */
-/* If You want to help us please go here https://www.rnexamples.com/help-us */
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
-import small_logo from './../our_assets/small_logo.png'; 
+import small_logo from './../our_assets/small_logo.png';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-export default SignUpScreen = () => {
-  const [name, setName] = useState()
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
+const SignUpScreen = ({ navigation }) => {
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [showPassword, setShowPassword] = useState(false);
 
-  onClickListener = viewId => {
-    Alert.alert('Alert', 'Button pressed ' + viewId)
-  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSignUp = () => {
+    // Your sign-up logic here
+    Alert.alert('Alert', 'Sign up action triggered')
+  };
+  
+  const handleSignIn = () => {
+    // Your sign-in logic here
+    //Alert.alert('Alert', 'Sign in action triggered')
+    navigation.navigate('Sign In');
+  };
 
   return (
     <ImageBackground
@@ -69,21 +81,26 @@ export default SignUpScreen = () => {
           style={styles.inputs}
           placeholderTextColor={"black"}
           placeholder="Password"
-          secureTextEntry={true}
+          secureTextEntry={!showPassword}
           underlineColorAndroid="transparent"
           onChangeText={password => setPassword({ password })}
         />
+
+      <TouchableOpacity onPress={togglePasswordVisibility} style={{ marginRight: 20 }}>
+        <Icon name={showPassword ? 'visibility-off' : 'visibility'} size={25} />
+      </TouchableOpacity>
+
       </View>
 
       <TouchableOpacity
         style={[styles.buttonContainer, styles.signupButton]}
-        onPress={() => this.onClickListener('signup')}>
+        onPress={handleSignUp}>
         <Text style={styles.signupText}>Sign up!</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={() => this.onClickListener('signin')}>
+        onPress={handleSignIn}>
         <Text style={styles.btnText}>Already have an account? Sign in</Text>
       </TouchableOpacity>
     </View>
@@ -198,3 +215,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   }
 })
+
+
+export default SignUpScreen;

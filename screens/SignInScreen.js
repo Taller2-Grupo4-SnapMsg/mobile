@@ -1,132 +1,196 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableHighlight, StyleSheet, Image, TextInput, Alert } from 'react-native'; // Add StyleSheet import
-import small_logo from './our_assets/small_logo.png'; 
-import LogInHandler from '../handlers/LogInHandler';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
+import small_logo from './../our_assets/small_logo.png'; 
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const SignInScreen = ({ navigation }) => {
-    const [username, setUsername] = useState(''); // Initialize the username state
-    const [password, setPassword] = useState(''); // Initialize the password state
-   
-    const handleButtonSignUp = () => {
-        navigation.navigate('Home');
-    };
+const SignInScreen = ({navigation}) => {
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [showPassword, setShowPassword] = useState(false);
 
-    const handleButtonSignIn = () => {
-      const userData = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
-      Alert.alert('User Data!\n', userData, [{ text: 'OK' }]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSignUp = () => {
+    // Your sign-up logic here
+    //Alert.alert('Alert', 'Sign up action triggered')
+    navigation.navigate('Sign Up');
+  };
   
-      //acá debería tener un SignUpHandler que haga el fetch al backend
-      LogInHandler(email, password, firstName, lastName, username);
-      navigation.navigate('WIP');
-    };
-
-    const handleButtonForgotPassword = () => {
-        navigation.navigate('WIP');
-    };
+  const handleSignIn = () => {
+    // Your sign-in logic here
+    Alert.alert('Alert', 'Sign in action triggered');
+  };
 
   return (
+    <ImageBackground
+      source={{ uri: 'https://wallpaperaccess.com/full/2923163.jpg' }}
+      style={styles.container}
+    >
+      
     <View style={styles.container}>
-      <Image source={small_logo} style={styles.small_logo} />
-      <Text style={styles.text}>Sign in</Text>
-    
+    <Image style={styles.logo} source={small_logo} />
+    <Text style={styles.signinTitle}>Sign in to SnapMsg</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Username"
+          underlineColorAndroid="transparent"
+          onChangeText={name => setName({ name })}
+        />
+      </View>
 
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        style={styles.textInput}
-        placeholderStyle={styles.placeholderStyle} 
-        placeholderTextColor="#EDEDF4" 
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Email"
+          keyboardType="email-address"
+          underlineColorAndroid="transparent"
+          onChangeText={email => setEmail({ email })}
+        />
+      </View>
 
-      <TouchableHighlight
-        onPress={handleButtonForgotPassword}
-        underlayColor="#45494A"
-        style={styles.button}
-      >
-      <Text style={styles.buttonText}>Forgot our password?</Text>
-      </TouchableHighlight>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholderTextColor={"black"}
+          placeholder="Password"
+          secureTextEntry={!showPassword}
+          underlineColorAndroid="transparent"
+          onChangeText={password => setPassword({ password })}
+        />
+      <TouchableOpacity onPress={togglePasswordVisibility} style={{ marginRight: 20 }}>
+        <Icon name={showPassword ? 'visibility-off' : 'visibility'} size={25} />
+      </TouchableOpacity>
+      </View>
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.textInput}
-        secureTextEntry
-        placeholderStyle={styles.placeholderStyle}
-        placeholderTextColor="#EDEDF4"  
-      />
-      
-      <TouchableHighlight
-        onPress={handleButtonSignIn}
-        underlayColor="#45494A"
-        style={styles.button}
-      >
-      <Text style={styles.buttonText}>Sign in</Text>
-      </TouchableHighlight>
-      <Text style={styles.signUpText}>Don't have an account yet?</Text>
-      
-      <TouchableHighlight
-        onPress={handleButtonSignUp}
-        underlayColor="#45494A"
-        style={styles.button}
-      >
-      <Text style={styles.buttonText}>Sign up!</Text>
-      </TouchableHighlight>
+      <TouchableOpacity
+        style={[styles.buttonContainer, styles.signinButton]}
+        onPress={handleSignIn}>
+        <Text style={styles.signinText}>Sign in</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={handleSignUp}>
+        <Text style={styles.btnText}>Don't have an account? Sign up today!</Text>
+      </TouchableOpacity>
     </View>
-  );
-};
-
+    </ImageBackground>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#353839',
+    backgroundImage: 'url(https://wallpaperaccess.com/full/2923163.jpg)',
   },
-  text: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#eb8258',
-    marginTop: 45,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#353839',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 30,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#ffd581',
-    fontWeight: 'bold',
-  },
-  small_logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-    marginTop: -100,
-  },
-  signUpText: {
-    fontSize: 25,
-    marginTop: 60,
-    marginBottom: -10,
-    color: '#eb8258',
-  },
-  textInput: {
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 30,
     borderBottomWidth: 1,
-    borderColor: '#EDEDF4',
-    width: '80%',
-    height: 60, // Adjust the height value
-    marginTop: 10,
+    width: 300,
+    height: 45,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    shadowColor: '#808080',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5
+  },
+  inputs: {
+    height: 45,
+    marginLeft: 16,
+    borderBottomColor: '#FFFFFF',
+    flex: 1
+  },
+  inputIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 15,
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    height: 45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 300,
+    borderRadius: 30,
+    backgroundColor: 'transparent',
+  },
+  btnByRegister: {
+    height: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+    width: 300,
+    backgroundColor: 'transparent',
+  },
+  signinButton: {
+    backgroundColor: '#6B5A8E',
+
+    shadowColor: '#808080',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 12.35,
+
+    elevation: 19,
+  },
+  signinTitle: {
+    color: 'white', 
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 30,
+    marginBottom: 60,
+  },
+  signinText: {
+    color: 'white', 
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  btnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+  },
+  textByRegister: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+  },
+  logo: {
+    width: 50,
+    height: 50,
     marginBottom: 10,
-    color: '#FFA500',
-    fontSize: 20,
-    fontStyle: 'italic',
   }
-});
+})
 
 export default SignInScreen;

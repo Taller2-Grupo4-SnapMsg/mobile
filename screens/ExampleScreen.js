@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableHighlight, StyleSheet, Image } from 'react-native'; // Add StyleSheet import
-import logo from './our_assets/logo.png'; 
+import logo from './../our_assets/logo.png';
 
 const HomeScreen = ({ navigation }) => {
   const handleButtonPress = () => {
