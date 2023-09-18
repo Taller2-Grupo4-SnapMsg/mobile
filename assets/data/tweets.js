@@ -2,7 +2,7 @@ const tweets = [
   {
     id: 't0',
     user: {
-      id: 'u1',
+      id: '1',
       username: 'VadimNotJustDev',
       name: 'Vadim',
       image:
@@ -20,7 +20,7 @@ const tweets = [
     id: '111111111',
     createdAt: '2023-04-28T08:30:00.000Z',
     user: {
-      id: '123456789',
+      id: '2',
       name: 'Jeff B',
       username: 'bezos',
       image:
@@ -37,7 +37,7 @@ const tweets = [
     id: '222222222',
     createdAt: '2023-04-27T19:45:00.000Z',
     user: {
-      id: '987654321',
+      id: '3',
       name: 'Zuck',
       username: 'zuck',
       image:
@@ -54,7 +54,7 @@ const tweets = [
     id: '333333333',
     createdAt: '2023-04-26T12:00:00.000Z',
     user: {
-      id: '123456789',
+      id: '4',
       name: 'Jane Smith',
       username: 'janesmith',
       image:
@@ -70,7 +70,7 @@ const tweets = [
   {
     id: 't1',
     user: {
-      id: 'u1',
+      id: '5',
       username: 'VadimNotJustDev',
       name: 'Vadim',
       image:
@@ -88,7 +88,7 @@ const tweets = [
   {
     id: 't2',
     user: {
-      id: 'u1',
+      id: '6',
       username: 'VadimNotJustDev',
       name: 'Vadim',
       image:
@@ -104,7 +104,7 @@ const tweets = [
   {
     id: 't3',
     user: {
-      id: 'u1',
+      id: '7',
       username: 'VadimNotJustDev',
       name: 'Vadim',
       image:
@@ -119,7 +119,7 @@ const tweets = [
   {
     id: 't4',
     user: {
-      id: 'u1',
+      id: '8',
       username: 'VadimNotJustDev',
       name: 'Vadim',
       image:

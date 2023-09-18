@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import IconButton from './IconButton';
 import { Entypo } from '@expo/vector-icons';
+import Avatar from './Avatar';
 
 const Tweet = ({ tweet }) => {
   const navigation = useNavigation();
@@ -19,9 +20,7 @@ const Tweet = ({ tweet }) => {
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
-      {user.image && (
-        <Image source={{ uri: user.image }} style={styles.userImage} />
-      )}
+      <Avatar user={tweet.user}/>
 
       <View style={styles.mainContainer}>
         <View style={{ flexDirection: 'row' }}>
