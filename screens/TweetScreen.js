@@ -1,17 +1,20 @@
-import { Text } from 'react-native';
-import Tweet from '../components/Tweet';
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import tweets from '../assets/data/tweets';
-import { useSearchParams } from 'expo-router';
-import React from 'react';
+import Tweet from '../components/Tweet'
 
-export default function TweetScreen() {
-  const { id } = useSearchParams();
+const TweetScreen = () => {
+  const route = useRoute();
+  const { tweetId } = route.params;
 
-  const tweet = tweets.find((t) => t.id === id);
+  const tweet = tweets.find((t) => t.id === tweetId);
 
   if (!tweet) {
-    return <Text>Tweet {id} not found!</Text>;
+    return <Text>Tweet {tweetId} not found!</Text>;
   }
 
   return <Tweet tweet={tweet} />;
-}
+};
+
+export default TweetScreen;

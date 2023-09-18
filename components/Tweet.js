@@ -1,26 +1,32 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import IconButton from './IconButton';
-import { useNavigation } from '@react-navigation/native'; // Import the navigation hook
+import { Entypo } from '@expo/vector-icons';
 
 const Tweet = ({ tweet }) => {
-  const navigation = useNavigation(); // Get the navigation object
+  const navigation = useNavigation();
+
+  if (!tweet) {
+    return null;
+  }
+
+  const { id, user, content, image, numberOfComments, numberOfRetweets, numberOfLikes, impressions } = tweet;
 
   const handlePress = () => {
-    // When the tweet is pressed, navigate to the TweetScreen with the tweet's ID as a parameter
-    navigation.navigate('TweetScreen', { id: tweet.id });
+    navigation.navigate('TweetScreen', { tweetId: tweet.id });
   };
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
-      {tweet.user.image && (
-        <Image source={{ uri: tweet.user.image }} style={styles.userImage} />
+      {user.image && (
+        <Image source={{ uri: user.image }} style={styles.userImage} />
       )}
 
       <View style={styles.mainContainer}>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.name}>{tweet.user.name}</Text>
-          <Text style={styles.username}>{tweet.user.username} · 2h</Text>
+          <Text style={styles.name}>{user.name}</Text>
+          <Text style={styles.username}>{user.username} · 2h</Text>
           <Entypo
             name="dots-three-horizontal"
             size={16}
@@ -29,17 +35,25 @@ const Tweet = ({ tweet }) => {
           />
         </View>
 
-        <Text style={styles.content}>{tweet.content}</Text>
+        <Text style={styles.content}>{content}</Text>
 
-        {tweet.image && (
-          <Image source={{ uri: tweet.image }} style={styles.image} />
+        {image && (
+          <Image source={{ uri: image }} style={styles.image} />
         )}
 
         <View style={styles.footer}>
-          <IconButton icon="comment" text={tweet.numberOfComments} />
-          <IconButton icon="retweet" text={tweet.numberOfRetweets} />
-          <IconButton icon="heart" text={tweet.numberOfLikes} />
-          <IconButton icon="chart" text={tweet.impressions || 0} />
+          {numberOfComments && (
+            <IconButton icon="comment" text={numberOfComments} />
+          )}
+          {numberOfRetweets && (
+            <IconButton icon="retweet" text={numberOfRetweets} />
+          )}
+          {numberOfLikes && (
+            <IconButton icon="heart" text={numberOfLikes} />
+          )}
+          {(impressions || impressions === 0) && (
+            <IconButton icon="chart" text={impressions} />
+          )}
           <IconButton icon="share-apple" />
         </View>
       </View>
@@ -91,4 +105,5 @@ const styles = StyleSheet.create({
 });
 
 export default Tweet;
+
 
