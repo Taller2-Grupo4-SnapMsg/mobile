@@ -12,6 +12,7 @@ import { useRoute } from '@react-navigation/native';
 import tweets from '../../assets/data/tweets';
 import Tweet from '../../components/Tweet';
 import { Feather } from '@expo/vector-icons'; // Import Feather icons
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 export default function ProfileById() {
   const route = useRoute();
@@ -30,10 +31,17 @@ export default function ProfileById() {
 
 
 function Profile({ user }) {
+
+  const navigation = useNavigation(); // Use useNavigation hook to get navigation object
+
+  const handleEditButton = () => {
+    navigation.navigate('EditProfileById', { userId: user.id }); // Now you can use the navigation object
+  }
+  
   return (
     <View style={styles.container}>
             {/* Edit button */}
-      <TouchableOpacity style={styles.editButton}>
+      <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
         <Feather name="edit" size={24} />
       </TouchableOpacity>
       <View style={styles.profileContainer}>

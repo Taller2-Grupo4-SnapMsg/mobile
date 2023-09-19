@@ -11,6 +11,7 @@ import TweetById from './screens/home/TweetById';
 import NewTweet from './screens/home/NewTweet';
 import ProfileById from './screens/home/ProfileById';
 import Profile from './screens/profile/Profile';
+import EditProfileById from './screens/home/EditProfileById';
 import { useColorScheme } from 'react-native';
 import {
   DarkTheme,
@@ -40,6 +41,7 @@ const StackNavigator = () => {
       <Stack.Screen name="TweetById" component={TweetById} />
       <Stack.Screen name="NewTweet" component={NewTweet} />
       <Stack.Screen name="ProfileById" component={ProfileById} />
+      <Stack.Screen name="EditProfileById" component={EditProfileById} />
     </Stack.Navigator>
   );
 };
