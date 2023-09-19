@@ -58,7 +58,7 @@ function Profile({ user }) {
       <View style={styles.flatListContainer}>
         <FlatList
           data={tweets}
-          renderItem={({ item }) => item && <Tweet tweet={item} />}
+          renderItem={({ item }) => item && item.user.id == user.id && <Tweet tweet={item} />}
         />
       </View>
     </View>

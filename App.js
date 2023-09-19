@@ -10,6 +10,7 @@ import Home from './screens/home/Home';
 import TweetById from './screens/home/TweetById';
 import NewTweet from './screens/home/NewTweet';
 import ProfileById from './screens/home/ProfileById';
+import Profile from './screens/profile/Profile';
 import { useColorScheme } from 'react-native';
 import {
   DarkTheme,
@@ -22,6 +23,9 @@ import {
   WithSession,
   WithoutSession,
 } from './contexts/auth/Auth';
+import users from './assets/data/users'
+
+const userHarcodeado = users[2];
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -42,6 +46,7 @@ const StackNavigator = () => {
 
 const App = () => {
   const colorScheme = useColorScheme();
+  console.log(userHarcodeado);
 
   return(
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -71,6 +76,11 @@ const App = () => {
 const MainNavigator = () => (
   <Drawer.Navigator initialRouteName="Home">
     <Drawer.Screen name="Home" component={StackNavigator} />
+    <Drawer.Screen
+      name="Profile"
+      component={Profile}
+      initialParams={{ user: userHarcodeado }}
+    />
     {/*<Drawer.Screen name="WIP (no va)" component={WIPScreen} />*/}
     {/*<Drawer.Screen name="SignUp (no va)" component={SignUpScreen} />*/}
     {/*<Drawer.Screen name="ProfileScreen" component={ProfileScreen} />*/}

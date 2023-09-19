@@ -51,6 +51,74 @@ const tweets = [
     impressions: 1000,
   },
   {
+    id: '222222223',
+    createdAt: '2023-04-27T19:45:00.000Z',
+    user: {
+      id: '3',
+      name: 'Zuck',
+      username: 'zuck',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+    },
+    content: 'Had an amazing surf session this morning',
+    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    numberOfComments: 10,
+    numberOfRetweets: 20,
+    numberOfLikes: 100,
+    impressions: 1000,
+  },
+  {
+    id: '111111112',
+    createdAt: '2023-04-28T08:30:00.000Z',
+    user: {
+      id: '2',
+      name: 'Jeff B',
+      username: 'bezos',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/jeff.jpeg',
+    },
+    content:
+      'Just had a great workout at the gym! 💪 #fitness #healthylifestyle',
+    numberOfComments: 2,
+    numberOfRetweets: 5,
+    numberOfLikes: 25,
+    impressions: 500,
+  },
+  {
+    id: '111111113',
+    createdAt: '2023-04-28T08:30:00.000Z',
+    user: {
+      id: '2',
+      name: 'Jeff B',
+      username: 'bezos',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/jeff.jpeg',
+    },
+    content:
+      'Just had a great workout at the gym! 💪 #fitness #healthylifestyle',
+    numberOfComments: 2,
+    numberOfRetweets: 5,
+    numberOfLikes: 25,
+    impressions: 500,
+  },
+  {
+    id: '111111114',
+    createdAt: '2023-04-28T08:30:00.000Z',
+    user: {
+      id: '2',
+      name: 'Jeff B',
+      username: 'bezos',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/jeff.jpeg',
+    },
+    content:
+      'Just had a great workout at the gym! 💪 #fitness #healthylifestyle',
+    numberOfComments: 2,
+    numberOfRetweets: 5,
+    numberOfLikes: 25,
+    impressions: 500,
+  },
+  {
     id: '333333333',
     createdAt: '2023-04-26T12:00:00.000Z',
     user: {
@@ -65,6 +133,23 @@ const tweets = [
     numberOfComments: 5,
     numberOfRetweets: 10,
     numberOfLikes: 50,
+    impressions: 1000,
+  },
+  {
+    id: '222222224',
+    createdAt: '2023-04-27T19:45:00.000Z',
+    user: {
+      id: '3',
+      name: 'Zuck',
+      username: 'zuck',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+    },
+    content: 'Had an amazing surf session this morning',
+    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    numberOfComments: 10,
+    numberOfRetweets: 20,
+    numberOfLikes: 100,
     impressions: 1000,
   },
   {
@@ -102,6 +187,39 @@ const tweets = [
     numberOfLikes: 99,
   },
   {
+    id: '222222225',
+    createdAt: '2023-04-27T19:45:00.000Z',
+    user: {
+      id: '3',
+      name: 'Zuck',
+      username: 'zuck',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+    },
+    content: 'Had an amazing surf session this morning',
+    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    numberOfComments: 10,
+    numberOfRetweets: 20,
+    numberOfLikes: 100,
+    impressions: 1000,
+  },  {
+    id: '222222226',
+    createdAt: '2023-04-27T19:45:00.000Z',
+    user: {
+      id: '3',
+      name: 'Zuck',
+      username: 'zuck',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+    },
+    content: 'Had an amazing surf session this morning',
+    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    numberOfComments: 10,
+    numberOfRetweets: 20,
+    numberOfLikes: 100,
+    impressions: 1000,
+  },
+  {
     id: 't3',
     user: {
       id: '7',
@@ -131,6 +249,23 @@ const tweets = [
     numberOfComments: 4,
     numberOfRetweets: 11,
     numberOfLikes: 99,
+  },
+  {
+    id: '111111115',
+    createdAt: '2023-04-28T08:30:00.000Z',
+    user: {
+      id: '2',
+      name: 'Jeff B',
+      username: 'bezos',
+      image:
+        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/jeff.jpeg',
+    },
+    content:
+      'Just had a great workout at the gym! 💪 #fitness #healthylifestyle',
+    numberOfComments: 2,
+    numberOfRetweets: 5,
+    numberOfLikes: 25,
+    impressions: 500,
   },
 ];
 

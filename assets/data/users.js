@@ -43,50 +43,6 @@ const users = [
         following: '7400', 
         bio: 'HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
     },
-    {
-        id: '5',
-        username: 'VadimNotJustDev',
-        name: 'Vadim',
-        image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
-        snaps: '100',
-        followers: '500',
-        following: '7400', 
-        bio: 'HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
-    },
-    {
-        id: '6',
-        username: 'VadimNotJustDev',
-        name: 'Vadim',
-        image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
-        snaps: '100',
-        followers: '500',
-        following: '7400', 
-        bio: 'HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
-    },
-    {
-        id: '7',
-        username: 'VadimNotJustDev',
-        name: 'Vadim',
-        image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
-        snaps: '100',
-        followers: '500',
-        following: '7400', 
-        bio: 'HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
-    },
-    {
-        id: '8',
-        username: 'VadimNotJustDev',
-        name: 'Vadim',
-        image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
-        snaps: '100',
-        followers: '500',
-        following: '7400', 
-        bio: 'HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
-    }
   ];
   
   export default users;
