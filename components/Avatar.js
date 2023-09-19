@@ -6,10 +6,8 @@ export default function Avatar({user}){
 
     const navigation = useNavigation();
   
-    //const { id, user, content, image, numberOfComments, numberOfRetweets, numberOfLikes, impressions } = tweet;
-  
     const handlePressAvatar = () => {
-      navigation.navigate('ProfileScreen', { userId: user.id });
+      navigation.navigate('ProfileById', { userId: user.id });
     };
 
   return (

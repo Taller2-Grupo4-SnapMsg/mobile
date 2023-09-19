@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
-import small_logo from './../our_assets/small_logo.png'; 
+import small_logo from '../../assets/small_logo.png'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import LogInHandler from '../handlers/LogInHandler';
+import LogInHandler from '../../handlers/LogInHandler';
 
 const SignInScreen = ({navigation}) => {
   const [email, setEmail] = useState();
@@ -25,7 +25,7 @@ const SignInScreen = ({navigation}) => {
         return;
       }
       await LogInHandler(email, password)
-      //navigation.navigate('???');
+      navigation.navigate('Main');
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler

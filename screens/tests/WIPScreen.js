@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
-import logo from './../our_assets/logo.png';
+import logo from '../../assets/logo.png';
 
 const WIP = ({ navigation }) => {
 

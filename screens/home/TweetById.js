@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import tweets from '../assets/data/tweets';
-import Tweet from '../components/Tweet'
+import tweets from '../../assets/data/tweets';
+import Tweet from '../../components/Tweet'
 
-const TweetScreen = () => {
+const TweetById = () => {
   const route = useRoute();
   const { tweetId } = route.params;
 
@@ -17,4 +17,4 @@ const TweetScreen = () => {
   return <Tweet tweet={tweet} />;
 };
 
-export default TweetScreen;
+export default TweetById;

@@ -18,7 +18,7 @@ const user = {
     'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
 };
 
-export default function NewTweetScreen() {
+export default function NewTweet() {
   const [text, setText] = useState('');
   const navigation = useNavigation();
 
@@ -31,7 +31,7 @@ export default function NewTweetScreen() {
 
   const handlePressCancel = () => {
     console.warn('se descarto el text:', text);
-    navigation.navigate('Example');
+    navigation.navigate('InHome');
   };
 
   return (

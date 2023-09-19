@@ -15,7 +15,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
-import users from '../assets/data/users';
+import users from '../../assets/data/users';
 import { useRoute } from '@react-navigation/native';
 
 function generateTweets(limit) {
@@ -47,7 +47,7 @@ const AnimatedImageBackground = Animated.createAnimatedComponent(
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
-export default function ProfileScreen() {
+export default function ProfileById() {
   const route = useRoute();
   const { userId } = route.params;
 

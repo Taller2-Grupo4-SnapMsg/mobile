@@ -15,7 +15,7 @@ const Tweet = ({ tweet }) => {
   const { id, user, content, image, numberOfComments, numberOfRetweets, numberOfLikes, impressions } = tweet;
 
   const handlePress = () => {
-    navigation.navigate('TweetScreen', { tweetId: tweet.id });
+    navigation.navigate('TweetById', { tweetId: tweet.id });
   };
 
   return (

@@ -1,19 +1,19 @@
 import { StyleSheet, FlatList, View, Pressable  } from "react-native";
 import { Entypo } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import tweets from "../assets/data/tweets";
+import tweets from "../../assets/data/tweets";
 import React from 'react'; 
-import Tweet from "../components/Tweet";
+import Tweet from "../../components/Tweet";
 import { useNavigation } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 
-export default function TabOneScreen({}) {
+export default function Home({}) {
 
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('NewTweetScreen');
+    navigation.navigate('NewTweet');
   };
 
   return (

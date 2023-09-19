@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
-import small_logo from './../our_assets/small_logo.png';
+import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import RegisterHandler from '../handlers/RegisterHandler';
+import RegisterHandler from '../../handlers/RegisterHandler';
 
 
 const SignUpScreen = ({ navigation }) => {
