@@ -1,51 +1,17 @@
 import React, { useRef } from 'react';
 import {
-  Animated,
   Image,
-  ImageBackground,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
+  FlatList,
+  TouchableOpacity
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
 import users from '../../assets/data/users';
 import { useRoute } from '@react-navigation/native';
-
-function generateTweets(limit) {
-  return new Array(limit).fill(0).map((_, index) => {
-    const repetitions = Math.floor(Math.random() * 3) + 1;
-
-    return {
-      key: index.toString(),
-      text: 'Lorem ipsum dolor amet '.repeat(repetitions),
-      author: 'Arnaud',
-      tag: 'eveningkid',
-    };
-  });
-}
-
-const TWEETS = generateTweets(30);
-const HEADER_HEIGHT_EXPANDED = 35;
-const HEADER_HEIGHT_NARROWED = 90;
-
-const PROFILE_PICTURE_URI =
-  'https://pbs.twimg.com/profile_images/975388677642715136/7Hw2MgQ2_400x400.jpg';
-
-const PROFILE_BANNER_URI =
-  'https://pbs.twimg.com/profile_banners/3296259169/1438473955/1500x500';
-
-const AnimatedImageBackground = Animated.createAnimatedComponent(
-  ImageBackground
-);
-
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+import tweets from '../../assets/data/tweets';
+import Tweet from '../../components/Tweet';
+import { Feather } from '@expo/vector-icons'; // Import Feather icons
 
 export default function ProfileById() {
   const route = useRoute();
@@ -64,305 +30,37 @@ export default function ProfileById() {
 
 
 function Profile({ user }) {
-  const insets = useSafeAreaInsets();
-  const scrollY = useRef(new Animated.Value(0)).current;
-
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+            {/* Edit button */}
+      <TouchableOpacity style={styles.editButton}>
+        <Feather name="edit" size={24} />
+      </TouchableOpacity>
+      <View style={styles.profileContainer}>
+        <Image style={styles.avatar} source={{ uri: user.image }} />
 
-      {/* Back button */}
-      <View
-        style={{
-          zIndex: 2,
-          position: 'absolute',
-          top: insets.top + 10,
-          left: 20,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
-          height: 30,
-          width: 30,
-          borderRadius: 15,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Feather name="chevron-left" color="white" size={26} />
-      </View>
-
-      {/* Refresh arrow */}
-      <Animated.View
-        style={{
-          zIndex: 2,
-          position: 'absolute',
-          top: insets.top + 13,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-          opacity: scrollY.interpolate({
-            inputRange: [-20, 0],
-            outputRange: [1, 0],
-          }),
-          transform: [
-            {
-              rotate: scrollY.interpolate({
-                inputRange: [-45, -35],
-                outputRange: ['180deg', '0deg'],
-                extrapolate: 'clamp',
-              }),
-            },
-          ],
-        }}
-      >
-        <Feather name="arrow-down" color="white" size={25} />
-      </Animated.View>
-
-      {/* Name + tweets count */}
-      <Animated.View
-        style={{
-          zIndex: 2,
-          position: 'absolute',
-          top: insets.top + 6,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-          opacity: scrollY.interpolate({
-            inputRange: [90, 110],
-            outputRange: [0, 1],
-          }),
-          transform: [
-            {
-              translateY: scrollY.interpolate({
-                inputRange: [90, 120],
-                outputRange: [30, 0],
-                extrapolate: 'clamp',
-              }),
-            },
-          ],
-        }}
-      >
-        <Text style={[styles.text, styles.username]}>{user.name}</Text>
-
-        <Text style={[styles.text, styles.tweetsCount]}>
-          {user.snaps} tweets
-        </Text>
-      </Animated.View>
-
-      {/* Banner */}
-      <AnimatedImageBackground
-  source={{
-    uri: PROFILE_BANNER_URI,
-  }}
-  style={{
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: HEADER_HEIGHT_EXPANDED + HEADER_HEIGHT_NARROWED,
-    transform: [
-      {
-        scaleY: scrollY.interpolate({
-          inputRange: [-200, 0],
-          outputRange: [1, 1.2], // Adjust the value as needed
-          extrapolateLeft: 'extend',
-          extrapolateRight: 'clamp',
-        }),
-      },
-    ],
-  }}
->
-
-        <AnimatedBlurView
-          tint="dark"
-          intensity={96}
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            zIndex: 2,
-            opacity: scrollY.interpolate({
-              inputRange: [-50, 0, 50, 100],
-              outputRange: [1, 0, 0, 1],
-            }),
-          }}
-        />
-      </AnimatedImageBackground>
-
-      {/* Tweets/profile */}
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: { y: scrollY },
-              },
-            },
-          ],
-          { useNativeDriver: true }
-        )}
-        style={{
-          zIndex: 3,
-          marginTop: HEADER_HEIGHT_NARROWED,
-          paddingTop: HEADER_HEIGHT_EXPANDED,
-        }}
-      >
-        <View
-          style={[styles.container, { backgroundColor: 'black' }]}
-        >
-          <View
-            style={[
-              styles.container,
-              {
-                paddingHorizontal: 20,
-              },
-            ]}
-          >
-           <Animated.Image
-            source={{
-                uri: PROFILE_PICTURE_URI,
-            }}
-            style={{
-                width: 75,
-                height: 75,
-                borderRadius: 40,
-                borderWidth: 4,
-                borderColor: 'black',
-                transform: [
-                {
-                    scale: scrollY.interpolate({
-                    inputRange: [-HEADER_HEIGHT_EXPANDED, 0],
-                    outputRange: [0.6, 1], // Adjust the value as needed
-                    extrapolate: 'clamp',
-                    }),
-                },
-                {
-                    translateY: scrollY.interpolate({
-                    inputRange: [-HEADER_HEIGHT_EXPANDED, 0],
-                    outputRange: [16, 0], // Adjust the value as needed
-                    extrapolate: 'clamp',
-                    }),
-                },
-                ],
-            }}
-            />
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: 24,
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                },
-              ]}
-            >
-              {user.name}
-            </Text>
-
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: 15,
-                  color: 'gray',
-                  marginBottom: 15,
-                },
-              ]}
-            >
-              {user.username}
-            </Text>
-
-            <Text
-              style={[
-                styles.text,
-                { marginBottom: 15, fontSize: 15 },
-              ]}
-            >
-              {user.bio}
-            </Text>
-
-            {/* Profile stats */}
-            <View
-              style={{
-                flexDirection: 'row',
-                marginBottom: 15,
-              }}
-            >
-              <Text
-                style={[
-                  styles.text,
-                  {
-                    fontWeight: 'bold',
-                    marginRight: 10,
-                  },
-                ]}
-              >
-                {user.following}{' '}
-                <Text
-                  style={{
-                    color: 'gray',
-                    fontWeight: 'normal',
-                  }}
-                >
-                  Following
-                </Text>
-              </Text>
-
-              <Text style={[styles.text, { fontWeight: 'bold' }]}>
-                {user.followers}{' '}
-                <Text
-                  style={{
-                    color: 'gray',
-                    fontWeight: 'normal',
-                  }}
-                >
-                  Followers
-                </Text>
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.container}>
-            {TWEETS.map((item, index) => (
-              <View key={item.key} style={styles.tweet}>
-                <Image
-                  source={{
-                    uri: PROFILE_PICTURE_URI,
-                  }}
-                  style={{
-                    height: 50,
-                    width: 50,
-                    borderRadius: 25,
-                    marginRight: 10,
-                  }}
-                />
-
-                <View style={styles.container}>
-                  <Text
-                    style={[
-                      styles.text,
-                      {
-                        fontWeight: 'bold',
-                        fontSize: 15,
-                      },
-                    ]}
-                  >
-                    {item.author}{' '}
-                    <Text
-                      style={{
-                        color: 'gray',
-                        fontWeight: 'normal',
-                      }}
-                    >
-                      @{item.tag} · {index + 1}d
-                    </Text>
-                  </Text>
-
-                  <Text style={[styles.text, { fontSize: 15 }]}>
-                    {item.text}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
+        <View style={styles.userInfoContainer}>
+          <Text style={styles.nameText}>{user.name}</Text>
+          <Text style={styles.usernameText}>@{user.username}</Text>
         </View>
-      </Animated.ScrollView>
+    </View>
+    <View style={styles.BioAndStatsContainer} >
+      <Text style={styles.bioText}>{user.bio}</Text>
+
+      <View style={styles.statsContainer}>
+        <Text style={styles.statsCountText}>{user.following}{'  '}
+        <Text style={styles.statsLabelText}>Following </Text> </Text>
+        <Text style={styles.statsCountText}>{user.followers}{'  '}
+        <Text style={styles.statsLabelText}>Followers</Text> </Text>
+      </View>
+    </View>
+      {/* Separate container for FlatList */}
+      <View style={styles.flatListContainer}>
+        <FlatList
+          data={tweets}
+          renderItem={({ item }) => item && <Tweet tweet={item} />}
+        />
+      </View>
     </View>
   );
 }
@@ -370,23 +68,61 @@ function Profile({ user }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginVertical: 15
   },
-  text: {
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  avatar: {
+    width: 75,
+    height: 75,
+    borderRadius: 40,
+    borderWidth: 4,
+    borderColor: 'black',
+  },
+  userInfoContainer: {
+    marginLeft: 16,
+  },
+  nameText: {
+    fontWeight: 'bold',
+    fontSize: 24,
     color: 'white',
   },
-  username: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: -3,
+  usernameText: {
+    fontSize: 15,
+    color: 'gray',
   },
-  tweetsCount: {
-    fontSize: 13,
+  bioText: {
+    fontSize: 15,
+    color: 'white',
+    marginBottom: 16,
   },
-  tweet: {
+  statsContainer: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    justifyContent: 'space-around', // Add this line
+    marginBottom: 20,    },
+  statsCountText: {
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  statsLabelText: {
+    fontWeight: 'bold',
+    color: 'gray',
+  },
+  // Separate container styles for FlatList
+  flatListContainer: {
+    flex: 1, // Take up remaining vertical space
+    paddingHorizontal: 0, // Remove horizontal padding
+  },
+  BioAndStatsContainer: {
+    paddingHorizontal: 16,
+  },
+  editButton: {
+    position: 'absolute',
+    top: 10, // Adjust the top position as needed
+    right: 25, // Adjust the right position as needed
   },
 });

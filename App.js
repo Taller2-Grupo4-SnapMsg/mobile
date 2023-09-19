@@ -9,7 +9,7 @@ import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
 import TweetById from './screens/home/TweetById';
 import NewTweet from './screens/home/NewTweet';
-import ProfileById from './screens/profile/Profile';
+import ProfileById from './screens/home/ProfileById';
 import { useColorScheme } from 'react-native';
 import {
   DarkTheme,
