@@ -1,0 +1,42 @@
+.menu {
+  background-color: rgb(23, 33, 59);
+  width: 100%;
+  color: white;
+  padding: 16px 0;
+  align-items: flex-end;
+
+  .links {
+    color: white;
+    padding-left: 18px;
+
+    a {
+      color: white;
+    }
+  }
+
+  .links {
+    color: white;
+    padding-left: 18px;
+
+    a {
+      color: white;
+    }
+  }
+
+  .greetings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    margin-right: 24px;
+    span {
+      margin-right: 24px;
+    }
+    button {
+      padding: 8px;
+      border-radius: 10px;
+      background-color: rgb(43, 86, 126);
+      color: white;
+    }
+  }
+}

@@ -1,40 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 import small_logo from './../our_assets/small_logo.png'; 
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LogInHandler from '../handlers/LogInHandler';
-import login from '../services/login';
-//import { useState } from "react";
 
-const SignInScreen = () => {
-  const navigation = useNavigation();
-
+const SignInScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
-
-  ///despues borrar
-  const [error, setError] = useState();
-  const [token, setToken] = useState();
-  const [loading, setLoading] = useState(false);
-
-  ///despues borrar
-  const doLogin = async (_) => {
-    setLoading(true)
-    debugger
-    try {
-        const { token } = await login({ email, password })
-        console.log(email);
-        console.log(password);
-        console.log(token);
-        debugger
-        setToken(token)
-    } catch (e) {
-        setError(e.message)
-    }
-    setLoading(false)
-  }
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -50,7 +23,8 @@ const SignInScreen = () => {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
-      navigation.navigate('ExampleScreen');
+      await LogInHandler(email, password)
+      //navigation.navigate('???');
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler

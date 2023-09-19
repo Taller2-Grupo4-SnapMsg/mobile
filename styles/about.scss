@@ -1,0 +1,12 @@
+.about-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgb(83, 82, 82);
+
+  .content {
+    background: white;
+    padding: 24px;
+    border-radius: 6px;
+  }
+}
