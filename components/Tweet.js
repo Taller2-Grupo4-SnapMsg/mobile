@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: 'lightgrey',
-    backgroundColor: 'white',
+   // borderColor: 'lightgrey',
+    //backgroundColor: 'white',
   },
   userImage: {
     width: 50,

@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   floatingButtonIcon: {
-    color: 'white',
+    //color: 'white',
   },
 });

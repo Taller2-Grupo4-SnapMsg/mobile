@@ -39,6 +39,7 @@ function Profile({ user }) {
   
   return (
     <View style={styles.container}>
+      <View style={styles.profileContainerWhole}>
       <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
         <Feather name="edit" size={24} color={'#6B5A8E'}/>
       </TouchableOpacity>
@@ -58,6 +59,9 @@ function Profile({ user }) {
         <Text style={styles.statsLabelText}>Following </Text> </Text>
         <Text style={styles.statsCountText}>{user.followers}{'  '}
         <Text style={styles.statsLabelText}>Followers</Text> </Text>
+        <Text style={styles.statsCountText}>{user.snaps}{'  '}
+        <Text style={styles.statsLabelText}>Snaps</Text> </Text>
+      </View>
       </View>
     </View>
       <View style={styles.flatListContainer}>
@@ -85,8 +89,6 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 40,
-    borderWidth: 4,
-    borderColor: 'black',
   },
   userInfoContainer: {
     marginLeft: 16,
@@ -94,15 +96,15 @@ const styles = StyleSheet.create({
   nameText: {
     fontWeight: 'bold',
     fontSize: 24,
-    color: 'white',
+    //color: 'white',
   },
   usernameText: {
     fontSize: 15,
-    color: 'gray',
+    color: '#6B5A8E',
   },
   bioText: {
     fontSize: 15,
-    color: 'white',
+    //color: 'white',
     marginBottom: 16,
   },
   statsContainer: {
@@ -112,6 +114,7 @@ const styles = StyleSheet.create({
   statsCountText: {
     fontWeight: 'bold',
     marginRight: 10,
+    color: '#6B5A8E',
   },
   statsLabelText: {
     fontWeight: 'bold',
@@ -129,4 +132,7 @@ const styles = StyleSheet.create({
     top: 10,
     right: 25,
   },
+  profileContainerWhole: {
+    borderBottomWidth: 2,
+  }
 });

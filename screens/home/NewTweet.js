@@ -73,15 +73,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingBottom: 20,
   },
   button: {
-    backgroundColor: '#1C9BF0',
+    backgroundColor: '#6B5A8E',
     padding: 10,
     paddingHorizontal: 20,
-    borderRadius: 50,
+    borderRadius: 50
   },
   buttonText: {
-    color: 'white',
     fontWeight: '600',
     fontSize: 16,
   },
