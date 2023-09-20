@@ -142,6 +142,7 @@ const EditProfile = ({  user  }) => {
       <ScrollView>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImageSelection}>
+            <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>
               <MaterialIcons name="photo-camera" size={32} color={'#6B5A8E'}/>

@@ -52,8 +52,8 @@ function ProfileUser({ user }) {
         <Feather name="edit" size={24} />
       </TouchableOpacity>
       <View style={styles.profileContainer}>
-        {user.image && (
-          <Image style={styles.avatar} source={{ uri: user.image }} />
+        {(
+          <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
         )}
 
         <View style={styles.userInfoContainer}>
@@ -62,30 +62,16 @@ function ProfileUser({ user }) {
         </View>
       </View>
       <View style={styles.BioAndStatsContainer}>
-        {user.bio && <Text style={styles.bioText}>{user.bio}</Text>}
+        <Text style={styles.bioText}>{user.bio || "Hey, I'm using SnapMessage! :)"}</Text>
 
         <View style={styles.statsContainer}>
-          {user.following !== undefined && (
-            <Text style={styles.statsCountText}>
-              {user.following}{'  '}
-              <Text style={styles.statsLabelText}>Following</Text>
-            </Text>
-          )}
-          {user.followers !== undefined && (
-            <Text style={styles.statsCountText}>
-              {user.followers}{'  '}
-              <Text style={styles.statsLabelText}>Followers</Text>
-            </Text>
-          )}
-        </View>
+        <Text style={styles.statsCountText}>{user.following || 0}{'  '}
+        <Text style={styles.statsLabelText}>Following </Text> </Text>
+        <Text style={styles.statsCountText}>{user.followers || 0}{'  '}
+        <Text style={styles.statsLabelText}>Followers</Text> </Text>
+        <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
+        <Text style={styles.statsLabelText}>Snaps</Text> </Text>
       </View>
-      <View style={styles.flatListContainer}>
-        <FlatList
-          data={tweets}
-          renderItem={({ item }) =>
-            item && item.user.id === user.id && <Tweet tweet={item} />
-          }
-        />
       </View>
     </View>
     </ThemeProvider>
