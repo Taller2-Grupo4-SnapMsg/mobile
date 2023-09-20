@@ -133,6 +133,6 @@ const styles = StyleSheet.create({
     right: 25,
   },
   profileContainerWhole: {
-    borderBottomWidth: 2,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   }
 });

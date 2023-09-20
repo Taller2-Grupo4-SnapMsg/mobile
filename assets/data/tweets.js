@@ -3,15 +3,15 @@ const tweets = [
     id: 't0',
     user: {
       id: '1',
-      username: 'VadimNotJustDev',
-      name: 'Vadim',
+      username: 'taylor03',
+      name: 'Taylor Smith',
       image:
-        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
+        'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp',
     },
     createdAt: '2020-08-27T12:00:00.000Z',
     content: 'Can you please check if the Subscribe button on Youtube works?',
     image:
-      'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/thumbnail.png',
+      'https://cdn.pixabay.com/photo/2018/08/19/10/16/nature-3616194_1280.jpg',
     numberOfComments: 123,
     numberOfRetweets: 11,
     numberOfLikes: 10,
@@ -61,7 +61,7 @@ const tweets = [
         'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
     },
     content: 'Had an amazing surf session this morning',
-    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    image: 'https://cdn.pixabay.com/photo/2016/11/29/13/14/full-moon-1869760_1280.jpg',
     numberOfComments: 10,
     numberOfRetweets: 20,
     numberOfLikes: 100,
@@ -156,10 +156,10 @@ const tweets = [
     id: 't1',
     user: {
       id: '5',
-      username: 'VadimNotJustDev',
-      name: 'Vadim',
+      username: 'taylor03',
+      name: 'Taylor Smith',
       image:
-        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
+        'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp',
     },
     createdAt: '2020-08-27T12:00:00.000Z',
     content:
@@ -174,10 +174,10 @@ const tweets = [
     id: 't2',
     user: {
       id: '6',
-      username: 'VadimNotJustDev',
-      name: 'Vadim',
+      username: 'taylor03',
+      name: 'Taylor Smith',
       image:
-        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
+        'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp',
     },
     createdAt: '2020-08-27T12:00:00.000Z',
     content:
@@ -197,7 +197,7 @@ const tweets = [
         'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
     },
     content: 'Had an amazing surf session this morning',
-    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    image: 'https://cdn.pixabay.com/photo/2018/08/19/10/16/nature-3616194_1280.jpg',
     numberOfComments: 10,
     numberOfRetweets: 20,
     numberOfLikes: 100,
@@ -213,7 +213,7 @@ const tweets = [
         'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
     },
     content: 'Had an amazing surf session this morning',
-    image: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/8.jpg',
+    image: 'https://cdn.pixabay.com/photo/2018/08/23/07/35/thunderstorm-3625405_1280.jpg',
     numberOfComments: 10,
     numberOfRetweets: 20,
     numberOfLikes: 100,
@@ -223,10 +223,10 @@ const tweets = [
     id: 't3',
     user: {
       id: '7',
-      username: 'VadimNotJustDev',
-      name: 'Vadim',
+      username: 'taylor03',
+      name: 'Taylor Smith',
       image:
-        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
+        'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp',
     },
     createdAt: '2020-08-27T12:00:00.000Z',
     content: 'Hello World',
@@ -238,10 +238,10 @@ const tweets = [
     id: 't4',
     user: {
       id: '8',
-      username: 'VadimNotJustDev',
-      name: 'Vadim',
+      username: 'taylor03',
+      name: 'Taylor Smith',
       image:
-        'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
+        'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp',
     },
     createdAt: '2020-08-27T12:00:00.000Z',
     content:
@@ -251,7 +251,7 @@ const tweets = [
     numberOfLikes: 99,
   },
   {
-    id: '111111115',
+    id: '111111111',
     createdAt: '2023-04-28T08:30:00.000Z',
     user: {
       id: '2',

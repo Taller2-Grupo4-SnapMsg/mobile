@@ -1,10 +1,10 @@
 const users = [
     {
         id: '1',
-        username: 'VadimNotJustDev',
-        name: 'Vadim',
+        username: 'taylor03',
+        name: 'Taylor Smith',
         image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.png',
+          'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp',
         snaps: '100',
         followers: '500',
         following: '7400', 
