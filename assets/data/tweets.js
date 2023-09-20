@@ -155,7 +155,7 @@ const tweets = [
   {
     id: 't1',
     user: {
-      id: '5',
+      id: '1',
       username: 'taylor03',
       name: 'Taylor Smith',
       image:
@@ -173,7 +173,7 @@ const tweets = [
   {
     id: 't2',
     user: {
-      id: '6',
+      id: '1',
       username: 'taylor03',
       name: 'Taylor Smith',
       image:
@@ -222,7 +222,7 @@ const tweets = [
   {
     id: 't3',
     user: {
-      id: '7',
+      id: '1',
       username: 'taylor03',
       name: 'Taylor Smith',
       image:
@@ -237,7 +237,7 @@ const tweets = [
   {
     id: 't4',
     user: {
-      id: '8',
+      id: '1',
       username: 'taylor03',
       name: 'Taylor Smith',
       image:
@@ -251,7 +251,7 @@ const tweets = [
     numberOfLikes: 99,
   },
   {
-    id: '111111111',
+    id: '11111111133',
     createdAt: '2023-04-28T08:30:00.000Z',
     user: {
       id: '2',
