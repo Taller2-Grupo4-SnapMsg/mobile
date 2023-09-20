@@ -144,7 +144,7 @@ const EditProfile = ({  user  }) => {
           <TouchableOpacity onPress={handleImageSelection}>
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>
-              <MaterialIcons name="photo-camera" size={32}/>
+              <MaterialIcons name="photo-camera" size={32} color={'#6B5A8E'}/>
             </View>
           </TouchableOpacity>
         </View>
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
       width: 170,
       borderRadius: 85,
       borderWidth: 2,
-      borderColor: "#469ab6",
+      borderColor: "#6B5A8E",
     },
     cameraIcon: {
       position: "absolute",
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     },    
     saveButton: {
       marginTop: 30,
-      backgroundColor: "#469ab6",
+      backgroundColor: "#6B5A8E",
       height: 44,
       borderRadius: 50,
       alignItems: "center",

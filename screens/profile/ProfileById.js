@@ -40,7 +40,7 @@ function Profile({ user }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
-        <Feather name="edit" size={24} />
+        <Feather name="edit" size={24} color={'#6B5A8E'}/>
       </TouchableOpacity>
       <View style={styles.profileContainer}>
         <Image style={styles.avatar} source={{ uri: user.image }} />

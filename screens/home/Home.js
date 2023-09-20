@@ -30,7 +30,7 @@ export default function Home({}) {
         <Entypo
           name="plus"
           size={24}
-          color="white"
+          //color="white"
         />
       </Pressable>
     </View>
@@ -41,10 +41,10 @@ export default function Home({}) {
 const styles = StyleSheet.create({
   container: {
   flex: 1,
-  backgroundColor: 'white',
+  //backgroundColor: 'white',
   },
   floatingButton: {
-    backgroundColor: '#1C9BF0',
+    backgroundColor: '#947EB0',
     borderRadius: 50,
     width: 50,
     height: 50,
