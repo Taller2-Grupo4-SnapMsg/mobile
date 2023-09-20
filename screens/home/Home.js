@@ -1,15 +1,18 @@
 import { StyleSheet, FlatList, View, Pressable  } from "react-native";
-import { Entypo } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import tweets from "../../assets/data/tweets";
-import React from 'react'; 
-import Tweet from "../../components/Tweet";
 import { useNavigation } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { Entypo } from '@expo/vector-icons';
+import tweets from "../../assets/data/tweets";
+import Tweet from "../../components/Tweet";
+import { useColorScheme } from 'react-native';
+import React from 'react'; 
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
 
 export default function Home({}) {
-
+  const colorScheme = useColorScheme();
   const navigation = useNavigation();
 
   const handlePress = () => {
@@ -17,6 +20,7 @@ export default function Home({}) {
   };
 
   return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
       <FlatList
         data={tweets}
@@ -30,6 +34,7 @@ export default function Home({}) {
         />
       </Pressable>
     </View>
+    </ThemeProvider>
   );
 }
 
@@ -58,6 +63,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   floatingButtonIcon: {
-    color: 'white', // Color del icono
+    color: 'white',
   },
 });

@@ -4,9 +4,16 @@ import { useNavigation } from '@react-navigation/native';
 import IconButton from './IconButton';
 import { Entypo } from '@expo/vector-icons';
 import Avatar from './Avatar';
+import { useColorScheme } from 'react-native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
 
 const Tweet = ({ tweet }) => {
   const navigation = useNavigation();
+  const colorScheme = useColorScheme();
 
   if (!tweet) {
     return null;
@@ -19,6 +26,7 @@ const Tweet = ({ tweet }) => {
   };
 
   return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <Pressable style={styles.container} onPress={handlePress}>
       <Avatar user={tweet.user}/>
 
@@ -57,6 +65,7 @@ const Tweet = ({ tweet }) => {
         </View>
       </View>
     </Pressable>
+    </ThemeProvider>
   );
 };
 

@@ -1,29 +1,25 @@
-import React from 'react';
+/*Necesitamos un endpoint para porder obtener el usuario mediante el token*/
+/*por el token solo pedimos algo del usuario y despues pedimos lo otro con otro endpoint?*/
+
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from './screens/tests/Test';
 import SignInScreen from './screens/signIn/SignInScreen';
-import WIPScreen from './screens/tests/WIPScreen';
-import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
 import TweetById from './screens/home/TweetById';
 import NewTweet from './screens/home/NewTweet';
-import ProfileById from './screens/home/ProfileById';
+import ProfileById from './screens/profile/ProfileById';
 import Profile from './screens/profile/Profile';
-import EditProfileById from './screens/home/EditProfileById';
+import EditProfileById from './screens/profile/EditProfileById';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { useColorScheme } from 'react-native';
+//import getUserFromToken from './handlers/getUserByToken'
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-import { withLayoutContext } from 'expo-router';
-import {
-  SessionProvider,
-  WithSession,
-  WithoutSession,
-} from './contexts/auth/Auth';
 import users from './assets/data/users'
 
 const userHarcodeado = users[2];
@@ -46,35 +42,6 @@ const StackNavigator = () => {
   );
 };
 
-const App = () => {
-  const colorScheme = useColorScheme();
-  console.log(userHarcodeado);
-
-  return(
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    <SessionProvider>
-      <NavigationContainer>
-      <WithSession>
-          <Drawer.Navigator initialRouteName="Home">
-            <Drawer.Screen name="Home" component={StackNavigator} />
-            {/*<Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="WIP (no va)" component={WIPScreen} />
-            <Stack.Screen name="SignUp (no va)" component={SignUpScreen} />
-            <Stack.Screen name="Sign In (no va)" component={SignInScreen} />*/}
-          </Drawer.Navigator>
-      </WithSession>
-      <WithoutSession>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="Main" component={MainNavigator} />
-        </Stack.Navigator>
-      </WithoutSession>
-      </NavigationContainer>
-    </SessionProvider>
-    </ThemeProvider>
-  );
-};
-
 const MainNavigator = () => (
   <Drawer.Navigator initialRouteName="Home">
     <Drawer.Screen name="Home" component={StackNavigator} />
@@ -83,11 +50,52 @@ const MainNavigator = () => (
       component={Profile}
       initialParams={{ user: userHarcodeado }}
     />
-    {/*<Drawer.Screen name="WIP (no va)" component={WIPScreen} />*/}
-    {/*<Drawer.Screen name="SignUp (no va)" component={SignUpScreen} />*/}
-    {/*<Drawer.Screen name="ProfileScreen" component={ProfileScreen} />*/}
   </Drawer.Navigator>
 );
+
+
+const App = () => {
+  const [token, setToken] = useState();
+  const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    const getToken = async () => {
+        try {
+            const storedToken = await AsyncStorage.getItem('token');
+            setToken(storedToken);
+        } catch (error) {
+            console.error('Error al recuperar el token:', error);
+        }
+    };
+    getToken();
+  }, []);
+
+  /*getUserFromToken().then((userData) => {
+    if (userData) {
+        console.log('Usuario:', userData);
+    } else {
+        console.log('No se pudo obtener el usuario');
+    }
+  });*/
+
+  return(
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
+      <NavigationContainer>
+          {token && (
+            <Drawer.Navigator initialRouteName="Home">
+              <Drawer.Screen name="Home" component={MainNavigator} />
+            </Drawer.Navigator>
+          )}
+          {!token && (
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="SignIn" component={SignInScreen} />
+              <Stack.Screen name="Main" component={MainNavigator} />
+            </Stack.Navigator>
+          )}
+      </NavigationContainer>
+    </ThemeProvider>
+  );
+};
 
 export default App;
 

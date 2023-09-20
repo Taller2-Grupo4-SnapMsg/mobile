@@ -13,7 +13,7 @@ export function SessionProvider({ children }) {
     const login = async (credentials) => {
         try {
             // Simula una función de login (reemplaza con tu lógica real)
-            const response = await fetch('tu_endpoint_de_login', {
+            const response = await fetch('###tu_endpoint_de_login###', {
                 method: 'POST',
                 body: JSON.stringify(credentials),
                 headers: {

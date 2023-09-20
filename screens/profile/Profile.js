@@ -1,4 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import tweets from '../../assets/data/tweets';
+import Tweet from '../../components/Tweet';
+import { Feather } from '@expo/vector-icons';
+import getUserByEmail from '../../handlers/getUserByEmail';
+import { useColorScheme } from 'react-native';
 import {
   Image,
   StyleSheet,
@@ -7,56 +12,83 @@ import {
   FlatList,
   TouchableOpacity
 } from 'react-native';
-import users from '../../assets/data/users';
-import { useRoute } from '@react-navigation/native';
-import tweets from '../../assets/data/tweets';
-import Tweet from '../../components/Tweet';
-import { Feather } from '@expo/vector-icons'; // Import Feather icons
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
 
-const userHarcodeado = users[2];
+const userEmailHarcodeado = '';
 
-export default function Profile(/*{ user }*/) {
-  if (!userHarcodeado) {
-    return <Text>User not found!</Text>; // Cambiado el mensaje de error
+export default function Profile({ /*user*/ }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    getUserByEmail('marta04@fi.uba.ar')
+      .then((userData) => {
+        setUser(userData);
+      })
+      .catch((error) => {
+        console.error('Error al obtener usuario:', error);
+      });
+  }, []);
+
+  if (!user) {
+    return <Text>User not found!</Text>;
   }
   return (
-    <ProfileUser user={userHarcodeado} />
+    <ProfileUser user={user} />
   );
 }
 
 function ProfileUser({ user }) {
+  const colorScheme = useColorScheme();
+
+  
   return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
     <View style={styles.container}>
-            {/* Edit button */}
       <TouchableOpacity style={styles.editButton}>
         <Feather name="edit" size={24} />
       </TouchableOpacity>
       <View style={styles.profileContainer}>
-        <Image style={styles.avatar} source={{ uri: user.image }} />
+        {user.image && (
+          <Image style={styles.avatar} source={{ uri: user.image }} />
+        )}
 
         <View style={styles.userInfoContainer}>
-          <Text style={styles.nameText}>{user.name}</Text>
-          <Text style={styles.usernameText}>@{user.username}</Text>
+          {user.name && <Text style={styles.nameText}>{user.name}</Text>}
+          {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
         </View>
-    </View>
-    <View style={styles.BioAndStatsContainer} >
-      <Text style={styles.bioText}>{user.bio}</Text>
-
-      <View style={styles.statsContainer}>
-        <Text style={styles.statsCountText}>{user.following}{'  '}
-        <Text style={styles.statsLabelText}>Following </Text> </Text>
-        <Text style={styles.statsCountText}>{user.followers}{'  '}
-        <Text style={styles.statsLabelText}>Followers</Text> </Text>
       </View>
-    </View>
-      {/* Separate container for FlatList */}
+      <View style={styles.BioAndStatsContainer}>
+        {user.bio && <Text style={styles.bioText}>{user.bio}</Text>}
+
+        <View style={styles.statsContainer}>
+          {user.following !== undefined && (
+            <Text style={styles.statsCountText}>
+              {user.following}{'  '}
+              <Text style={styles.statsLabelText}>Following</Text>
+            </Text>
+          )}
+          {user.followers !== undefined && (
+            <Text style={styles.statsCountText}>
+              {user.followers}{'  '}
+              <Text style={styles.statsLabelText}>Followers</Text>
+            </Text>
+          )}
+        </View>
+      </View>
       <View style={styles.flatListContainer}>
         <FlatList
           data={tweets}
-          renderItem={({ item }) => item && item.user.id == user.id && <Tweet tweet={item} />}
+          renderItem={({ item }) =>
+            item && item.user.id === user.id && <Tweet tweet={item} />
+          }
         />
       </View>
     </View>
+    </ThemeProvider>
   );
 }
 
@@ -84,15 +116,15 @@ const styles = StyleSheet.create({
   nameText: {
     fontWeight: 'bold',
     fontSize: 24,
-    color: 'white',
+    //color: 'white',
   },
   usernameText: {
     fontSize: 15,
-    color: 'gray',
+    //color: 'gray',
   },
   bioText: {
     fontSize: 15,
-    color: 'white',
+    //color: 'white',
     marginBottom: 16,
   },
   statsContainer: {
@@ -105,7 +137,7 @@ const styles = StyleSheet.create({
   },
   statsLabelText: {
     fontWeight: 'bold',
-    color: 'gray',
+    //color: 'gray',
   },
   // Separate container styles for FlatList
   flatListContainer: {

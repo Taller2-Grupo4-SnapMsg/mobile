@@ -11,8 +11,8 @@ import users from '../../assets/data/users';
 import { useRoute } from '@react-navigation/native';
 import tweets from '../../assets/data/tweets';
 import Tweet from '../../components/Tweet';
-import { Feather } from '@expo/vector-icons'; // Import Feather icons
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ProfileById() {
   const route = useRoute();
@@ -32,15 +32,13 @@ export default function ProfileById() {
 
 function Profile({ user }) {
 
-  const navigation = useNavigation(); // Use useNavigation hook to get navigation object
-
+  const navigation = useNavigation();
   const handleEditButton = () => {
-    navigation.navigate('EditProfileById', { userId: user.id }); // Now you can use the navigation object
+    navigation.navigate('EditProfileById', { userId: user.id });
   }
   
   return (
     <View style={styles.container}>
-            {/* Edit button */}
       <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
         <Feather name="edit" size={24} />
       </TouchableOpacity>
@@ -62,7 +60,6 @@ function Profile({ user }) {
         <Text style={styles.statsLabelText}>Followers</Text> </Text>
       </View>
     </View>
-      {/* Separate container for FlatList */}
       <View style={styles.flatListContainer}>
         <FlatList
           data={tweets}
@@ -110,7 +107,7 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around', // Add this line
+    justifyContent: 'space-around',
     marginBottom: 20,    },
   statsCountText: {
     fontWeight: 'bold',
@@ -120,17 +117,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'gray',
   },
-  // Separate container styles for FlatList
   flatListContainer: {
-    flex: 1, // Take up remaining vertical space
-    paddingHorizontal: 0, // Remove horizontal padding
+    flex: 1,
+    paddingHorizontal: 0,
   },
   BioAndStatsContainer: {
     paddingHorizontal: 16,
   },
   editButton: {
     position: 'absolute',
-    top: 10, // Adjust the top position as needed
-    right: 25, // Adjust the right position as needed
+    top: 10,
+    right: 25,
   },
 });
