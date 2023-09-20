@@ -47,37 +47,38 @@ function ProfileUser({ user }) {
   
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.editButton}>
-        <Feather name="edit" size={24} />
-      </TouchableOpacity>
-      <View style={styles.profileContainer}>
-        {(
-          <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
-        )}
+      <View style={styles.container}>
+        <View style={styles.profileContainerWhole}>
+          <TouchableOpacity style={styles.editButton}>
+            <Feather name="edit" size={24} color={'#6B5A8E'} />
+          </TouchableOpacity>
+          <View style={styles.profileContainer}>
+            {(
+              <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+            )}
 
-        <View style={styles.userInfoContainer}>
-          {user.name && <Text style={styles.nameText}>{user.name}</Text>}
-          {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
+            <View style={styles.userInfoContainer}>
+              {user.name && <Text style={styles.nameText}>{user.name}</Text>}
+              {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
+            </View>
+          </View>
+          <View style={styles.BioAndStatsContainer}>
+            <Text style={styles.bioText}>{user.bio || "Hey, I'm using SnapMessage! :)"}</Text>
+
+            <View style={styles.statsContainer}>
+            <Text style={styles.statsCountText}>{user.following || 0}{'  '}
+            <Text style={styles.statsLabelText}>Following </Text> </Text>
+            <Text style={styles.statsCountText}>{user.followers || 0}{'  '}
+            <Text style={styles.statsLabelText}>Followers</Text> </Text>
+            <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
+            <Text style={styles.statsLabelText}>Snaps</Text> </Text>
+          </View>
+          </View>
         </View>
       </View>
-      <View style={styles.BioAndStatsContainer}>
-        <Text style={styles.bioText}>{user.bio || "Hey, I'm using SnapMessage! :)"}</Text>
-
-        <View style={styles.statsContainer}>
-        <Text style={styles.statsCountText}>{user.following || 0}{'  '}
-        <Text style={styles.statsLabelText}>Following </Text> </Text>
-        <Text style={styles.statsCountText}>{user.followers || 0}{'  '}
-        <Text style={styles.statsLabelText}>Followers</Text> </Text>
-        <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
-        <Text style={styles.statsLabelText}>Snaps</Text> </Text>
-      </View>
-      </View>
-    </View>
     </ThemeProvider>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -93,8 +94,6 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 40,
-    borderWidth: 4,
-    borderColor: 'black',
   },
   userInfoContainer: {
     marginLeft: 16,
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
   },
   usernameText: {
     fontSize: 15,
-    //color: 'gray',
+    color: '#6B5A8E',
   },
   bioText: {
     fontSize: 15,
@@ -115,27 +114,30 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around', // Add this line
+    justifyContent: 'space-around',
     marginBottom: 20,    },
   statsCountText: {
     fontWeight: 'bold',
     marginRight: 10,
+    color: '#6B5A8E',
   },
   statsLabelText: {
     fontWeight: 'bold',
-    //color: 'gray',
+    color: 'gray',
   },
-  // Separate container styles for FlatList
   flatListContainer: {
-    flex: 1, // Take up remaining vertical space
-    paddingHorizontal: 0, // Remove horizontal padding
+    flex: 1,
+    paddingHorizontal: 0,
   },
   BioAndStatsContainer: {
     paddingHorizontal: 16,
   },
   editButton: {
     position: 'absolute',
-    top: 10, // Adjust the top position as needed
-    right: 25, // Adjust the right position as needed
+    top: 10,
+    right: 25,
   },
+  profileContainerWhole: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  }
 });
