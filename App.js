@@ -14,7 +14,7 @@ import Profile from './screens/profile/Profile';
 import EditProfileById from './screens/profile/EditProfileById';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { useColorScheme } from 'react-native';
-//import getUserFromToken from './handlers/getUserByToken'
+
 import {
   DarkTheme,
   DefaultTheme,
