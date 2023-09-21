@@ -10,7 +10,7 @@ const headers = {
     'Access-Control-Allow-Origin': '*',
   };
   
-const RegisterHandler = async (email, password, firstName, lastName, username) => {
+const RegisterHandler = async (email, password, firstName, lastName, username, date_of_birth) => {
     try {
         const requestBody = {
         email: email,
@@ -18,6 +18,7 @@ const RegisterHandler = async (email, password, firstName, lastName, username) =
         name: firstName,
         last_name: lastName,
         nickname: username,
+        date_of_birth: date_of_birth,
         };
 
         const response = await fetch('https://loginback-lg51.onrender.com/register', {

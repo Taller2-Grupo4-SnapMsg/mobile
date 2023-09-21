@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, Button } from 'react-native';
+import DatePicker from 'react-native-modern-datepicker';
+
 import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
+
 
 
 const SignUpScreen = ({ navigation }) => {
@@ -13,6 +16,13 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [date_of_birth, setDateOfBirth] = useState('');
+
+  const handleDateChange = (date) => {
+    setDateOfBirth(date);
+    setModalVisible(false);
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -24,7 +34,7 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
-      await RegisterHandler(email, password, name, last_name, username)
+      await RegisterHandler(email, password, name, last_name, username, date_of_birth)
       
       //navigation.navigate('???');
     }
@@ -35,7 +45,7 @@ const SignUpScreen = ({ navigation }) => {
   };
   
   const handleSignIn = () => {
-    navigation.navigate('Sign In');
+    navigation.navigate('SignIn');
   };
 
   return (
@@ -78,25 +88,65 @@ const SignUpScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputs}
-          placeholderTextColor={"black"}
-          placeholder="Email"
-          keyboardType="email-address"
-          underlineColorAndroid="transparent"
-          onChangeText={text => setEmail(text)}
-        />
-      </View>
+      <TextInput
+        style={styles.inputs}
+        placeholder="Date of Birth"
+        value={date_of_birth}
+        onFocus={() => setModalVisible(true)}
+      />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputs}
-          placeholderTextColor={"black"}
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          underlineColorAndroid="transparent"
-          onChangeText={text => setPassword(text)}
-        />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+          <DatePicker
+            mode="calendar"
+            onDateChange={handleDateChange}
+            options={{
+              backgroundColor: '#090C08',
+              textHeaderColor: '#947EB0',
+              textDefaultColor: '#EDEDF4',
+              selectedTextColor: '#fff',
+              mainColor: '#947EB0',
+              textSecondaryColor: '#EDEDF4',
+              borderColor: 'rgba(122, 146, 165, 0.1)',
+            }}
+            style={{ borderRadius: 10 }}
+          />
+          <TouchableOpacity
+            style={[styles.buttonContainer, styles.signupButton]} 
+             onPress={() => setModalVisible(false) }>
+              <Text style={styles.signupText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+
+    <View style={styles.inputContainer}>
+      <TextInput
+        style={styles.inputs}
+        placeholderTextColor={"black"}
+        placeholder="Email"
+        keyboardType="email-address"
+        underlineColorAndroid="transparent"
+        onChangeText={text => setEmail(text)}
+      />
+    </View>
+
+    <View style={styles.inputContainer}>
+      <TextInput
+        style={styles.inputs}
+        placeholderTextColor={"black"}
+        placeholder="Password"
+        secureTextEntry={!showPassword}
+        underlineColorAndroid="transparent"
+        onChangeText={text => setPassword(text)}
+      />
 
       <TouchableOpacity onPress={togglePasswordVisibility} style={{ marginRight: 20 }}>
         <Icon name={showPassword ? 'visibility-off' : 'visibility'} size={25} />
@@ -225,7 +275,20 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginBottom: 10,
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+  },
+  modalContent: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    elevation: 5,
+  },
 })
 
 
