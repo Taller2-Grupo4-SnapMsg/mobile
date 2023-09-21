@@ -115,6 +115,8 @@ const SignUpScreen = ({ navigation }) => {
               textSecondaryColor: '#EDEDF4',
               borderColor: 'rgba(122, 146, 165, 0.1)',
             }}
+            current="1998-01-01"
+            selected="1998-01-01" //creo que estos dos me dejan poner un default, pero probar por las dudas
             style={{ borderRadius: 10 }}
           />
           <TouchableOpacity
