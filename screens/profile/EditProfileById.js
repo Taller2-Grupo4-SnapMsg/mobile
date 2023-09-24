@@ -22,6 +22,7 @@ export default function EditProfileById() {
   const { userId } = route.params;
 
   const user = users.find((u) => u.id === userId);
+  
 
   if (!user) {
     return <Text>User {user} not found!</Text>;
@@ -34,8 +35,6 @@ export default function EditProfileById() {
 
 const EditProfile = ({  user  }) => {
 
-  
-  
   const [selectedImage, setSelectedImage] = useState(user.image || " ");
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);

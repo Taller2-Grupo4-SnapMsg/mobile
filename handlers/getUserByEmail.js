@@ -14,7 +14,7 @@ const headers = {
 const getUserByEmail = async (email) => {
   try {
     console.log(email)
-    const response = await fetch(`${API_BASE_URL}/users/${email}`, {
+    const response = await fetch(`${API_BASE_URL}/users/email/${email}`, {
       method: 'GET',
       headers: headers,
     });

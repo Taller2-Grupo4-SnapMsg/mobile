@@ -4,6 +4,8 @@ import Tweet from '../../components/Tweet';
 import { Feather } from '@expo/vector-icons';
 import getUserByEmail from '../../handlers/getUserByEmail';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import getUserByToken from '../../handlers/getUserByToken'
 import {
   Image,
   StyleSheet,
@@ -18,32 +20,59 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const userEmailHarcodeado = '';
 
-export default function Profile({ /*user*/ }) {
+  //const [token, setToken] = useState();
+
+  /*useEffect(() => {
+    console.log("se llama useEffect para obtener el token")
+    const getToken = async () => {
+      try {
+        token = await AsyncStorage.getItem('token');
+        setToken(token);
+      } catch (error) {
+        console.error('Error al recuperar el token:', error);
+      }
+    };
+
+    getToken();
+  }, []);*/
+
+export default function Profile() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    getUserByEmail('marta04@fi.uba.ar')
-      .then((userData) => {
-        setUser(userData);
-      })
-      .catch((error) => {
+    const fetchUserData = async () => {
+      try {
+        const fetchedUser = await getUserByToken();
+        if (fetchedUser) {
+          console.log('Usuario:', fetchedUser);
+          setUser(fetchedUser);
+        } else {
+          console.log('No se pudo obtener el usuario');
+        }
+      } catch (error) {
         console.error('Error al obtener usuario:', error);
-      });
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   if (!user) {
-    return <Text>User not found!</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Cargando usuario...</Text>
+      </View>
+    );
   }
-  return (
-    <ProfileUser user={user} />
-  );
+
+  // Renderiza el contenido de ProfileUser solo cuando se obtiene el usuario
+  return <ProfileUser user={user} />;
 }
+
 
 function ProfileUser({ user }) {
   const colorScheme = useColorScheme();
-
   
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
