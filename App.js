@@ -36,6 +36,7 @@ const StackNavigator = () => {
       <Stack.Screen name="TweetById" component={TweetById} />
       <Stack.Screen name="NewTweet" component={NewTweet} />
       <Stack.Screen name="ProfileById" component={ProfileById} />
+      <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="EditProfileById" component={EditProfileById} />
     </Stack.Navigator>
   );
@@ -47,7 +48,6 @@ const MainNavigator = () => (
     <Drawer.Screen
       name="Profile"
       component={Profile}
-      initialParams={{ user: userHarcodeado }}
     />
   </Drawer.Navigator>
 );

@@ -15,15 +15,12 @@ import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
 import users from "../../assets/data/users";
 import { useRoute } from "@react-navigation/native";
 
-
-
 export default function EditProfileById() {
   const route = useRoute();
-  const { userId } = route.params;
+  const { user } = route.params;
 
-  const user = users.find((u) => u.id === userId);
-  
-
+  console.log("El usuario es:")
+  console.log(user)
   if (!user) {
     return <Text>User {user} not found!</Text>;
   }
@@ -31,11 +28,8 @@ export default function EditProfileById() {
   return <EditProfile user={user} />;
 }
 
-
-
 const EditProfile = ({  user  }) => {
-
-  const [selectedImage, setSelectedImage] = useState(user.image || " ");
+  const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg');
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [username, setUsername] = useState(user.username);
@@ -141,7 +135,7 @@ const EditProfile = ({  user  }) => {
       <ScrollView>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImageSelection}>
-            <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+            <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>
               <MaterialIcons name="photo-camera" size={32} color={'#6B5A8E'}/>
@@ -295,4 +289,3 @@ const styles = StyleSheet.create({
       color: "#fff",
     },
 });
-

@@ -6,22 +6,19 @@ const USER_NOT_FOUND = 404;
 //ponerlo en un .env como en la clase
 const API_BASE_URL = 'https://loginback-lg51.onrender.com';
 
-const headers = {
-  'Content-Type': 'application/json;charset=utf-8',
-  'Access-Control-Allow-Origin': '*',
-};
-
-const getUserByEmail = async (email) => {
+const getFollowersByUsername = async (username) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/users/email/${email}`, {
+    const response = await fetch(`${API_BASE_URL}/follow/${username}/count/`, {
       method: 'GET',
-      headers: headers,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (response.status === OK) {
-      const user = await response.json();
+      const followers = await response.json();
+      return followers;
       Alert.alert('User Details', JSON.stringify(user));
-      return user;
     } else if (response.status === USER_NOT_FOUND) {
       Alert.alert('Alert', 'El usuario no se encontro. Verifica el email.');
     } else {
@@ -37,4 +34,4 @@ const getUserByEmail = async (email) => {
   }
 };
 
-export default getUserByEmail;
+export default getFollowersByUsername;

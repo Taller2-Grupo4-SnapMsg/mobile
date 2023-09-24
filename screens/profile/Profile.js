@@ -6,6 +6,9 @@ import getUserByEmail from '../../handlers/getUserByEmail';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import getUserByToken from '../../handlers/getUserByToken'
+import getFollowersByUsername from '../../handlers/getFollowersByUsername';
+import getFollowingByUsername from '../../handlers/getFollowingByUsername';
+import { useNavigation } from '@react-navigation/native';
 import {
   Image,
   StyleSheet,
@@ -19,23 +22,6 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-
-
-  //const [token, setToken] = useState();
-
-  /*useEffect(() => {
-    console.log("se llama useEffect para obtener el token")
-    const getToken = async () => {
-      try {
-        token = await AsyncStorage.getItem('token');
-        setToken(token);
-      } catch (error) {
-        console.error('Error al recuperar el token:', error);
-      }
-    };
-
-    getToken();
-  }, []);*/
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -73,17 +59,60 @@ export default function Profile() {
 
 function ProfileUser({ user }) {
   const colorScheme = useColorScheme();
-  
+  const navigation = useNavigation();
+  const [followers, setFollowers] = useState(null);
+  const [following, setFollowing] = useState(null);
+
+  useEffect(() => {
+    const fetchFollowersData = async () => {
+      try {
+        const fetchedFollowers = await getFollowersByUsername(user.username);
+        if (fetchedFollowers) { //aca ver porque 0 es un numero valido, no deberia entar al else
+          console.log('Followers:', fetchedFollowers);
+          setFollowers(fetchedFollowers);
+        } else {
+          console.log('No se pudo obtener los followers');
+        }
+      } catch (error) {
+        console.error('Error al obtener los followers:', error);
+      }
+    };
+
+    fetchFollowersData();
+  }, []);
+
+  useEffect(() => {
+    const fetchFollowingData = async () => {
+      try {
+        const fetchedFollowing = await getFollowingByUsername(user.username);
+        if (fetchedFollowing) {
+          console.log('Followings:', fetchedFollowing);
+          setFollowing(fetchedFollowing);
+        } else {
+          console.log('No se pudo obtener los followings');
+        }
+      } catch (error) {
+        console.error('Error al obtener los followings:', error);
+      }
+    };
+
+    fetchFollowingData();
+  }, []);
+
+  const handleEditButton = () => {
+    navigation.navigate('EditProfileById' , {user: user});
+  }
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={styles.container}>
         <View style={styles.profileContainerWhole}>
-          <TouchableOpacity style={styles.editButton}>
+            <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
             <Feather name="edit" size={24} color={'#6B5A8E'} />
           </TouchableOpacity>
           <View style={styles.profileContainer}>
             {(
-              <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+              <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             )}
 
             <View style={styles.userInfoContainer}>
@@ -95,9 +124,9 @@ function ProfileUser({ user }) {
             <Text style={styles.bioText}>{user.bio || "Hey, I'm using SnapMessage! :)"}</Text>
 
             <View style={styles.statsContainer}>
-            <Text style={styles.statsCountText}>{user.following || 0}{'  '}
+            <Text style={styles.statsCountText}>{following || 0}{'  '}
             <Text style={styles.statsLabelText}>Following </Text> </Text>
-            <Text style={styles.statsCountText}>{user.followers || 0}{'  '}
+            <Text style={styles.statsCountText}>{followers || 0}{'  '}
             <Text style={styles.statsLabelText}>Followers</Text> </Text>
             <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
             <Text style={styles.statsLabelText}>Snaps</Text> </Text>
