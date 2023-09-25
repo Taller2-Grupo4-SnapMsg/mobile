@@ -30,9 +30,6 @@ export default function ProfileById() {
 }
 
 function Profile({ user }) {
-
-  const navigation = useNavigation();
-  
   return (
     <View style={styles.container}>
       <View style={styles.profileContainerWhole}>

@@ -35,7 +35,6 @@ const StackNavigator = () => {
   );
 };
 
-
 const StackNavigatorProfile = () => {
   return (
     <Stack.Navigator screenOptions={{

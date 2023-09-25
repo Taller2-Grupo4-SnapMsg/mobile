@@ -11,6 +11,8 @@ import getFollowingByUsername from '../../handlers/getFollowingByUsername';
 import { useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useFocusEffect } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons'; 
+
 import {
   Image,
   StyleSheet,
@@ -130,7 +132,7 @@ function ProfileUser({ user }) {
             )}
 
             <View style={styles.userInfoContainer}>
-              {user.name && <Text style={styles.nameText}>{user.name}</Text>}
+              {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
               {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
             </View>
           </View>
@@ -144,6 +146,17 @@ function ProfileUser({ user }) {
             <Text style={styles.statsLabelText}>Followers</Text> </Text>
             <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
             <Text style={styles.statsLabelText}>Snaps</Text> </Text>
+          </View>
+
+          <View style={styles.birthdayContainer}>
+          <View style={styles.calendarIcon}>
+          <FontAwesome name="birthday-cake" size={16} color="#6B5A8E" />
+          </View>
+            <View style={styles.dateOfBirthContainer}>
+              <Text style={styles.statsCountText}>
+                {(user.date_of_birth || 'Birthday not set').split(' ')[0]}
+              </Text>
+            </View>
           </View>
           </View>
         </View>
@@ -211,6 +224,21 @@ const styles = StyleSheet.create({
   },
   profileContainerWhole: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-  }
+  },
+  birthdayContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', // Add this line to vertically center the icon and date
+    justifyContent: 'center',
+    marginTop: 10, // Add margin top to separate from the statsContainer
+    marginBottom:10,
+    fontSize: 16,
+  },
+  calendarIcon: {
+    marginRight: 10, // Add some margin to the right of the icon to create space
+  },
+  dateOfBirthContainer: {
+    flexDirection: 'row', // Add flexDirection to display icon and date inline
+    alignItems: 'center', // Center the date vertically
+  },
 });
 

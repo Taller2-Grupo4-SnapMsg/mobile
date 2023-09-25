@@ -15,9 +15,11 @@ import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
 import changeName from "../../handlers/changeName";
 import changeBio from "../../handlers/changeBio";
 import changeAvatar from "../../handlers/changeAvatar";
+import changeLastName from "../../handlers/changeLastName";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 import { PermissionsAndroid } from "react-native";
+import storage from '@react-native-firebase/storage';
 import { useEffect } from 'react';
 
 export default function EditProfileById() {
@@ -76,9 +78,9 @@ const EditProfile = ({  user  }) => {
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [dateOfBirthHasChanged, setDateOfBirthHasChanged] = useState(false); 
   
-  const [email, setEmail] = useState(user.email);
-  const [username, setUsername] = useState(user.username);
-  const [country, setCountry] = useState(user.country );
+  const [lastName, setLastName] = useState(user.last_name);
+  const [lastNameHasChanged, setLastNameHasChanged] = useState(false);
+
   
   const today = new Date();
   const startDate = getFormatedDate(
@@ -98,22 +100,42 @@ const EditProfile = ({  user  }) => {
   const handleOnPressStartDate = () => {
     setOpenStartDatePicker(!openStartDatePicker);
   };
-
-
+  
   const handleImageSelection = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-      setAvatarHasChanged(true); 
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 4],
+        quality: 1,
+      });
+      
+      if (!result.cancelled) {
+        const imageUri = result.uri;
+        const fileName = 'nombre_de_tu_archivo.jpg'; // Define un nombre único para el archivo
+        const storageRef = storage().ref(`ruta_en_storage/${fileName}`);
+        
+        // Subir la imagen a Firebase Storage
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+        await storageRef.put(blob);
+        
+        // Obtener la URL de descarga de la imagen y actualizar la interfaz
+        const downloadURL = await storageRef.getDownloadURL();
+        setEditedImageUri(downloadURL);
+        setImageHasChanged(true);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar la imagen:', error);
     }
   };
-
   
+
+  const handleLastNameChange = (value) => {
+    setLastName(value);
+    setLastNameHasChanged(true);
+  };
+
   const handleNameChange = (value) => {
     setName(value);
     setNameHasChanged(true);
@@ -138,11 +160,15 @@ const EditProfile = ({  user  }) => {
       const updated = await changeBio(user.email, bio); 
     }
     if (avatarHasChanged) {
+      console.log(selectedImage)
       const updated = await changeAvatar(user.email, selectedImage); 
     }
     if (dateOfBirthHasChanged) {
       const formattedDate = selectedStartDate.split('/').join(' ');
       const update = await changeDateOfBirth(user.email, formattedDate);
+    }
+    if (lastNameHasChanged) {
+      const update = await changeLastName(user.email, lastName);
     }
   }
 
@@ -227,7 +253,7 @@ const EditProfile = ({  user  }) => {
                 value={name}
                 onChangeText={handleNameChange}
                 editable={true}
-                placeholder="Enter your name"
+                placeholder="Enter your first name"
               />
             </View>
           </View>
@@ -235,24 +261,15 @@ const EditProfile = ({  user  }) => {
           <View style={styles.inputContainer}>
             <View style={styles.textInput}>
               <TextInput
-                value={email}
-                onChangeText={(value) => setEmail(value)}
+                value={lastName}
+                onChangeText={handleLastNameChange}
                 editable={true}
-                placeholder="Enter your email"
+                placeholder="Enter your last name"
               />
             </View>
           </View>
 
-          <View style={styles.inputContainer}>
-            <View style={styles.textInput}>
-              <TextInput
-                value={username}
-                onChangeText={(value) => setUsername(value)}
-                editable={true}
-                placeholder="Enter your username"
-              />
-            </View>
-          </View>
+          
 
           <View style={styles.inputContainer}>
           <View style={styles.textInput}>
@@ -278,17 +295,7 @@ const EditProfile = ({  user  }) => {
           </View>
         </View>
 
-        <View style={styles.inputContainer}>
-          <View style={styles.textInput}>
-            <TextInput
-              value={country}
-              onChangeText={(value) => setCountry(value)}
-              editable={true}
-              placeholder="Enter your country"
-            />
-          </View>
-        </View>
-
+      
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
@@ -337,6 +344,7 @@ const styles = StyleSheet.create({
     inputContainer: {
       flexDirection: "column",
       marginBottom: 6,
+      height: 100,
     },
     inputLabel: {
       fontSize: 16,
