@@ -1,22 +1,25 @@
-/*import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const OK = 200;
 
-const getUserFromToken = async () => {
+const getUserByToken = async () => {
     try {
         const token = await AsyncStorage.getItem('token');
-
         if (token) {
-            const decodedToken = jwtDecode(token);
+            const headers = {
+                'Content-Type': 'application/json;charset=utf-8',
+                'accept': 'application/json',
+                'token': token,
+            };
+                            
+            const response = await fetch('https://loginback-lg51.onrender.com/get_user_by_token/', {
+                method: 'GET',
+                headers: headers,
+              });
             
-            const userId = decodedToken.userId;
-            
-            //const response = await endpoint(`API_BASE_URL${userId}`);
-            
-            if (response.ok) {
-                const userData = await response.json();
-                return userData;
+            if (response.status === OK) {
+                const user = await response.json();
+                return user;
             } else {
                 throw new Error('Error al obtener los datos del usuario');
             }
@@ -27,10 +30,9 @@ const getUserFromToken = async () => {
         console.error('Error al obtener el usuario:', error);
         return null;
     }
-};*/
+};
 
-
-
+export default getUserByToken;
 
 
 

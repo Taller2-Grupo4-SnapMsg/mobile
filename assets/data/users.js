@@ -19,7 +19,7 @@ const users = [
         snaps: '100',
         followers: '500',
         following: '7400', 
-        bio: 'HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+        bio: ''
       },
     {
         id: '3',

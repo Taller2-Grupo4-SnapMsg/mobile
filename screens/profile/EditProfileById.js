@@ -12,16 +12,17 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
-import users from "../../assets/data/users";
+import changeName from "../../handlers/changeName";
+import changeBio from "../../handlers/changeBio";
+import changeAvatar from "../../handlers/changeAvatar";
 import { useRoute } from "@react-navigation/native";
-
-
+import changeDateOfBirth from "../../handlers/changeDateOfBirth";
+import { PermissionsAndroid } from "react-native";
+import { useEffect } from 'react';
 
 export default function EditProfileById() {
   const route = useRoute();
-  const { userId } = route.params;
-
-  const user = users.find((u) => u.id === userId);
+  const { user } = route.params;
 
   if (!user) {
     return <Text>User {user} not found!</Text>;
@@ -30,36 +31,74 @@ export default function EditProfileById() {
   return <EditProfile user={user} />;
 }
 
-
-
 const EditProfile = ({  user  }) => {
 
+
+
+  // Función para solicitar permisos en tiempo de ejecución.
+  async function requestCameraRollPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: "Permiso de Acceso a la Galería de Fotos",
+          message: "Esta aplicación necesita acceso a tu galería de fotos.",
+          buttonNeutral: "Preguntar más tarde",
+          buttonNegative: "Cancelar",
+          buttonPositive: "OK",
+        }
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Permiso concedido");
+      } else {
+        console.log("Permiso denegado");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  // Llama a la función de solicitud de permisos en algún lugar apropiado.
+  useEffect(() => {
+    requestCameraRollPermission();
+  }, []);
+
+  const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg');
+  const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
   
-  
-  const [selectedImage, setSelectedImage] = useState(user.image || " ");
   const [name, setName] = useState(user.name);
+  const [nameHasChanged, setNameHasChanged] = useState(false);
+  
+  const [bio, setBio] = useState(user.bio);
+  const [bioHasChanged, setBioHasChanged] = useState(false); 
+
+  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+  const [dateOfBirthHasChanged, setDateOfBirthHasChanged] = useState(false); 
+  
   const [email, setEmail] = useState(user.email);
   const [username, setUsername] = useState(user.username);
   const [country, setCountry] = useState(user.country );
-  const [bio, setBio] = useState(user.bio);
   
-  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const today = new Date();
   const startDate = getFormatedDate(
     today.setDate(today.getDate() + 1),
-    "YYYY/MM/DD"
+    "YYYY MM DD"
     );
-    const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth || startDate);
-    const [startedDate, setStartedDate] = useState("12/12/2023");
-    
-    const minDate = getFormatedDate(today, "YYYY/MM/DD");
-  const handleChangeStartDate = (propDate) => {
-    setStartedDate(propDate);
+
+  const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth || startDate);
+  
+  const minDate = getFormatedDate(today, "YYYY MM DD");
+
+  const handleChangeStartDate = (selected) => {
+    setSelectedStartDate(selected);
+    setDateOfBirthHasChanged(true);
   };
 
   const handleOnPressStartDate = () => {
     setOpenStartDatePicker(!openStartDatePicker);
   };
+
 
   const handleImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -68,13 +107,44 @@ const EditProfile = ({  user  }) => {
       aspect: [4, 4],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      setAvatarHasChanged(true); 
     }
   };
+
+  
+  const handleNameChange = (value) => {
+    setName(value);
+    setNameHasChanged(true);
+  };
+
+  const handleBioChange = (value) => {
+    setBio(value); 
+    setBioHasChanged(true); 
+  }
+
+  const handleAvatarChange = (value) => {
+    setSelectedImage(value); 
+    setAvatarHasChanged(true); 
+  }
+  
+ 
+  const handleSaveButton = async () => {
+    if (nameHasChanged) {
+      const updated = await changeName(user.email, name);
+    }
+    if (bioHasChanged) {
+      const updated = await changeBio(user.email, bio); 
+    }
+    if (avatarHasChanged) {
+      const updated = await changeAvatar(user.email, selectedImage); 
+    }
+    if (dateOfBirthHasChanged) {
+      const formattedDate = selectedStartDate.split('/').join(' ');
+      const update = await changeDateOfBirth(user.email, formattedDate);
+    }
+  }
 
   function renderDatePicker() {
     return (
@@ -113,18 +183,16 @@ const EditProfile = ({  user  }) => {
               mode="calendar"
               maximumDate={minDate}
               minDate={today}
-              selected={startedDate}
-              onDateChanged={handleChangeStartDate}
-              onSelectedChange={(date) => setSelectedStartDate(date)}
-              format="YYYY"
+              selected={selectedStartDate}
+              onSelectedChange={handleChangeStartDate}
               options={{
-                backgroundColor: "#469ab6",
+                backgroundColor: "#6B5A8E",
                 textHeaderColor: "#fff",
                 textDefaultColor: "#fff",
                 selectedTextColor: "#fff",
-                mainColor: "#469ab6",
+                mainColor: "#6B5A8E",
                 textSecondaryColor: "#fff",
-                borderColor: "rgba(122,146,165,0.1)",
+                borderColor: "rgba(122,146,changes165,0.1)",
               }}
             />
 
@@ -142,7 +210,9 @@ const EditProfile = ({  user  }) => {
       <ScrollView>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImageSelection}>
-            <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+            {console.log("url que llega")}
+            {console.log(user.avatar)}
+            <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>
               <MaterialIcons name="photo-camera" size={32} color={'#6B5A8E'}/>
@@ -155,7 +225,7 @@ const EditProfile = ({  user  }) => {
             <View style={styles.textInput}>
               <TextInput
                 value={name}
-                onChangeText={(value) => setName(value)}
+                onChangeText={handleNameChange}
                 editable={true}
                 placeholder="Enter your name"
               />
@@ -188,7 +258,7 @@ const EditProfile = ({  user  }) => {
           <View style={styles.textInput}>
             <TextInput
               value={bio}
-              onChangeText={(value) => setBio(value)}
+              onChangeText={handleBioChange}
               editable={true}
               placeholder="Enter your bio"
               multiline={true} // Allow multiple lines
@@ -219,7 +289,7 @@ const EditProfile = ({  user  }) => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
 
@@ -296,4 +366,3 @@ const styles = StyleSheet.create({
       color: "#fff",
     },
 });
-

@@ -29,20 +29,13 @@ export default function ProfileById() {
   );
 }
 
-
 function Profile({ user }) {
 
   const navigation = useNavigation();
-  const handleEditButton = () => {
-    navigation.navigate('EditProfileById', { userId: user.id });
-  }
   
   return (
     <View style={styles.container}>
       <View style={styles.profileContainerWhole}>
-      <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
-        <Feather name="edit" size={24} color={'#6B5A8E'}/>
-      </TouchableOpacity>
       <View style={styles.profileContainer}>
         <Image style={styles.avatar} source={{ uri: user.image }} />
 
@@ -96,7 +89,6 @@ const styles = StyleSheet.create({
   nameText: {
     fontWeight: 'bold',
     fontSize: 24,
-    //color: 'white',
   },
   usernameText: {
     fontSize: 15,
@@ -104,7 +96,6 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: 15,
-    //color: 'white',
     marginBottom: 16,
   },
   statsContainer: {
