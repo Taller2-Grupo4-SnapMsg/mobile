@@ -24,8 +24,8 @@ const SignInScreen = ({navigation}) => {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
-      await LogInHandler(email, password)
-      navigation.navigate('Main');
+      const response = await LogInHandler(email, password)
+      if (response) navigation.navigate('Main');
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler

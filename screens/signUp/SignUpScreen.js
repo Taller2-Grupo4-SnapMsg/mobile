@@ -7,7 +7,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
 
 
-
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [last_name, setLastName] = useState();

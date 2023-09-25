@@ -11,17 +11,12 @@ import ProfileById from './screens/profile/ProfileById';
 import Profile from './screens/profile/Profile';
 import EditProfileById from './screens/profile/EditProfileById';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
-
 import { useColorScheme } from 'react-native';
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-import users from './assets/data/users'
-import SignUpScreen from './screens/signUp/SignUpScreen';
-
-const userHarcodeado = users[2];
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -48,8 +43,6 @@ const StackNavigatorProfile = () => {
     }}>
       <Stack.Screen name="InProfile" component={Profile} />
       <Stack.Screen name="EditProfileById" component={EditProfileById} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen name="SignIn" component={SignInScreen} />
     </Stack.Navigator>
   );
 };
@@ -81,25 +74,7 @@ const App = () => {
     getToken();
   }, []);
 
-  console.log(token)
-
   return(
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-    //   {/* <NavigationContainer>
-    //       {token && (
-    //         <Drawer.Navigator initialRouteName="Home">
-    //           <Drawer.Screen name="Home" component={MainNavigator} />
-    //         </Drawer.Navigator>
-    //       )}
-    //       {!token && (
-    //         <Stack.Navigator screenOptions={{ headerShown: false }}>
-    //           <Stack.Screen name="SignIn" component={SignInScreen} />
-    //           <Stack.Screen name="Main" component={MainNavigator} />
-    //         </Stack.Navigator>
-    //       )}
-    //   </NavigationContainer> */}
-            
-    // </ThemeProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
       <NavigationContainer>
           {/*{token && (

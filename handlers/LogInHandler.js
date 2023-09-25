@@ -30,20 +30,20 @@ const headers = {
             const token = responseData.token;
             await AsyncStorage.setItem('token', token);
             Alert.alert('Alert', 'Sign Up successful');
-            break;
+            return true;
     
         case USER_NOT_FOUND:
             Alert.alert('Alert', 'User not found. Check email and password.');
-            break;
-        
+            return false;
+
         case PASSWORD_DOESNT_MATCH:
             Alert.alert('Alert', 'Incorrect password.');
-            break;
+            return false;
 
         default:
             Alert.alert('Alert', 'Sign in failed: ' + responseData);
             console.error('Sign in failed:', responseData);
-            break;
+            return false;
       }
     } catch (error) {
       const message =
