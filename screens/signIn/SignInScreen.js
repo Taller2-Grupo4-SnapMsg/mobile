@@ -46,6 +46,7 @@ const SignInScreen = ({navigation}) => {
         <TextInput
           style={styles.inputs}
           placeholderTextColor={"black"}
+          autoCapitalize="none"
           placeholder="Email"
           keyboardType="email-address"
           underlineColorAndroid="transparent"

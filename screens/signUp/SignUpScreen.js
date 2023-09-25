@@ -131,6 +131,7 @@ const SignUpScreen = ({ navigation }) => {
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.inputs}
+        autoCapitalize="none"
         placeholder="Email"
         keyboardType="email-address"
         underlineColorAndroid="transparent"
