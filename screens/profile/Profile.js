@@ -4,6 +4,13 @@ import Tweet from '../../components/Tweet';
 import { Feather } from '@expo/vector-icons';
 import getUserByEmail from '../../handlers/getUserByEmail';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import getUserByToken from '../../handlers/getUserByToken'
+import getFollowersByUsername from '../../handlers/getFollowersByUsername';
+import getFollowingByUsername from '../../handlers/getFollowingByUsername';
+import { useNavigation } from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Image,
   StyleSheet,
@@ -18,43 +25,108 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const userEmailHarcodeado = '';
-
-export default function Profile({ /*user*/ }) {
+export default function Profile() {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchUserData = async () => {
+    try {
+      const fetchedUser = await getUserByToken();
+      if (fetchedUser) {
+        setUser(fetchedUser);
+      } else {
+        console.log('No se pudo obtener el usuario');
+      }
+    } catch (error) {
+      console.error('Error al obtener usuario:', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Llama a fetchUserData cada vez que la pantalla se monte
+      fetchUserData();
+    }, [])
+  );
 
   useEffect(() => {
-    getUserByEmail('marta04@fi.uba.ar')
-      .then((userData) => {
-        setUser(userData);
-      })
-      .catch((error) => {
-        console.error('Error al obtener usuario:', error);
-      });
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   }, []);
 
   if (!user) {
-    return <Text>User not found!</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Spinner
+          visible={isLoading}
+          textContent={'Cargando...'}
+          textStyle={{ color: '#FFF' }}
+        />
+      </View>
+    );
   }
-  return (
-    <ProfileUser user={user} />
-  );
+
+  // Renderiza el contenido de ProfileUser solo cuando se obtiene el usuario
+  return <ProfileUser user={user} />;
 }
 
-function ProfileUser({ user }) {
-  const colorScheme = useColorScheme();
 
-  
+function ProfileUser({ user }) {
+
+  const colorScheme = useColorScheme();
+  const navigation = useNavigation();
+  const [followers, setFollowers] = useState(null);
+  const [following, setFollowing] = useState(null);
+
+  useEffect(() => {
+    const fetchFollowersData = async () => {
+      try {
+        const fetchedFollowers = await getFollowersByUsername(user.username);
+        if (fetchedFollowers) { //aca ver porque 0 es un numero valido, no deberia entar al else
+          setFollowers(fetchedFollowers);
+        } else {
+          console.log('No se pudo obtener los followers');
+        }
+      } catch (error) {
+        console.error('Error al obtener los followers:', error);
+      }
+    };
+
+    fetchFollowersData();
+  });
+
+  useEffect(() => {
+    const fetchFollowingData = async () => {
+      try {
+        const fetchedFollowing = await getFollowingByUsername(user.username);
+        if (fetchedFollowing) {
+          setFollowing(fetchedFollowing);
+        } else {
+          console.log('No se pudo obtener los followings');
+        }
+      } catch (error) {
+        console.error('Error al obtener los followings:', error);
+      }
+    };
+
+    fetchFollowingData();
+  }, []);
+
+  const handleEditButton = () => {
+    navigation.navigate('EditProfileById' , {user: user});
+  }
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={styles.container}>
         <View style={styles.profileContainerWhole}>
-          <TouchableOpacity style={styles.editButton}>
+            <TouchableOpacity style={styles.editButton} onPress={handleEditButton}>
             <Feather name="edit" size={24} color={'#6B5A8E'} />
           </TouchableOpacity>
           <View style={styles.profileContainer}>
             {(
-              <Image style={styles.avatar} source={{ uri: user.image || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+              <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             )}
 
             <View style={styles.userInfoContainer}>
@@ -66,9 +138,9 @@ function ProfileUser({ user }) {
             <Text style={styles.bioText}>{user.bio || "Hey, I'm using SnapMessage! :)"}</Text>
 
             <View style={styles.statsContainer}>
-            <Text style={styles.statsCountText}>{user.following || 0}{'  '}
+            <Text style={styles.statsCountText}>{following || 0}{'  '}
             <Text style={styles.statsLabelText}>Following </Text> </Text>
-            <Text style={styles.statsCountText}>{user.followers || 0}{'  '}
+            <Text style={styles.statsCountText}>{followers || 0}{'  '}
             <Text style={styles.statsLabelText}>Followers</Text> </Text>
             <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
             <Text style={styles.statsLabelText}>Snaps</Text> </Text>
@@ -141,3 +213,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   }
 });
+

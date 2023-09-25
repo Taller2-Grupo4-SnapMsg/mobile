@@ -1,11 +1,9 @@
-/*Necesitamos un endpoint para porder obtener el usuario mediante el token*/
-/*por el token solo pedimos algo del usuario y despues pedimos lo otro con otro endpoint?*/
-
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInScreen from './screens/signIn/SignInScreen';
+import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
 import TweetById from './screens/home/TweetById';
 import NewTweet from './screens/home/NewTweet';
@@ -13,8 +11,8 @@ import ProfileById from './screens/profile/ProfileById';
 import Profile from './screens/profile/Profile';
 import EditProfileById from './screens/profile/EditProfileById';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
-import { useColorScheme } from 'react-native';
 
+import { useColorScheme } from 'react-native';
 import {
   DarkTheme,
   DefaultTheme,
@@ -38,6 +36,17 @@ const StackNavigator = () => {
       <Stack.Screen name="TweetById" component={TweetById} />
       <Stack.Screen name="NewTweet" component={NewTweet} />
       <Stack.Screen name="ProfileById" component={ProfileById} />
+    </Stack.Navigator>
+  );
+};
+
+
+const StackNavigatorProfile = () => {
+  return (
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+    }}>
+      <Stack.Screen name="InProfile" component={Profile} />
       <Stack.Screen name="EditProfileById" component={EditProfileById} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -50,8 +59,7 @@ const MainNavigator = () => (
     <Drawer.Screen name="Home" component={StackNavigator} />
     <Drawer.Screen
       name="Profile"
-      component={Profile}
-      initialParams={{ user: userHarcodeado }}
+      component={StackNavigatorProfile}
     />
   </Drawer.Navigator>
 );
@@ -73,13 +81,7 @@ const App = () => {
     getToken();
   }, []);
 
-  /*getUserFromToken().then((userData) => {
-    if (userData) {
-        console.log('Usuario:', userData);
-    } else {
-        console.log('No se pudo obtener el usuario');
-    }
-  });*/
+  console.log(token)
 
   return(
     // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
@@ -99,13 +101,27 @@ const App = () => {
             
     // </ThemeProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
+      <NavigationContainer>
+          {/*{token && (
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Main" component={MainNavigator} />
+            </Stack.Navigator>
+          )}
+          {!token && (
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="SignIn" component={SignInScreen} />
+              <Stack.Screen name="SignUp" component={SignUpScreen} />
+              <Stack.Screen name="Main" component={MainNavigator} />
+            </Stack.Navigator>
+          )}*/}
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="Main" component={MainNavigator} />
+          </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SignIn" component={SignUpScreen} />
-        <Stack.Screen name="Main" component={MainNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  </ThemeProvider>
   );
 };
 

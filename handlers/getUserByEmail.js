@@ -13,16 +13,13 @@ const headers = {
 
 const getUserByEmail = async (email) => {
   try {
-    console.log(email)
-    const response = await fetch(`${API_BASE_URL}/users/${email}`, {
+    const response = await fetch(`${API_BASE_URL}/users/email/${email}`, {
       method: 'GET',
       headers: headers,
     });
 
     if (response.status === OK) {
-        console.log(response)
       const user = await response.json();
-      //console.log(user)
       Alert.alert('User Details', JSON.stringify(user));
       return user;
     } else if (response.status === USER_NOT_FOUND) {
