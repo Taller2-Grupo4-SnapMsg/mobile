@@ -60,7 +60,6 @@ const SignUpScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputs}
-          placeholderTextColor={"black"}
           placeholder="First name"
           underlineColorAndroid="transparent"
           onChangeText={text => setName(text)}
@@ -70,7 +69,6 @@ const SignUpScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputs}
-          placeholderTextColor={"black"}
           placeholder="Last Name"
           underlineColorAndroid="transparent"
           onChangeText={text => setLastName(text)}
@@ -80,7 +78,7 @@ const SignUpScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputs}
-          placeholderTextColor={"black"}
+          //placeholderTextColor={"black"}
           placeholder="Username"
           underlineColorAndroid="transparent"
           onChangeText={text => setUserName(text)}
@@ -91,6 +89,7 @@ const SignUpScreen = ({ navigation }) => {
       <TextInput
         style={styles.inputs}
         placeholder="Date of Birth"
+        underlineColorAndroid="transparent"
         value={date_of_birth}
         onFocus={() => setModalVisible(true)}
       />
@@ -132,7 +131,6 @@ const SignUpScreen = ({ navigation }) => {
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.inputs}
-        placeholderTextColor={"black"}
         placeholder="Email"
         keyboardType="email-address"
         underlineColorAndroid="transparent"
@@ -143,7 +141,6 @@ const SignUpScreen = ({ navigation }) => {
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.inputs}
-        placeholderTextColor={"black"}
         placeholder="Password"
         secureTextEntry={!showPassword}
         underlineColorAndroid="transparent"
@@ -204,7 +201,7 @@ const styles = StyleSheet.create({
     height: 45,
     marginLeft: 16,
     borderBottomColor: '#FFFFFF',
-    flex: 1
+    flex: 1,
   },
   inputIcon: {
     width: 30,
