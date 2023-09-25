@@ -15,7 +15,7 @@ const SignInScreen = ({navigation}) => {
   };
 
   const handleSignUp = () => {
-    navigation.navigate('Sign Up');
+    navigation.navigate('SignUp');
   };
   
   const handleSignIn = async () => {

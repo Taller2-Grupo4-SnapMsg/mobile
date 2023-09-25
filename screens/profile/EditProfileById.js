@@ -17,6 +17,8 @@ import changeBio from "../../handlers/changeBio";
 import changeAvatar from "../../handlers/changeAvatar";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
+import { PermissionsAndroid } from "react-native";
+import { useEffect } from 'react';
 
 export default function EditProfileById() {
   const route = useRoute();
@@ -30,6 +32,37 @@ export default function EditProfileById() {
 }
 
 const EditProfile = ({  user  }) => {
+
+
+
+  // Función para solicitar permisos en tiempo de ejecución.
+  async function requestCameraRollPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: "Permiso de Acceso a la Galería de Fotos",
+          message: "Esta aplicación necesita acceso a tu galería de fotos.",
+          buttonNeutral: "Preguntar más tarde",
+          buttonNegative: "Cancelar",
+          buttonPositive: "OK",
+        }
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Permiso concedido");
+      } else {
+        console.log("Permiso denegado");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  // Llama a la función de solicitud de permisos en algún lugar apropiado.
+  useEffect(() => {
+    requestCameraRollPermission();
+  }, []);
 
   const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg');
   const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
@@ -66,6 +99,7 @@ const EditProfile = ({  user  }) => {
     setOpenStartDatePicker(!openStartDatePicker);
   };
 
+
   const handleImageSelection = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -74,8 +108,6 @@ const EditProfile = ({  user  }) => {
       quality: 1,
     });
     if (!result.canceled) {
-      console.log("en handleImageSelection")
-      console.log(result.assets[0].uri)
       setSelectedImage(result.assets[0].uri);
       setAvatarHasChanged(true); 
     }
@@ -178,6 +210,8 @@ const EditProfile = ({  user  }) => {
       <ScrollView>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImageSelection}>
+            {console.log("url que llega")}
+            {console.log(user.avatar)}
             <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>

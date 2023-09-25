@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInScreen from './screens/signIn/SignInScreen';
+import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
 import TweetById from './screens/home/TweetById';
 import NewTweet from './screens/home/NewTweet';
@@ -10,6 +11,7 @@ import ProfileById from './screens/profile/ProfileById';
 import Profile from './screens/profile/Profile';
 import EditProfileById from './screens/profile/EditProfileById';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
+
 import { useColorScheme } from 'react-native';
 import {
   DarkTheme,
@@ -76,6 +78,8 @@ const App = () => {
     getToken();
   }, []);
 
+  console.log(token)
+
   return(
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
       <NavigationContainer>
@@ -87,11 +91,13 @@ const App = () => {
           {!token && (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name="SignIn" component={SignInScreen} />
+              <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="Main" component={MainNavigator} />
             </Stack.Navigator>
           )}*/}
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Main" component={MainNavigator} />
           </Stack.Navigator>
       </NavigationContainer>

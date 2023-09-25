@@ -26,7 +26,7 @@ const SignUpScreen = ({ navigation }) => {
       }
       await RegisterHandler(email, password, name, last_name, username)
       
-      //navigation.navigate('???');
+      navigation.navigate('Main');
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler
@@ -35,7 +35,7 @@ const SignUpScreen = ({ navigation }) => {
   };
   
   const handleSignIn = () => {
-    navigation.navigate('Sign In');
+    navigation.navigate('SignIn');
   };
 
   return (
