@@ -12,13 +12,15 @@ const headers = {
   
 const RegisterHandler = async (email, password, firstName, lastName, username, date_of_birth) => {
     try {
+
+        const dob = date_of_birth.replace(/\//g, ' ');
         const requestBody = {
         email: email,
         password: password,
         name: firstName,
         last_name: lastName,
-        nickname: username,
-        date_of_birth: date_of_birth,
+        username: username,
+        date_of_birth: dob,
         };
 
         const response = await fetch('https://loginback-lg51.onrender.com/register', {
