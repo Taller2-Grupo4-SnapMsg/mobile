@@ -121,9 +121,9 @@ const App = () => {
           </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
-    <NavigationContainer>
   );
 };
 
+//<Stack.Screen name="Main" component={MainNavigator} />
 export default App;
 

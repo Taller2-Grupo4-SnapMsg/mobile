@@ -2,8 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert }  from 'react-native';
 
 const OK = 201
-const USERNAME_TAKEN = 400
-const EMAIL_TAKEN = 401
+const USER_ALREADY_REGISTERED = 409
+const CHECK_USERNAME = "Username"
+const CHECK_EMAIL= "Email"
+
 
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
@@ -30,21 +32,32 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
         });
 
         const responseData = await response.json();
+        console.log("response.status: " + response.status);
 
-        if (response.status === OK) {
-            const token = responseData.token;
-            await AsyncStorage.setItem('token', token);
-            Alert.alert('Alert', 'Sign Up successful');
-        } if (response.status === USERNAME_TAKEN) {
-            Alert.alert('Alert', 'Username already taken.');
-        } if (response.status === EMAIL_TAKEN) {
-            Alert.alert('Alert', 'Email already taken.');
-        }
-        else {
-        // Registration failed
-            console.error('Registration failed:', responseData);
+        switch (response.status) {
+            case OK:
+                const token = responseData.token;
+                await AsyncStorage.setItem('token', token);
+                Alert.alert('Alert', 'Sign Up successful');
+                break;
+        
+            case USER_ALREADY_REGISTERED:
+                if (responseData.detail && responseData.detail.includes(CHECK_USERNAME)) {
+                    Alert.alert('Alert', 'Username already taken.');
+                } else if (responseData.detail && responseData.detail.includes(CHECK_EMAIL))
+                    Alert.alert('Alert', 'Email already taken.');
+                else {
+                    Alert.alert('Alert', 'Unknown error with user data.');
+                }
+                break;
+                
+            default:
+                Alert.alert('Alert', 'Registration failed: ' + responseData);
+                console.error('Registration failed:', responseData);
+                break;
         }
     } catch (error) {
+        console.log("error!: " +  error);
         const message =
         error.response?.data?.error ||
         error.message ||
