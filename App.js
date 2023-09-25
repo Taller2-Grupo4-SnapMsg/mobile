@@ -1,6 +1,3 @@
-/*Necesitamos un endpoint para porder obtener el usuario mediante el token*/
-/*por el token solo pedimos algo del usuario y despues pedimos lo otro con otro endpoint?*/
-
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -36,7 +33,17 @@ const StackNavigator = () => {
       <Stack.Screen name="TweetById" component={TweetById} />
       <Stack.Screen name="NewTweet" component={NewTweet} />
       <Stack.Screen name="ProfileById" component={ProfileById} />
-      <Stack.Screen name="Profile" component={Profile} />
+    </Stack.Navigator>
+  );
+};
+
+
+const StackNavigatorProfile = () => {
+  return (
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+    }}>
+      <Stack.Screen name="InProfile" component={Profile} />
       <Stack.Screen name="EditProfileById" component={EditProfileById} />
     </Stack.Navigator>
   );
@@ -47,7 +54,7 @@ const MainNavigator = () => (
     <Drawer.Screen name="Home" component={StackNavigator} />
     <Drawer.Screen
       name="Profile"
-      component={Profile}
+      component={StackNavigatorProfile}
     />
   </Drawer.Navigator>
 );
@@ -73,9 +80,9 @@ const App = () => {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
       <NavigationContainer>
           {/*{token && (
-            <Drawer.Navigator initialRouteName="Home">
-              <Drawer.Screen name="Home" component={MainNavigator} />
-            </Drawer.Navigator>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Main" component={MainNavigator} />
+            </Stack.Navigator>
           )}
           {!token && (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -83,10 +90,10 @@ const App = () => {
               <Stack.Screen name="Main" component={MainNavigator} />
             </Stack.Navigator>
           )}*/}
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="SignIn" component={SignInScreen} />
-              <Stack.Screen name="Main" component={MainNavigator} />
-            </Stack.Navigator>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="Main" component={MainNavigator} />
+          </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>
   );

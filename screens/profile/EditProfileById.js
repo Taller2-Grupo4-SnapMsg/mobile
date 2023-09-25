@@ -12,15 +12,16 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
-import users from "../../assets/data/users";
+import changeName from "../../handlers/changeName";
+import changeBio from "../../handlers/changeBio";
+import changeAvatar from "../../handlers/changeAvatar";
 import { useRoute } from "@react-navigation/native";
+import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 
 export default function EditProfileById() {
   const route = useRoute();
   const { user } = route.params;
 
-  console.log("El usuario es:")
-  console.log(user)
   if (!user) {
     return <Text>User {user} not found!</Text>;
   }
@@ -29,25 +30,36 @@ export default function EditProfileById() {
 }
 
 const EditProfile = ({  user  }) => {
+
   const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg');
+  const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
+  
   const [name, setName] = useState(user.name);
+  const [nameHasChanged, setNameHasChanged] = useState(false);
+  
+  const [bio, setBio] = useState(user.bio);
+  const [bioHasChanged, setBioHasChanged] = useState(false); 
+
+  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+  const [dateOfBirthHasChanged, setDateOfBirthHasChanged] = useState(false); 
+  
   const [email, setEmail] = useState(user.email);
   const [username, setUsername] = useState(user.username);
   const [country, setCountry] = useState(user.country );
-  const [bio, setBio] = useState(user.bio);
   
-  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const today = new Date();
   const startDate = getFormatedDate(
     today.setDate(today.getDate() + 1),
-    "YYYY/MM/DD"
+    "YYYY MM DD"
     );
-    const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth || startDate);
-    const [startedDate, setStartedDate] = useState("12/12/2023");
-    
-    const minDate = getFormatedDate(today, "YYYY/MM/DD");
-  const handleChangeStartDate = (propDate) => {
-    setStartedDate(propDate);
+
+  const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth || startDate);
+  
+  const minDate = getFormatedDate(today, "YYYY MM DD");
+
+  const handleChangeStartDate = (selected) => {
+    setSelectedStartDate(selected);
+    setDateOfBirthHasChanged(true);
   };
 
   const handleOnPressStartDate = () => {
@@ -61,13 +73,46 @@ const EditProfile = ({  user  }) => {
       aspect: [4, 4],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
+      console.log("en handleImageSelection")
+      console.log(result.assets[0].uri)
       setSelectedImage(result.assets[0].uri);
+      setAvatarHasChanged(true); 
     }
   };
+
+  
+  const handleNameChange = (value) => {
+    setName(value);
+    setNameHasChanged(true);
+  };
+
+  const handleBioChange = (value) => {
+    setBio(value); 
+    setBioHasChanged(true); 
+  }
+
+  const handleAvatarChange = (value) => {
+    setSelectedImage(value); 
+    setAvatarHasChanged(true); 
+  }
+  
+ 
+  const handleSaveButton = async () => {
+    if (nameHasChanged) {
+      const updated = await changeName(user.email, name);
+    }
+    if (bioHasChanged) {
+      const updated = await changeBio(user.email, bio); 
+    }
+    if (avatarHasChanged) {
+      const updated = await changeAvatar(user.email, selectedImage); 
+    }
+    if (dateOfBirthHasChanged) {
+      const formattedDate = selectedStartDate.split('/').join(' ');
+      const update = await changeDateOfBirth(user.email, formattedDate);
+    }
+  }
 
   function renderDatePicker() {
     return (
@@ -106,18 +151,16 @@ const EditProfile = ({  user  }) => {
               mode="calendar"
               maximumDate={minDate}
               minDate={today}
-              selected={startedDate}
-              onDateChanged={handleChangeStartDate}
-              onSelectedChange={(date) => setSelectedStartDate(date)}
-              format="YYYY"
+              selected={selectedStartDate}
+              onSelectedChange={handleChangeStartDate}
               options={{
-                backgroundColor: "#469ab6",
+                backgroundColor: "#6B5A8E",
                 textHeaderColor: "#fff",
                 textDefaultColor: "#fff",
                 selectedTextColor: "#fff",
-                mainColor: "#469ab6",
+                mainColor: "#6B5A8E",
                 textSecondaryColor: "#fff",
-                borderColor: "rgba(122,146,165,0.1)",
+                borderColor: "rgba(122,146,changes165,0.1)",
               }}
             />
 
@@ -148,7 +191,7 @@ const EditProfile = ({  user  }) => {
             <View style={styles.textInput}>
               <TextInput
                 value={name}
-                onChangeText={(value) => setName(value)}
+                onChangeText={handleNameChange}
                 editable={true}
                 placeholder="Enter your name"
               />
@@ -181,7 +224,7 @@ const EditProfile = ({  user  }) => {
           <View style={styles.textInput}>
             <TextInput
               value={bio}
-              onChangeText={(value) => setBio(value)}
+              onChangeText={handleBioChange}
               editable={true}
               placeholder="Enter your bio"
               multiline={true} // Allow multiple lines
@@ -212,7 +255,7 @@ const EditProfile = ({  user  }) => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
 

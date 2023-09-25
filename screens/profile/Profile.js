@@ -9,6 +9,8 @@ import getUserByToken from '../../handlers/getUserByToken'
 import getFollowersByUsername from '../../handlers/getFollowersByUsername';
 import getFollowingByUsername from '../../handlers/getFollowingByUsername';
 import { useNavigation } from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Image,
   StyleSheet,
@@ -25,29 +27,42 @@ import {
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchUserData = async () => {
+    try {
+      const fetchedUser = await getUserByToken();
+      if (fetchedUser) {
+        setUser(fetchedUser);
+      } else {
+        console.log('No se pudo obtener el usuario');
+      }
+    } catch (error) {
+      console.error('Error al obtener usuario:', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Llama a fetchUserData cada vez que la pantalla se monte
+      fetchUserData();
+    }, [])
+  );
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const fetchedUser = await getUserByToken();
-        if (fetchedUser) {
-          console.log('Usuario:', fetchedUser);
-          setUser(fetchedUser);
-        } else {
-          console.log('No se pudo obtener el usuario');
-        }
-      } catch (error) {
-        console.error('Error al obtener usuario:', error);
-      }
-    };
-
-    fetchUserData();
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   }, []);
 
   if (!user) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Cargando usuario...</Text>
+        <Spinner
+          visible={isLoading}
+          textContent={'Cargando...'}
+          textStyle={{ color: '#FFF' }}
+        />
       </View>
     );
   }
@@ -58,6 +73,7 @@ export default function Profile() {
 
 
 function ProfileUser({ user }) {
+
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
   const [followers, setFollowers] = useState(null);
@@ -68,7 +84,6 @@ function ProfileUser({ user }) {
       try {
         const fetchedFollowers = await getFollowersByUsername(user.username);
         if (fetchedFollowers) { //aca ver porque 0 es un numero valido, no deberia entar al else
-          console.log('Followers:', fetchedFollowers);
           setFollowers(fetchedFollowers);
         } else {
           console.log('No se pudo obtener los followers');
@@ -79,14 +94,13 @@ function ProfileUser({ user }) {
     };
 
     fetchFollowersData();
-  }, []);
+  });
 
   useEffect(() => {
     const fetchFollowingData = async () => {
       try {
         const fetchedFollowing = await getFollowingByUsername(user.username);
         if (fetchedFollowing) {
-          console.log('Followings:', fetchedFollowing);
           setFollowing(fetchedFollowing);
         } else {
           console.log('No se pudo obtener los followings');
@@ -199,3 +213,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   }
 });
+
