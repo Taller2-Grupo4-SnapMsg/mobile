@@ -14,13 +14,14 @@ import Profile from './screens/profile/Profile';
 import EditProfileById from './screens/profile/EditProfileById';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { useColorScheme } from 'react-native';
-//import getUserFromToken from './handlers/getUserByToken'
+
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
 import users from './assets/data/users'
+import SignUpScreen from './screens/signUp/SignUpScreen';
 
 const userHarcodeado = users[2];
 
@@ -38,6 +39,8 @@ const StackNavigator = () => {
       <Stack.Screen name="NewTweet" component={NewTweet} />
       <Stack.Screen name="ProfileById" component={ProfileById} />
       <Stack.Screen name="EditProfileById" component={EditProfileById} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="SignIn" component={SignInScreen} />
     </Stack.Navigator>
   );
 };
@@ -79,21 +82,30 @@ const App = () => {
   });*/
 
   return(
+    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
+    //   {/* <NavigationContainer>
+    //       {token && (
+    //         <Drawer.Navigator initialRouteName="Home">
+    //           <Drawer.Screen name="Home" component={MainNavigator} />
+    //         </Drawer.Navigator>
+    //       )}
+    //       {!token && (
+    //         <Stack.Navigator screenOptions={{ headerShown: false }}>
+    //           <Stack.Screen name="SignIn" component={SignInScreen} />
+    //           <Stack.Screen name="Main" component={MainNavigator} />
+    //         </Stack.Navigator>
+    //       )}
+    //   </NavigationContainer> */}
+            
+    // </ThemeProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-      <NavigationContainer>
-          {token && (
-            <Drawer.Navigator initialRouteName="Home">
-              <Drawer.Screen name="Home" component={MainNavigator} />
-            </Drawer.Navigator>
-          )}
-          {!token && (
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="SignIn" component={SignInScreen} />
-              <Stack.Screen name="Main" component={MainNavigator} />
-            </Stack.Navigator>
-          )}
-      </NavigationContainer>
-    </ThemeProvider>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SignIn" component={SignUpScreen} />
+        <Stack.Screen name="Main" component={MainNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </ThemeProvider>
   );
 };
 
