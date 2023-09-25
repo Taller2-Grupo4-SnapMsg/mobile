@@ -101,13 +101,14 @@ const App = () => {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SignIn" component={SignUpScreen} />
-        <Stack.Screen name="Main" component={MainNavigator} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   </ThemeProvider>
   );
 };
 
+//<Stack.Screen name="Main" component={MainNavigator} />
 export default App;
 

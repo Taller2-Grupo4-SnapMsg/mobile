@@ -4,6 +4,7 @@ import { Alert }  from 'react-native';
 
 const OK = 200
 const USER_NOT_FOUND = 404
+const PASSWORD_DOESNT_MATCH = 401
 
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
@@ -24,21 +25,25 @@ const headers = {
       });
 
       const responseData = await response.json();
-      
-      if (response.status === OK) {
-        const token = responseData.token;
-        await AsyncStorage.setItem('token', token);
-
-        Alert.alert('Alert', 'Sign Up successful');
-
+      switch (response.status) {
+        case OK:
+            const token = responseData.token;
+            await AsyncStorage.setItem('token', token);
+            Alert.alert('Alert', 'Sign Up successful');
+            break;
+    
+        case USER_NOT_FOUND:
+            Alert.alert('Alert', 'User not found. Check email and password.');
+            break;
         
-        //Redirect or perform any other action you need here
-        //window.location.href = '/pin';
-      }  if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Alert', 'The user was not found. Check email and password.');
-      } else {
-        // Registration failed
-        console.error('Sign in failed:', responseData);
+        case PASSWORD_DOESNT_MATCH:
+            Alert.alert('Alert', 'Incorrect password.');
+            break;
+
+        default:
+            Alert.alert('Alert', 'Sign in failed: ' + responseData);
+            console.error('Sign in failed:', responseData);
+            break;
       }
     } catch (error) {
       const message =
