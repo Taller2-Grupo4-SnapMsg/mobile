@@ -75,7 +75,7 @@ export default function Profile() {
 
 
 function ProfileUser({ user }) {
-
+ 
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
   const [followers, setFollowers] = useState(null);
@@ -84,7 +84,7 @@ function ProfileUser({ user }) {
   useEffect(() => {
     const fetchFollowersData = async () => {
       try {
-        const fetchedFollowers = await getFollowersByUsername(user.username);
+        const fetchedFollowers = await getFollowersByUsername(user.email);
         if (fetchedFollowers) { //aca ver porque 0 es un numero valido, no deberia entar al else
           setFollowers(fetchedFollowers);
         } else {
@@ -101,7 +101,7 @@ function ProfileUser({ user }) {
   useEffect(() => {
     const fetchFollowingData = async () => {
       try {
-        const fetchedFollowing = await getFollowingByUsername(user.username);
+        const fetchedFollowing = await getFollowingByUsername(user.email);
         if (fetchedFollowing) {
           setFollowing(fetchedFollowing);
         } else {
