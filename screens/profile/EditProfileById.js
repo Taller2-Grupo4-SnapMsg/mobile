@@ -21,6 +21,7 @@ import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 import { PermissionsAndroid } from "react-native";
 import storage from '@react-native-firebase/storage';
 import { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 export default function EditProfileById() {
   const route = useRoute();
@@ -50,12 +51,6 @@ const EditProfile = ({  user  }) => {
           buttonPositive: "OK",
         }
       );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("Permiso concedido");
-      } else {
-        console.log("Permiso denegado");
-      }
     } catch (err) {
       console.warn(err);
     }
@@ -151,25 +146,27 @@ const EditProfile = ({  user  }) => {
     setAvatarHasChanged(true); 
   }
   
- 
+  const navigation = useNavigation();
+
   const handleSaveButton = async () => {
     if (nameHasChanged) {
-      const updated = await changeName(user.email, name);
+      const updated = await changeName(name);
     }
     if (bioHasChanged) {
-      const updated = await changeBio(user.email, bio); 
+      const updated = await changeBio(bio); 
     }
     if (avatarHasChanged) {
       console.log(selectedImage)
-      const updated = await changeAvatar(user.email, selectedImage); 
+      const updated = await changeAvatar(selectedImage); 
     }
     if (dateOfBirthHasChanged) {
       const formattedDate = selectedStartDate.split('/').join(' ');
-      const update = await changeDateOfBirth(user.email, formattedDate);
+      const update = await changeDateOfBirth(formattedDate);
     }
     if (lastNameHasChanged) {
-      const update = await changeLastName(user.email, lastName);
+      const update = await changeLastName(lastName);
     }
+    navigation.goBack();
   }
 
   function renderDatePicker() {
@@ -236,8 +233,6 @@ const EditProfile = ({  user  }) => {
       <ScrollView>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImageSelection}>
-            {console.log("url que llega")}
-            {console.log(user.avatar)}
             <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>
@@ -360,7 +355,7 @@ const styles = StyleSheet.create({
       paddingLeft: 8,
     },    
     saveButton: {
-      marginTop: 30,
+      marginTop: 0,
       backgroundColor: "#6B5A8E",
       height: 44,
       borderRadius: 50,
