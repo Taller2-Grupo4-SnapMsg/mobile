@@ -19,9 +19,11 @@ import changeLastName from "../../handlers/changeLastName";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 import { PermissionsAndroid } from "react-native";
-import storage from '@react-native-firebase/storage';
 import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import  { storage }  from "../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import ref function
+
 
 export default function EditProfileById() {
   const route = useRoute();
@@ -37,6 +39,7 @@ export default function EditProfileById() {
 const EditProfile = ({  user  }) => {
 
 
+  
 
   // Función para solicitar permisos en tiempo de ejecución.
   async function requestCameraRollPermission() {
@@ -61,7 +64,7 @@ const EditProfile = ({  user  }) => {
     requestCameraRollPermission();
   }, []);
 
-  const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg');
+  const [selectedImage, setSelectedImage] = useState(user.avatar);
   const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
   
   const [name, setName] = useState(user.name);
@@ -96,6 +99,7 @@ const EditProfile = ({  user  }) => {
     setOpenStartDatePicker(!openStartDatePicker);
   };
   
+
   const handleImageSelection = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -104,28 +108,28 @@ const EditProfile = ({  user  }) => {
         aspect: [4, 4],
         quality: 1,
       });
-      
-      if (!result.cancelled) {
-        const imageUri = result.uri;
-        const fileName = 'nombre_de_tu_archivo.jpg'; // Define un nombre único para el archivo
-        const storageRef = storage().ref(`ruta_en_storage/${fileName}`);
-        
-        // Subir la imagen a Firebase Storage
+  
+      if (!result.canceled) {
+        const imageUri = result.assets[0].uri;
+        const fileName = 'profile_picture.jpg'; // Define a unique name for the file
+        const storageRef = ref(storage, `profile_pictures/${user.email}/${fileName}`); // Use ref function
+  
+        // Upload the image to Firebase Storage
         const response = await fetch(imageUri);
         const blob = await response.blob();
-        await storageRef.put(blob);
-        
-        // Obtener la URL de descarga de la imagen y actualizar la interfaz
-        const downloadURL = await storageRef.getDownloadURL();
-        setEditedImageUri(downloadURL);
-        setImageHasChanged(true);
+        await uploadBytes(storageRef, blob); // Use uploadBytes function to upload
+  
+        // Get the download URL of the image and update the state variable
+        const downloadURL = await getDownloadURL(storageRef);
+        setSelectedImage(downloadURL); // Update the state variable here
+        setAvatarHasChanged(true);
       }
     } catch (error) {
       console.error('Error al seleccionar la imagen:', error);
     }
   };
+    
   
-
   const handleLastNameChange = (value) => {
     setLastName(value);
     setLastNameHasChanged(true);
@@ -156,6 +160,7 @@ const EditProfile = ({  user  }) => {
       const updated = await changeBio(bio); 
     }
     if (avatarHasChanged) {
+      console.log("Selected Image en Handle Button")
       console.log(selectedImage)
       const updated = await changeAvatar(selectedImage); 
     }
@@ -233,7 +238,7 @@ const EditProfile = ({  user  }) => {
       <ScrollView>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImageSelection}>
-            <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+            <Image style={styles.avatar} source={{ uri: user.avatar}} />
             <Image source={{ uri: selectedImage }} style={styles.image} />
             <View style={styles.cameraIcon}>
               <MaterialIcons name="photo-camera" size={32} color={'#6B5A8E'}/>
@@ -345,7 +350,7 @@ const styles = StyleSheet.create({
       fontSize: 16,
     },
     textInput: {
-      height: 44,
+      height: 34,
       width: "100%",
       borderColor: "#ccc",
       borderBottomWidth: 1, // Add this line

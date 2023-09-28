@@ -10,6 +10,8 @@ import NewTweet from './screens/home/NewTweet';
 import ProfileById from './screens/profile/ProfileById';
 import Profile from './screens/profile/Profile';
 import EditProfileById from './screens/profile/EditProfileById';
+import FollowingsById from './screens/profile/FollowingsById';
+import FollowersById from './screens/profile/FollowersById';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { useColorScheme } from 'react-native';
 import {
@@ -42,6 +44,8 @@ const StackNavigatorProfile = () => {
     }}>
       <Stack.Screen name="InProfile" component={Profile} />
       <Stack.Screen name="EditProfileById" component={EditProfileById} />
+      <Stack.Screen name="FollowingsById" component={FollowingsById} />
+      <Stack.Screen name="FollowersById" component={FollowersById} />
     </Stack.Navigator>
   );
 };
@@ -76,7 +80,7 @@ const App = () => {
   return(
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
       <NavigationContainer>
-          {/*{token && (
+          {token && (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name="Main" component={MainNavigator} />
             </Stack.Navigator>
@@ -87,12 +91,7 @@ const App = () => {
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="Main" component={MainNavigator} />
             </Stack.Navigator>
-          )}*/}
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="Main" component={MainNavigator} />
-          </Stack.Navigator>
+          )}
       </NavigationContainer>
     </ThemeProvider>
   );
