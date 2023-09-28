@@ -73,6 +73,20 @@ export default function Profile() {
   return <ProfileUser user={user} />;
 }
 
+function formatDateOfBirth(dateOfBirth) {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const date = new Date(dateOfBirth);
+  const month = date.getMonth();
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  const formattedDate = `${months[month]} ${day}, ${year}`;
+  return formattedDate;
+}
 
 function ProfileUser({ user }) {
  
@@ -119,6 +133,17 @@ function ProfileUser({ user }) {
     navigation.navigate('EditProfileById' , {user: user});
   }
 
+
+  const handleFollowersButton = () => {
+     navigation.navigate('FollowersById' , {user: user});
+  }
+
+  const handleFollowingButton = () => {
+    navigation.navigate('FollowingsById' , {user: user});
+  }
+
+  
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={styles.container}>
@@ -127,10 +152,7 @@ function ProfileUser({ user }) {
             <Feather name="edit" size={24} color={'#6B5A8E'} />
           </TouchableOpacity>
           <View style={styles.profileContainer}>
-            {(
               <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
-            )}
-
             <View style={styles.userInfoContainer}>
               {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
               {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
@@ -140,22 +162,27 @@ function ProfileUser({ user }) {
             <Text style={styles.bioText}>{user.bio || "Hey, I'm using SnapMessage! :)"}</Text>
 
             <View style={styles.statsContainer}>
-            <Text style={styles.statsCountText}>{following || 0}{'  '}
-            <Text style={styles.statsLabelText}>Following </Text> </Text>
-            <Text style={styles.statsCountText}>{followers || 0}{'  '}
-            <Text style={styles.statsLabelText}>Followers</Text> </Text>
-            <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
-            <Text style={styles.statsLabelText}>Snaps</Text> </Text>
-          </View>
+              <TouchableOpacity onPress={handleFollowingButton}>
+                <Text style={styles.statsCountText}>{following || 0}{'  '}
+                <Text style={styles.statsLabelText}>Following</Text> </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleFollowersButton}>
+                <Text style={styles.statsCountText}>{followers || 0}{'  '}
+                <Text style={styles.statsLabelText}>Followers</Text> </Text>
+              </TouchableOpacity>
+              <Text style={styles.statsCountText}>{user.snaps || 0}{'  '}
+              <Text style={styles.statsLabelText}>Snaps</Text></Text>
+            </View>
+
 
           <View style={styles.birthdayContainer}>
           <View style={styles.calendarIcon}>
           <FontAwesome name="birthday-cake" size={16} color="#6B5A8E" />
           </View>
             <View style={styles.dateOfBirthContainer}>
-              <Text style={styles.statsCountText}>
-                {(user.date_of_birth || 'Birthday not set').split(' ')[0]}
-              </Text>
+            <Text style={styles.statsCountText}>
+              {formatDateOfBirth(user.date_of_birth)}
+            </Text>
             </View>
           </View>
           </View>
@@ -186,7 +213,6 @@ const styles = StyleSheet.create({
   nameText: {
     fontWeight: 'bold',
     fontSize: 24,
-    //color: 'white',
   },
   usernameText: {
     fontSize: 15,
@@ -194,8 +220,8 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: 15,
-    //color: 'white',
     marginBottom: 16,
+    marginLeft: 18,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -227,18 +253,18 @@ const styles = StyleSheet.create({
   },
   birthdayContainer: {
     flexDirection: 'row',
-    alignItems: 'center', // Add this line to vertically center the icon and date
+    alignItems: 'center', 
     justifyContent: 'center',
-    marginTop: 10, // Add margin top to separate from the statsContainer
+    marginTop: 10, 
     marginBottom:10,
     fontSize: 16,
   },
   calendarIcon: {
-    marginRight: 10, // Add some margin to the right of the icon to create space
+    marginRight: 10, 
   },
   dateOfBirthContainer: {
-    flexDirection: 'row', // Add flexDirection to display icon and date inline
-    alignItems: 'center', // Center the date vertically
+    flexDirection: 'row', 
+    alignItems: 'center', 
   },
 });
 
