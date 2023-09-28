@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import  { storage }  from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import ref function
+import { Platform } from "react-native"; // Import Platform
 
 
 export default function EditProfileById() {
@@ -37,32 +38,6 @@ export default function EditProfileById() {
 }
 
 const EditProfile = ({  user  }) => {
-
-
-  
-
-  // Función para solicitar permisos en tiempo de ejecución.
-  async function requestCameraRollPermission() {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: "Permiso de Acceso a la Galería de Fotos",
-          message: "Esta aplicación necesita acceso a tu galería de fotos.",
-          buttonNeutral: "Preguntar más tarde",
-          buttonNegative: "Cancelar",
-          buttonPositive: "OK",
-        }
-      );
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
-  // Llama a la función de solicitud de permisos en algún lugar apropiado.
-  useEffect(() => {
-    requestCameraRollPermission();
-  }, []);
 
   const [selectedImage, setSelectedImage] = useState(user.avatar);
   const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
@@ -102,6 +77,7 @@ const EditProfile = ({  user  }) => {
 
   const handleImageSelection = async () => {
     try {
+      // Launch the image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -125,10 +101,9 @@ const EditProfile = ({  user  }) => {
         setAvatarHasChanged(true);
       }
     } catch (error) {
-      console.error('Error al seleccionar la imagen:', error);
+      console.error('Error selecting the image:', error);
     }
-  };
-    
+  };    
   
   const handleLastNameChange = (value) => {
     setLastName(value);
@@ -160,8 +135,6 @@ const EditProfile = ({  user  }) => {
       const updated = await changeBio(bio); 
     }
     if (avatarHasChanged) {
-      console.log("Selected Image en Handle Button")
-      console.log(selectedImage)
       const updated = await changeAvatar(selectedImage); 
     }
     if (dateOfBirthHasChanged) {
