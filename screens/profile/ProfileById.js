@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Modal,
   TouchableOpacity
 } from 'react-native';
 
@@ -14,6 +15,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
 import getFollowersByUsername from '../../handlers/getFollowersByUsername';
 import getFollowingByUsername from '../../handlers/getFollowingByUsername';
+import checkIfFollowing from '../../handlers/checkIfFollowing';
+import followUser from '../../handlers/followUser';
+import unfollowUser from '../../handlers/unfollowUser';
+import { useFocusEffect } from '@react-navigation/native';
 
 import {
   DarkTheme,
@@ -50,14 +55,28 @@ function formatDateOfBirth(dateOfBirth) {
 }
 
 function Profile({ user }) {
- 
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
   const [followers, setFollowers] = useState(null);
   const [following, setFollowing] = useState(null);
 
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+  const [isFollowing, setIsFollowing] = useState(false); 
+
   useEffect(() => {
-    const fetchFollowersData = async () => {
+    const checkFollowingStatus = async () => {
+      const isUserFollowing = await checkIfFollowing(user.email);
+      setIsFollowing(isUserFollowing);
+    };
+
+    checkFollowingStatus();
+  }, [user.email]);
+
+
+    const fetchFollowersCount = async () => {
       try {
         const fetchedFollowers = await getFollowersByUsername(user.email);
         setFollowers(fetchedFollowers);
@@ -66,11 +85,8 @@ function Profile({ user }) {
       }
     };
 
-    fetchFollowersData();
-  });
 
-  useEffect(() => {
-    const fetchFollowingData = async () => {
+    const fetchFollowingCount = async () => {
       try {
         const fetchedFollowing = await getFollowingByUsername(user.email);
         setFollowing(fetchedFollowing);
@@ -79,13 +95,26 @@ function Profile({ user }) {
       }
     };
 
-    fetchFollowingData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Llama a fetchUserData cada vez que la pantalla se monte
+      fetchFollowingCount();
+      fetchFollowersCount();
+    }, [])
+  );
 
-  const handleEditButton = () => {
-    navigation.navigate('EditProfileById' , {user: user});
-  }
+  const handleFollowButton = () => {
 
+    if (isFollowing) {
+      unfollowUser(user.email);
+    } else {
+      followUser(user.email);
+    }
+
+    setIsFollowing(!isFollowing);
+    fetchFollowersCount();
+    fetchFollowingCount();
+  };
 
   const handleFollowersButton = () => {
      navigation.navigate('FollowersById' , {user: user});
@@ -101,8 +130,41 @@ function Profile({ user }) {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={styles.container}>
         <View style={styles.profileContainerWhole}>
+        <TouchableOpacity onPress={handleFollowButton} style={styles.followButton}>
+          <Text style={styles.followButtonText}>
+            {isFollowing ? 'Following' : 'Follow'}
+          </Text>
+        </TouchableOpacity>
           <View style={styles.profileContainer}>
-              <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+          <TouchableOpacity onPress={toggleModal}>
+          <Image
+            style={styles.avatar}
+            source={{
+              uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg',
+            }}
+          />
+        </TouchableOpacity>
+
+        <Modal
+            animationType="fade"
+            transparent={true}
+            visible={isModalVisible}
+            onRequestClose={toggleModal}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContainer}>
+                <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                  <Feather name="x" size={24} color="white" />
+                </TouchableOpacity>
+                <Image
+                  style={styles.modalAvatar}
+                  source={{
+                    uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg',
+                  }}
+                />
+              </View>
+            </View>
+          </Modal>
             <View style={styles.userInfoContainer}>
               {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
               {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
@@ -216,5 +278,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center', 
   },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', // Semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalAvatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  followButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#6B5A8E', // Change the background color as needed
+    paddingHorizontal: 26,
+    paddingVertical:6,
+    borderRadius: 20,
+  },
+  followButtonText: {
+    fontWeight: 'bold',
+  },
+
 });
 

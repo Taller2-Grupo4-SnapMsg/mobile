@@ -9,7 +9,6 @@ const Test = ({ navigation }) => {
     navigation.navigate('Sign Up');
   };
 
-  console.log("llega1");
 
   const handleButtonSignIn = () => {
     navigation.navigate('Sign In');
