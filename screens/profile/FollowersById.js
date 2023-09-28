@@ -3,11 +3,15 @@ import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react
 import { useRoute } from '@react-navigation/native';
 import getFollowers from '../../handlers/getFollowers';
 import { useNavigation } from '@react-navigation/native';
+import checkIfFollowing from '../../handlers/checkIfFollowing';
+import followUser from '../../handlers/followUser';
+import unfollowUser from '../../handlers/unfollowUser';
+import { useFocusEffect } from '@react-navigation/native';
+import getUserByToken from '../../handlers/getUserByToken';
 
 export default function FollowersById() {
   const route = useRoute();
   const { user } = route.params;
-
   if (!user) {
     return <Text>User {user} not found!</Text>;
   }
@@ -21,34 +25,62 @@ const Followers = ({ user }) => {
   const [followers, setFollowers] = useState([]);
   const [followerStatus, setFollowersStatus] = useState({});
 
-  useEffect(() => {
-    const fetchFollowersData = async () => {
+  const fetchFollowersData = async () => {
       try {
         const fetchedFollowers = await getFollowers(user.email);
-        if (fetchedFollowers) {
-          setFollowers(fetchedFollowers);
-          const initialFollowerStatus = {};
-          fetchedFollowers.forEach((item) => {
-            initialFollowerStatus[item.email] = true; 
-          });
-          setFollowersStatus(initialFollowerStatus);
-        } else {
-          console.log('No se pudo obtener los followings');
+        setFollowers(fetchedFollowers);
+        const initialFollowerStatus = {};
+        const followersEmails = fetchedFollowers.map((follower) => follower.email);
+    
+        const followStatusPromises = followersEmails.map(async (followerEmail) => {
+          const isUserFollower = await checkIfFollowing(followerEmail);
+          return { email: followerEmail, isFollowing: isUserFollower };
+        });
+    
+        const followerStatusArray = await Promise.all(followStatusPromises);
+    
+        followerStatusArray.forEach((status) => {
+          initialFollowerStatus[status.email] = status.isFollowing;
+        });
+    
+        setFollowersStatus(initialFollowerStatus);
+        }catch (error) {
+          console.error('Error al obtener los followings:', error);
         }
-      } catch (error) {
-        console.error('Error al obtener los followings:', error);
-      }
     };
 
-    fetchFollowersData();
-  }, [user.email]); 
+    useFocusEffect(
+      React.useCallback(() => {
+        fetchFollowersData();
+      }, [user])
+    ); 
 
-  const toggleFollower = (email) => {
+  const handleFollowButton = async (itemEmail) => {
+    if (followerStatus[itemEmail]) {
+      await unfollowUser(itemEmail);
+    } else {
+      await followUser(itemEmail);
+    }
+
     setFollowersStatus((prevStatus) => ({
       ...prevStatus,
-      [email]: !prevStatus[email], 
+      [itemEmail]: !prevStatus[itemEmail],
     }));
   };
+
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      const loggedInUser = await getUserByToken();
+      // Handle the case where loggedInUser is undefined
+      if (!loggedInUser) {
+        console.error('Error fetching logged-in user');
+      }
+      setLoggedInUser(loggedInUser);
+    };
+    fetchLoggedInUser();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -58,7 +90,11 @@ const Followers = ({ user }) => {
           <TouchableOpacity
             style={styles.itemContainer}
             onPress={() => {
-              navigation.navigate('ProfileById', { user: item });
+              if (loggedInUser && item.email === loggedInUser.email) {
+                navigation.navigate('InProfile');
+              } else {
+                navigation.navigate('ProfileById', { user: item });
+              }
             }}
           >
             <Image style={styles.image} source={{ uri: item.avatar }} />
@@ -72,14 +108,16 @@ const Followers = ({ user }) => {
               </View>
             </View>
 
+            {loggedInUser && item.email !== loggedInUser.email && (
             <TouchableOpacity
               style={styles.followButton}
-              onPress={() => toggleFollower(item.email)}
+               onPress={() => handleFollowButton(item.email)}
             >
               <Text style={styles.followButtonText}>
                 {followerStatus[item.email] ? 'Following' : 'Follow'}
               </Text>
             </TouchableOpacity>
+             )}
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.email} 

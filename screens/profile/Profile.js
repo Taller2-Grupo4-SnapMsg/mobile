@@ -9,12 +9,13 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { useFocusEffect } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons'; 
 
+
 import {
   Image,
   StyleSheet,
   Text,
   View,
-  FlatList,
+  Modal,
   TouchableOpacity
 } from 'react-native';
 import {
@@ -91,40 +92,37 @@ function ProfileUser({ user }) {
   const [followers, setFollowers] = useState(null);
   const [following, setFollowing] = useState(null);
 
-  useEffect(() => {
-    const fetchFollowersData = async () => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+    const fetchFollowersCount = async () => {
       try {
         const fetchedFollowers = await getFollowersByUsername(user.email);
-        if (fetchedFollowers) { //aca ver porque 0 es un numero valido, no deberia entar al else
-          setFollowers(fetchedFollowers);
-        } else {
-          console.log('No se pudo obtener los followers');
-        }
+        setFollowers(fetchedFollowers);
       } catch (error) {
         console.error('Error al obtener los followers:', error);
       }
     };
 
-    fetchFollowersData();
-  });
 
-  useEffect(() => {
-    const fetchFollowingData = async () => {
-      try {
-        const fetchedFollowing = await getFollowingByUsername(user.email);
-        if (fetchedFollowing) {
-          setFollowing(fetchedFollowing);
-        } else {
-          console.log('No se pudo obtener los followings');
-        }
-      } catch (error) {
-        console.error('Error al obtener los followings:', error);
-      }
-    };
+  const fetchFollowingCount = async () => {
+    try {
+      const fetchedFollowing = await getFollowingByUsername(user.email);
+      setFollowing(fetchedFollowing);
+    } catch (error) {
+      console.error('Error al obtener los followings:', error);
+    }
+  };
 
-    fetchFollowingData();
-  }, []);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      // Llama a fetchUserData cada vez que la pantalla se monte
+      fetchFollowingCount();
+      fetchFollowersCount();
+    }, [])
+  );
   const handleEditButton = () => {
     navigation.navigate('EditProfileById' , {user: user});
   }
@@ -148,7 +146,37 @@ function ProfileUser({ user }) {
             <Feather name="edit" size={24} color={'#6B5A8E'} />
           </TouchableOpacity>
           <View style={styles.profileContainer}>
-              <Image style={styles.avatar} source={{ uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg'}} />
+          <TouchableOpacity onPress={toggleModal}>
+          <Image
+            style={styles.avatar}
+            source={{
+              uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg',
+            }}
+          />
+        </TouchableOpacity>
+
+        <Modal
+            animationType="fade"
+            transparent={true}
+            visible={isModalVisible}
+            onRequestClose={toggleModal}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContainer}>
+                <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                  <Feather name="x" size={24} color="white" />
+                </TouchableOpacity>
+                <Image
+                  style={styles.modalAvatar}
+                  source={{
+                    uri: user.avatar || 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-3.jpg',
+                  }}
+                />
+              </View>
+            </View>
+          </Modal>
+
+
             <View style={styles.userInfoContainer}>
               {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
               {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
@@ -261,6 +289,29 @@ const styles = StyleSheet.create({
   dateOfBirthContainer: {
     flexDirection: 'row', 
     alignItems: 'center', 
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', // Semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalAvatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
 });
 

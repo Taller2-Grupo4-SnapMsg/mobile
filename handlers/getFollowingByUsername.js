@@ -20,14 +20,13 @@ const getFollowingByUsername = async (email) => {
         method: 'GET',
         headers: headers
       });
-  
       if (response.status === OK) {
         const following = await response.json();
         return following;
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro. Verifica el email.');
       } else {
-        console.error('Error al obtener usuario por email:', response.statusText);
+        console.error('Error al obtener following count:', response.statusText);
       }
     } catch (error) {
       const message =

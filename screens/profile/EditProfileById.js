@@ -18,12 +18,9 @@ import changeAvatar from "../../handlers/changeAvatar";
 import changeLastName from "../../handlers/changeLastName";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
-import { PermissionsAndroid } from "react-native";
-import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import  { storage }  from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import ref function
-import { Platform } from "react-native"; // Import Platform
 
 
 export default function EditProfileById() {
