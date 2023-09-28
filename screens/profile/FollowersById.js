@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import getFollowers from '../../handlers/getFollowers';
+import { useNavigation } from '@react-navigation/native';
 
 export default function FollowersById() {
   const route = useRoute();
@@ -15,6 +16,8 @@ export default function FollowersById() {
 }
 
 const Followers = ({ user }) => {
+  const navigation = useNavigation();
+
   const [followers, setFollowers] = useState([]);
   const [followerStatus, setFollowersStatus] = useState({});
 
@@ -52,7 +55,12 @@ const Followers = ({ user }) => {
       <FlatList
         data={followers}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
+          <TouchableOpacity
+            style={styles.itemContainer}
+            onPress={() => {
+              navigation.navigate('ProfileById', { user: item });
+            }}
+          >
             <Image style={styles.image} source={{ uri: item.avatar }} />
             <View style={styles.textContainer}>
               <Text style={styles.nameText}>{item.name}</Text>
@@ -72,7 +80,7 @@ const Followers = ({ user }) => {
                 {followerStatus[item.email] ? 'Following' : 'Follow'}
               </Text>
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
         keyExtractor={(item) => item.email} 
       />

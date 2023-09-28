@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import tweets from '../../assets/data/tweets';
-import Tweet from '../../components/Tweet';
 import { Feather } from '@expo/vector-icons';
-import getUserByEmail from '../../handlers/getUserByEmail';
 import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import getUserByToken from '../../handlers/getUserByToken'
 import getFollowersByUsername from '../../handlers/getFollowersByUsername';
 import getFollowingByUsername from '../../handlers/getFollowingByUsername';
