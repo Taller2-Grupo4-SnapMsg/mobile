@@ -6,7 +6,7 @@ const USER_NOT_FOUND = 404;
 
 const API_BASE_URL = 'https://loginback-lg51.onrender.com';
 
-const changeCountry = async (country) => {
+const changeCountry = async (location) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -16,7 +16,7 @@ const changeCountry = async (country) => {
         'token': token,
       };
 
-      const response = await fetch(`${API_BASE_URL}/users/bio?new_bio=${country}`, { //chequear como cambiar
+      const response = await fetch(`${API_BASE_URL}/users/location?new_location=${location}`, { //chequear como cambiar
         method: 'PUT',
         headers: headers,
       });
@@ -30,7 +30,7 @@ const changeCountry = async (country) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al actualizar bio:', response.response.status);
+        console.error('Error al actualizar bio:', response.status);
       }
     } catch (error) {
       const message =

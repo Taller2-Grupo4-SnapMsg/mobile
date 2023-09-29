@@ -16,7 +16,7 @@ import changeName from "../../handlers/changeName";
 import changeBio from "../../handlers/changeBio";
 import changeAvatar from "../../handlers/changeAvatar";
 import changeLastName from "../../handlers/changeLastName";
-import changeCountry from "../../handlers/changeCountry";
+import changeLocation from "../../handlers/changeLocation";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 import { useNavigation } from '@react-navigation/native';
@@ -54,20 +54,14 @@ const EditProfile = ({  user  }) => {
   
   const [lastName, setLastName] = useState(user.last_name);
   const [lastNameHasChanged, setLastNameHasChanged] = useState(false);
+  const [selectedCountryName, setSelectedCountryName] = useState(user.location);
 
-  const [selectedCountry, setSelectedCountry] = useState({
-    code: 'US', // Set the default country code
-    name: 'United States', // Set the default country name
-  });
-
-  const [selectedCountryName, setSelectedCountryName] = useState("Select a country");
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
 
   const [selectedCountryCode, setSelectedCountryCode] = useState(''); // Initialize it with an empty string
 
   
   const handleCountryChange = (country) => {
-    setSelectedCountry(country);
     setSelectedCountryName(country.name); // Set the selected country name
     setSelectedCountryCode(country.cca2); // Set the selected country code
     setCountryNameHasChanged(true);
@@ -162,7 +156,7 @@ const EditProfile = ({  user  }) => {
       const update = await changeLastName(lastName);
     }
     if (CountryNameHasChanged) {
-     // const update = await changeCountry(selectedCountryName);
+      const update = await changeLocation(selectedCountryName);
     }
     navigation.goBack();
   }
@@ -288,10 +282,8 @@ const EditProfile = ({  user  }) => {
           <View style={styles.countryPickerContainer}>
             <CountryPicker
               {...{
-                withCountryNameButton: true,
                 onSelect: handleCountryChange,
-                countryCode: selectedCountryCode,
-                disabled: true, // Disable user interaction with the picker
+                placeholder: selectedCountryName,
               }}
             />
           </View>
