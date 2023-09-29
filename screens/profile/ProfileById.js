@@ -117,11 +117,11 @@ function Profile({ user }) {
   };
 
   const handleFollowersButton = () => {
-     navigation.navigate('FollowersById' , {user: user});
+    if (isFollowing) navigation.navigate('FollowersById' , {user: user});
   }
 
   const handleFollowingButton = () => {
-    navigation.navigate('FollowingsById' , {user: user});
+    if (isFollowing) navigation.navigate('FollowingsById' , {user: user});
   }
 
   

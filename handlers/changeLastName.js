@@ -31,7 +31,7 @@ const changeLastName = async (last_name) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al actualizar bio:', response.statusText);
+        console.error('Error al actualizar bio:', response.status);
       }
     } catch (error) {
       const message =

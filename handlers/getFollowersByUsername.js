@@ -26,7 +26,7 @@ const getFollowersByUsername = async (email) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro. Verifica el email.');
       } else {
-        console.error('Error al obtener followers count:', response.statusText);
+        console.error('Error al obtener followers count:', response.status);
       }
     } catch (error) {
       const message =

@@ -29,7 +29,7 @@ const unfollowUser = async (email) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al obtener followers:', response.statusText);
+        console.error('Error al dejar de seguir:', response.status);
       }
     } catch (error) {
       const message =

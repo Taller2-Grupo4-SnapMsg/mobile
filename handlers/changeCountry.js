@@ -30,7 +30,7 @@ const changeCountry = async (country) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al actualizar bio:', response.statusText);
+        console.error('Error al actualizar bio:', response.response.status);
       }
     } catch (error) {
       const message =

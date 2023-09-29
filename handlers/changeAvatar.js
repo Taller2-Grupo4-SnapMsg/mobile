@@ -29,7 +29,7 @@ const changeAvatar = async (avatar) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al actualizar avatar:', response.statusText);
+        console.error('Error al actualizar avatar:', response.status);
       }
     } catch (error) {
       const message =

@@ -31,7 +31,7 @@ const changeDateOfBirth = async (date_of_birth) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al actualizar date_of_birth:', response.statusText);
+        console.error('Error al actualizar date_of_birth:', response.status);
       }
     } catch (error) {
       const message =
