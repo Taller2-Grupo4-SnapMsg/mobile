@@ -16,11 +16,15 @@ import changeName from "../../handlers/changeName";
 import changeBio from "../../handlers/changeBio";
 import changeAvatar from "../../handlers/changeAvatar";
 import changeLastName from "../../handlers/changeLastName";
+import changeCountry from "../../handlers/changeCountry";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 import { useNavigation } from '@react-navigation/native';
 import  { storage }  from "../../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import ref function
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
+import { Feather } from '@expo/vector-icons';
+import CountryPicker from 'react-native-country-picker-modal'
+
 
 
 export default function EditProfileById() {
@@ -51,16 +55,32 @@ const EditProfile = ({  user  }) => {
   const [lastName, setLastName] = useState(user.last_name);
   const [lastNameHasChanged, setLastNameHasChanged] = useState(false);
 
+  const [selectedCountry, setSelectedCountry] = useState({
+    code: 'US', // Set the default country code
+    name: 'United States', // Set the default country name
+  });
+
+  const [selectedCountryName, setSelectedCountryName] = useState("Select a country");
+  const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState(''); // Initialize it with an empty string
+
   
-  const today = new Date();
+  const handleCountryChange = (country) => {
+    setSelectedCountry(country);
+    setSelectedCountryName(country.name); // Set the selected country name
+    setSelectedCountryCode(country.cca2); // Set the selected country code
+    setCountryNameHasChanged(true);
+  };
+    const today = new Date();
   const startDate = getFormatedDate(
     today.setDate(today.getDate() + 1),
-    "YYYY MM DD"
+    "YYYY/MM/DD"
     );
 
-  const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth || startDate);
+  const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth.split(' ')[0] || startDate);
   
-  const minDate = getFormatedDate(today, "YYYY MM DD");
+  const minDate = getFormatedDate(today, "YYYY/MM/DD");
 
   const handleChangeStartDate = (selected) => {
     setSelectedStartDate(selected);
@@ -141,6 +161,9 @@ const EditProfile = ({  user  }) => {
     if (lastNameHasChanged) {
       const update = await changeLastName(lastName);
     }
+    if (CountryNameHasChanged) {
+     // const update = await changeCountry(selectedCountryName);
+    }
     navigation.goBack();
   }
 
@@ -160,13 +183,11 @@ const EditProfile = ({  user  }) => {
         >
           <View
             style={{
-              margin: 20,
-              backgroundColor: "#469ab6",
               alignItems: "center",
               justifyContent: "center",
               borderRadius: 20,
               padding: 35,
-              width: "90%",
+              width: "95%",
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
@@ -174,7 +195,6 @@ const EditProfile = ({  user  }) => {
               },
               shadowOpacity: 0.25,
               shadowRadius: 4,
-              elevation: 5,
             }}
           >
             <DatePicker
@@ -184,18 +204,16 @@ const EditProfile = ({  user  }) => {
               selected={selectedStartDate}
               onSelectedChange={handleChangeStartDate}
               options={{
-                backgroundColor: "#6B5A8E",
                 textHeaderColor: "#fff",
                 textDefaultColor: "#fff",
-                selectedTextColor: "#fff",
                 mainColor: "#6B5A8E",
                 textSecondaryColor: "#fff",
-                borderColor: "rgba(122,146,changes165,0.1)",
+                borderColor: "#6B5A8E",
               }}
             />
 
             <TouchableOpacity onPress={handleOnPressStartDate}>
-              <Text style={{ fontSize: 16, color: "#fff" }}>Close</Text>
+              <Feather name="x" size={24} color="#6B5A8E" />
             </TouchableOpacity>
           </View>
         </View>
@@ -260,10 +278,26 @@ const EditProfile = ({  user  }) => {
               style={styles.textInput}
               placeholder="Enter your date of birth"
             >
-              <Text>{selectedStartDate}</Text>
+            <Text>{selectedStartDate}</Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        <View style={styles.inputContainer}>
+          <View style={styles.textInput}>
+          <View style={styles.countryPickerContainer}>
+            <CountryPicker
+              {...{
+                withCountryNameButton: true,
+                onSelect: handleCountryChange,
+                countryCode: selectedCountryCode,
+                disabled: true, // Disable user interaction with the picker
+              }}
+            />
+          </View>
+          </View>
+        </View>
+
 
       
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
@@ -314,7 +348,7 @@ const styles = StyleSheet.create({
     inputContainer: {
       flexDirection: "column",
       marginBottom: 6,
-      height: 100,
+      height: 80,
     },
     inputLabel: {
       fontSize: 16,
@@ -343,4 +377,7 @@ const styles = StyleSheet.create({
       fontSize: 20,
       color: "#fff",
     },
+    bioText: {
+      numberOfLines: 4,
+    }
 });

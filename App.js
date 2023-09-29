@@ -83,7 +83,7 @@ const App = () => {
       <NavigationContainer>
           {token && (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="Main" component={MainNavigator} />
+              <Stack.Screen name="Main" component={MainNavigator} screenOptions={{ headerShown: false }} />
             </Stack.Navigator>
           )}
           {!token && (

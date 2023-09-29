@@ -200,15 +200,25 @@ function ProfileUser({ user }) {
 
 
           <View style={styles.birthdayContainer}>
-          <View style={styles.calendarIcon}>
-          <FontAwesome name="birthday-cake" size={16} color="#6B5A8E" />
-          </View>
+            <View style={styles.calendarIcon}>
+              <FontAwesome name="birthday-cake" size={16} color="#6B5A8E" />
+            </View>
             <View style={styles.dateOfBirthContainer}>
-            <Text style={styles.statsCountText}>
-              {formatDateOfBirth(user.date_of_birth)}
-            </Text>
+              <Text style={styles.statsCountText}>
+                  {formatDateOfBirth(user.date_of_birth)}
+              </Text>
+            </View>
+            </View>
+          <View style={styles.locationContainer}>
+            <View style={styles.locationIcon}>
+              <FontAwesome name="map-marker" size={16} color="#6B5A8E" />
+            </View>
+            <View style={styles.locationText}>
+              <Text style={styles.statsCountText}>{user.location || 'Earth'}</Text>
             </View>
           </View>
+          
+          
           </View>
         </View>
       </View>
@@ -287,6 +297,21 @@ const styles = StyleSheet.create({
     marginRight: 10, 
   },
   dateOfBirthContainer: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    marginTop: 10, 
+    marginBottom:10,
+    fontSize: 16,
+  },
+  locationIcon: {
+    marginRight: 10, 
+  },
+  locationText: {
     flexDirection: 'row', 
     alignItems: 'center', 
   },
