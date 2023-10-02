@@ -22,6 +22,7 @@ const changeDateOfBirth = async (date_of_birth) => {
         headers: headers,
       });
 
+      console.log('response.status', response.status);
       if (response.status === 200) {
         const data = await response.json();
         return data;

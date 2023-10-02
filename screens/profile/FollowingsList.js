@@ -100,7 +100,7 @@ const Followings = ({ user }) => {
               if (loggedInUser && item.email === loggedInUser.email) {
                 navigation.navigate('InProfile');
               } else {
-                navigation.navigate('ProfileById', { user: item });
+                navigation.push('InProfile', { user_param: item }); // Use push instead of navigate
               }
             }}
           >

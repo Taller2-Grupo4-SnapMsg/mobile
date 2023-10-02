@@ -16,12 +16,11 @@ const getUserByToken = async () => {
                 method: 'GET',
                 headers: headers,
               });
-            
             if (response.status === OK) {
                 const user = await response.json();
                 return user;
             } else {
-                throw new Error('Error al obtener los datos del usuario');
+                throw new Error('Error al obtener los datos del usuario: ' ,response.status);
             }
         } else {
             throw new Error('Token no encontrado en AsyncStorage');

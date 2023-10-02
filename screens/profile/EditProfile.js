@@ -4,13 +4,9 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
-  TextInput,
   Modal,
   StyleSheet,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { MaterialIcons } from "@expo/vector-icons";
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
 import changeName from "../../handlers/changeName";
 import changeBio from "../../handlers/changeBio";
@@ -20,11 +16,10 @@ import changeLocation from "../../handlers/changeLocation";
 import { useRoute } from "@react-navigation/native";
 import changeDateOfBirth from "../../handlers/changeDateOfBirth";
 import { useNavigation } from '@react-navigation/native';
-import  { storage }  from "../../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
 import { Feather } from '@expo/vector-icons';
-import CountryPicker from 'react-native-country-picker-modal'
-
+import AvatarPicker from "../../components/AvatarPicker";
+import EditProfileTextInputField from "../../components/EditProfileTextInputField";
+import CountryPickerModal from "../../components/CountryPickerModal";
 
 
 export default function EditProfileById() {
@@ -54,16 +49,14 @@ const EditProfile = ({  user  }) => {
   
   const [lastName, setLastName] = useState(user.last_name);
   const [lastNameHasChanged, setLastNameHasChanged] = useState(false);
+
+
   const [selectedCountryName, setSelectedCountryName] = useState(user.location);
-
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
-
-  const [selectedCountryCode, setSelectedCountryCode] = useState(''); // Initialize it with an empty string
 
   
   const handleCountryChange = (country) => {
     setSelectedCountryName(country.name); // Set the selected country name
-    setSelectedCountryCode(country.cca2); // Set the selected country code
     setCountryNameHasChanged(true);
   };
     const today = new Date();
@@ -85,36 +78,6 @@ const EditProfile = ({  user  }) => {
     setOpenStartDatePicker(!openStartDatePicker);
   };
   
-
-  const handleImageSelection = async () => {
-    try {
-      // Launch the image picker
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 4],
-        quality: 1,
-      });
-  
-      if (!result.canceled) {
-        const imageUri = result.assets[0].uri;
-        const fileName = 'profile_picture.jpg'; // Define a unique name for the file
-        const storageRef = ref(storage, `profile_pictures/${user.email}/${fileName}`); // Use ref function
-  
-        // Upload the image to Firebase Storage
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        await uploadBytes(storageRef, blob); // Use uploadBytes function to upload
-  
-        // Get the download URL of the image and update the state variable
-        const downloadURL = await getDownloadURL(storageRef);
-        setSelectedImage(downloadURL); // Update the state variable here
-        setAvatarHasChanged(true);
-      }
-    } catch (error) {
-      console.error('Error selecting the image:', error);
-    }
-  };    
   
   const handleLastNameChange = (value) => {
     setLastName(value);
@@ -140,25 +103,25 @@ const EditProfile = ({  user  }) => {
 
   const handleSaveButton = async () => {
     if (nameHasChanged) {
-      const updated = await changeName(name);
+      await changeName(name);
     }
     if (bioHasChanged) {
-      const updated = await changeBio(bio); 
+      await changeBio(bio); 
     }
     if (avatarHasChanged) {
-      const updated = await changeAvatar(selectedImage); 
+      await changeAvatar(selectedImage); 
     }
     if (dateOfBirthHasChanged) {
       const formattedDate = selectedStartDate.split('/').join(' ');
-      const update = await changeDateOfBirth(formattedDate);
+      await changeDateOfBirth(formattedDate);
     }
     if (lastNameHasChanged) {
-      const update = await changeLastName(lastName);
+      await changeLastName(lastName);
     }
     if (CountryNameHasChanged) {
-      const update = await changeLocation(selectedCountryName);
+      await changeLocation(selectedCountryName);
     }
-    navigation.goBack();
+    navigation.navigate('InProfile');
   }
 
   function renderDatePicker() {
@@ -207,7 +170,7 @@ const EditProfile = ({  user  }) => {
             />
 
             <TouchableOpacity onPress={handleOnPressStartDate}>
-              <Feather name="x" size={24} color="#6B5A8E" />
+              <Feather name="x" size={24} color="#6B5A8E" style={{top: -30}}/>
             </TouchableOpacity>
           </View>
         </View>
@@ -219,52 +182,42 @@ const EditProfile = ({  user  }) => {
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.imageContainer}>
-          <TouchableOpacity onPress={handleImageSelection}>
-            <Image style={styles.avatar} source={{ uri: user.avatar}} />
-            <Image source={{ uri: selectedImage }} style={styles.image} />
-            <View style={styles.cameraIcon}>
-              <MaterialIcons name="photo-camera" size={32} color={'#6B5A8E'}/>
-            </View>
-          </TouchableOpacity>
+        <AvatarPicker
+          selectedImage={selectedImage}
+          setSelectedImage={setSelectedImage} // Pass the setSelectedImage function here
+          onImageSelect={handleAvatarChange}
+          user={user}
+        />
+
         </View>
 
-        <View>
-          <View style={styles.inputContainer}>
-            <View style={styles.textInput}>
-              <TextInput
-                value={name}
-                onChangeText={handleNameChange}
-                editable={true}
-                placeholder="Enter your first name"
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <View style={styles.textInput}>
-              <TextInput
-                value={lastName}
-                onChangeText={handleLastNameChange}
-                editable={true}
-                placeholder="Enter your last name"
-              />
-            </View>
-          </View>
-
-          
-
-          <View style={styles.inputContainer}>
-          <View style={styles.textInput}>
-            <TextInput
-              value={bio}
-              onChangeText={handleBioChange}
-              editable={true}
-              placeholder="Enter your bio"
-              multiline={true} // Allow multiple lines
-              numberOfLines={4} // Set the number of visible lines (adjust as needed)
+        <View style={styles.inputContainer}>
+            <EditProfileTextInputField
+              value={name}
+              onChangeText={handleNameChange}
+              placeholder="Enter your first name"
             />
           </View>
-        </View>
+
+          <View style={styles.inputContainer}>
+            <EditProfileTextInputField
+              value={lastName}
+              onChangeText={handleLastNameChange}
+              placeholder="Enter your last name"
+            />
+          </View>
+
+
+          <View style={styles.inputContainer}>
+            <EditProfileTextInputField
+              value={bio}
+              onChangeText={handleBioChange}
+              placeholder="Enter your bio"
+              multiline={true}
+              numberOfLines={4}
+            />
+          </View>
+
 
           <View style={styles.inputContainer}>
             <TouchableOpacity
@@ -275,18 +228,12 @@ const EditProfile = ({  user  }) => {
             <Text>{selectedStartDate}</Text>
             </TouchableOpacity>
           </View>
-        </View>
 
         <View style={styles.inputContainer}>
           <View style={styles.textInput}>
-          <View style={styles.countryPickerContainer}>
-            <CountryPicker
-              {...{
-                onSelect: handleCountryChange,
-                placeholder: selectedCountryName,
-              }}
-            />
-          </View>
+            <CountryPickerModal
+              handleCountryChange={handleCountryChange}
+              selectedCountryName={selectedCountryName}/>
           </View>
         </View>
 
@@ -323,19 +270,6 @@ const styles = StyleSheet.create({
     imageContainer: {
       alignItems: "center",
       marginVertical: 22,
-    },
-    image: {
-      height: 170,
-      width: 170,
-      borderRadius: 85,
-      borderWidth: 2,
-      borderColor: "#6B5A8E",
-    },
-    cameraIcon: {
-      position: "absolute",
-      bottom: 0,
-      right: 10,
-      zIndex: 9999,
     },
     inputContainer: {
       flexDirection: "column",
