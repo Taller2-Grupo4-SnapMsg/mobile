@@ -27,51 +27,38 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
+// Import the UserProvider
+
+import { useUser } from '../../UserContext';
+
+
 
 export default function Profile() {
+  const { loggedInUser } = useUser();
   const route = useRoute();
-  const { user_param } = route.params || {}; // Provide an empty object as a default
+  const { user_param } = route.params || {};
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [loggedInUser, setLoggedInUser] = useState(null);
 
-  const fetchUserData = async () => {
-    try {
-      // Fetch the logged-in user regardless of user_param
-      const loggedInUser = await getUserByToken();
-      if (loggedInUser) {
-        setLoggedInUser(loggedInUser);
-      } else {
-        console.log('No se pudo obtener el usuario');
-      }
-
-      // Check if user parameters are provided and set the user state accordingly
-      if (route.params && Object.keys(user_param).length !== 0) {
-        setUser(user_param);
-      } else {
-        // Handle the case where user parameters are not provided
-        setUser(loggedInUser);
-      }
-
-      setIsLoading(false); // Set loading to false after fetching
-    } catch (error) {
-      console.error('Error al obtener usuario:', error);
-      setIsLoading(false); // Set loading to false in case of an error
-    }
-  };
-
-  // Use useEffect to fetch user data when the component mounts or user_param changes
   useEffect(() => {
-    fetchUserData();
-  }, [user_param]);
-
-  // Use useFocusEffect to refetch user data when the screen gains focus
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchUserData();
-    }, [])
-  );
-
+    const fetchData = async () => {
+      try {
+        // Fetch the logged-in user regardless of user_param
+        if (route.params && Object.keys(user_param).length !== 0) {
+          setUser(user_param);
+        } else {
+          setUser(loggedInUser);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error al obtener usuario:', error);
+        setIsLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, [loggedInUser, user_param]);
+  
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -83,11 +70,13 @@ export default function Profile() {
       </View>
     );
   }
-
-  return <ProfileUser user={user} loggedInUser={loggedInUser} />;
+  return <ProfileUser user={user} />;
 }
 
-function ProfileUser({ user, loggedInUser }) {
+
+
+function ProfileUser({ user }) {
+  const { loggedInUser } = useUser(); // Use the hook to access loggedInUser
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
   const [followers, setFollowers] = useState(null);
@@ -119,13 +108,14 @@ function ProfileUser({ user, loggedInUser }) {
 
   useEffect(() => {
     if (user) {
+      console.log('user que llega  a use effect ', user)
       fetchFollowersCount();
       fetchFollowingCount();
     }
   }, [user]);
 
   const handleEditButton = () => {
-    navigation.navigate('EditProfile', { user: user });
+    navigation.push('EditProfile', { user: user });
   };
 
   const handleFollowersButton = () => {
@@ -136,7 +126,7 @@ function ProfileUser({ user, loggedInUser }) {
 
   const handleFollowingButton = () => {
     if (isFollowing || (user && loggedInUser && user.email === loggedInUser.email)) {
-      navigation.navigate('FollowingsList', { user: user });
+      navigation.push('FollowingsList', { user: user });
     }
   };
 

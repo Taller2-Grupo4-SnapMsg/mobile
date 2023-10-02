@@ -11,15 +11,15 @@ import Profile from './screens/profile/Profile';
 import EditProfile from './screens/profile/EditProfile';
 import FollowingsList from './screens/profile/FollowingsList';
 import FollowersList from './screens/profile/FollowersList';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'react-native';
 import { View } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+
+// Import the UserProvider
+import { UserProvider, useUser } from './UserContext'; // Import useUser hook
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -44,9 +44,11 @@ const StackNavigatorProfile = () => {
   );
 };
 
+
 export default function App() {
   const [token, setToken] = useState();
   const colorScheme = useColorScheme();
+  
 
   useEffect(() => {
     const getToken = async () => {
@@ -74,19 +76,21 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {token ? (
-        <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen name="Home" component={StackNavigator} />
-          <Drawer.Screen name="Profile" component={StackNavigatorProfile} />
-        </Drawer.Navigator>
-      ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Home" component={StackNavigator} />
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        {token ? (
+          <Drawer.Navigator initialRouteName="Home">
+            <Drawer.Screen name="Home" component={StackNavigator} />
+            <Drawer.Screen name="Profile" component={StackNavigatorProfile} />
+          </Drawer.Navigator>
+        ) : (
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="Home" component={StackNavigator} />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </UserProvider>
   );
-}
+};

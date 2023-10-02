@@ -8,6 +8,7 @@ import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import { useFocusEffect } from '@react-navigation/native';
 import getUserByToken from '../../handlers/getUserByToken';
+import { useUser } from '../../UserContext';
 
 export default function FollowersById() {
   const route = useRoute();
@@ -24,6 +25,7 @@ const Followers = ({ user }) => {
 
   const [followers, setFollowers] = useState([]);
   const [followerStatus, setFollowersStatus] = useState({});
+  const { loggedInUser } = useUser();
 
   const fetchFollowersData = async () => {
       try {
@@ -68,19 +70,6 @@ const Followers = ({ user }) => {
     }));
   };
 
-  const [loggedInUser, setLoggedInUser] = useState(null);
-
-  useEffect(() => {
-    const fetchLoggedInUser = async () => {
-      const loggedInUser = await getUserByToken();
-      // Handle the case where loggedInUser is undefined
-      if (!loggedInUser) {
-        console.error('Error fetching logged-in user');
-      }
-      setLoggedInUser(loggedInUser);
-    };
-    fetchLoggedInUser();
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -93,6 +82,7 @@ const Followers = ({ user }) => {
               if (loggedInUser && item.email === loggedInUser.email) {
                 navigation.navigate('InProfile');
               } else {
+                console.log("ENTROOOOOOOOOOOOOOOO")
                 navigation.push('InProfile', { user_param: item }); // Use push instead of navigate
               }
             }}

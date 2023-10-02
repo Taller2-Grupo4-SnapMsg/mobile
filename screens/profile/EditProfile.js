@@ -20,6 +20,9 @@ import { Feather } from '@expo/vector-icons';
 import AvatarPicker from "../../components/AvatarPicker";
 import EditProfileTextInputField from "../../components/EditProfileTextInputField";
 import CountryPickerModal from "../../components/CountryPickerModal";
+import { useUser } from '../../UserContext';
+import { useEffect } from "react";
+import getUserByToken from "../../handlers/getUserByToken";
 
 
 export default function EditProfileById() {
@@ -53,6 +56,9 @@ const EditProfile = ({  user  }) => {
 
   const [selectedCountryName, setSelectedCountryName] = useState(user.location);
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
+
+  const { loggedInUser, setLoggedInUser } = useUser(); // Use the hook to access loggedInUser
+
 
   
   const handleCountryChange = (country) => {
@@ -106,10 +112,10 @@ const EditProfile = ({  user  }) => {
       await changeName(name);
     }
     if (bioHasChanged) {
-      await changeBio(bio); 
+      await changeBio(bio);
     }
     if (avatarHasChanged) {
-      await changeAvatar(selectedImage); 
+      await changeAvatar(selectedImage);
     }
     if (dateOfBirthHasChanged) {
       const formattedDate = selectedStartDate.split('/').join(' ');
@@ -121,9 +127,29 @@ const EditProfile = ({  user  }) => {
     if (CountryNameHasChanged) {
       await changeLocation(selectedCountryName);
     }
+  
+    // Fetch the user after saving the changes
+    const fetchLoggedInUser = async () => {
+      try {
+        // Fetch the user here, e.g., using an API call or AsyncStorage
+        const user = await getUserByToken(); // Replace with your actual fetch logic
+  
+        // Set the loggedInUser if the user is fetched successfully
+        if (user) {
+          setLoggedInUser(user);
+        }
+      } catch (error) {
+        console.error('Error fetching logged-in user:', error);
+      }
+    };
+  
+    // Call the fetchLoggedInUser function
+    fetchLoggedInUser();
+  
+    // Navigate back to the previous screen
     navigation.navigate('InProfile');
-  }
-
+  };
+  
   function renderDatePicker() {
     return (
       <Modal

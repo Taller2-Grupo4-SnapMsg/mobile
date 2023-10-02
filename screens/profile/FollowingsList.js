@@ -8,6 +8,7 @@ import checkIfFollowing from '../../handlers/checkIfFollowing';
 import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import getUserByToken from '../../handlers/getUserByToken';
+import { useUser } from '../../UserContext';
 
 export default function FollowingsById() {
   const route = useRoute();
@@ -25,6 +26,8 @@ const Followings = ({ user }) => {
 
   const [followings, setFollowings] = useState([]);
   const [followingStatus, setFollowingStatus] = useState({});
+
+  const { loggedInUser } = useUser();
 
     const fetchFollowingsData = async () => {
       try {
@@ -74,20 +77,6 @@ const Followings = ({ user }) => {
         [itemEmail]: !prevStatus[itemEmail],
       }));
     };
-    const [loggedInUser, setLoggedInUser] = useState(null);
-
-    useEffect(() => {
-      const fetchLoggedInUser = async () => {
-        const loggedInUser = await getUserByToken();
-        // Handle the case where loggedInUser is undefined
-        if (!loggedInUser) {
-          console.error('Error fetching logged-in user');
-        }
-        setLoggedInUser(loggedInUser);
-      };
-      fetchLoggedInUser();
-    }, []);
-  
 
   return (
     <View style={styles.container}>
