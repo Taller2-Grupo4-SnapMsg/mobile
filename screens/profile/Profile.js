@@ -64,7 +64,6 @@ export default function Profile() {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Spinner
           visible={isLoading}
-          textContent={'Cargando...'}
           textStyle={{ color: '#FFF' }}
         />
       </View>

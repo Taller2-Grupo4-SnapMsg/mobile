@@ -66,7 +66,6 @@ export default function App() {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Spinner
           visible={true}
-          textContent={'Cargando...'}
           textStyle={{ color: '#FFF' }}
         />
       </View>
