@@ -29,7 +29,7 @@ const checkIfFollowing = async (email) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al obtener followers:', response.statusText);
+        console.error('Error al checkear si sigue al usuario:', response.status);
       }
     } catch (error) {
       const message =
