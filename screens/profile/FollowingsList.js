@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import checkIfFollowing from '../../handlers/checkIfFollowing';
 import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
-import getUserByToken from '../../handlers/getUserByToken';
+import { ActivityIndicator } from 'react-native'; 
 import { useUser } from '../../UserContext';
 
 export default function FollowingsById() {
@@ -26,57 +26,81 @@ const Followings = ({ user }) => {
 
   const [followings, setFollowings] = useState([]);
   const [followingStatus, setFollowingStatus] = useState({});
-
+  const [isFetchingMap, setIsFetchingMap] = useState({}); // Add isFetchingMap state
   const { loggedInUser } = useUser();
 
-    const fetchFollowingsData = async () => {
-      try {
+  const fetchFollowingsData = async () => {
+    try {
+      setIsFetchingMap({}); // Clear previous isFetchingMap when starting a new fetch
       const fetchedFollowings = await getFollowings(user.email);
       setFollowings(fetchedFollowings);
       const initialFollowerStatus = {};
       const followingEmails = fetchedFollowings.map((follower) => follower.email);
-  
+
       // Fetch follow status for all followers in parallel
       const followStatusPromises = followingEmails.map(async (followingEmail) => {
+        // Set isFetching for each user to true when you start fetching
+        setIsFetchingMap((prevIsFetchingMap) => ({
+          ...prevIsFetchingMap,
+          [followingEmail]: true,
+        }));
+
         const isUserFollowing = await checkIfFollowing(followingEmail);
+
+        // Set isFetching back to false after fetching for each user
+        setIsFetchingMap((prevIsFetchingMap) => ({
+          ...prevIsFetchingMap,
+          [followingEmail]: false,
+        }));
+
         return { email: followingEmail, isFollowing: isUserFollowing };
       });
-  
+
       // Wait for all promises to resolve
       const followerStatusArray = await Promise.all(followStatusPromises);
-  
+
       // Convert the array back to an object
       followerStatusArray.forEach((status) => {
         initialFollowerStatus[status.email] = status.isFollowing;
       });
-  
-      setFollowingStatus(initialFollowerStatus);
-      }catch (error) {
-        console.error('Error al obtener los followings:', error);
-      }
-    };
 
+      setFollowingStatus(initialFollowerStatus);
+    } catch (error) {
+      console.error('Error al obtener los followings:', error);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
-      // Llama a fetchUserData cada vez que la pantalla se monte
+      // Call fetchFollowingsData each time the screen mounts
       fetchFollowingsData();
     }, [user])
   );
-    const handleFollowButton = async (itemEmail) => {
-      // Check the current status from the local state
-      if (followingStatus[itemEmail]) {
-        await unfollowUser(itemEmail);
-      } else {
-        await followUser(itemEmail);
-      }
 
-      // Update the local state
-      setFollowingStatus((prevStatus) => ({
-        ...prevStatus,
-        [itemEmail]: !prevStatus[itemEmail],
-      }));
-    };
+  const handleFollowButton = async (itemEmail) => {
+    setIsFetchingMap((prevIsFetchingMap) => ({
+      ...prevIsFetchingMap,
+      [itemEmail]: true, // Set isFetching to true when you start the action
+    }));
+
+    // Check the current status from the local state
+    if (followingStatus[itemEmail]) {
+      await unfollowUser(itemEmail);
+    } else {
+      await followUser(itemEmail);
+    }
+
+    // Update the local state
+    setFollowingStatus((prevStatus) => ({
+      ...prevStatus,
+      [itemEmail]: !prevStatus[itemEmail],
+    }));
+
+    setIsFetchingMap((prevIsFetchingMap) => ({
+      ...prevIsFetchingMap,
+      [itemEmail]: false, // Set isFetching back to false after completing the action
+    }));
+  };
 
   return (
     <View style={styles.container}>
@@ -103,18 +127,24 @@ const Followings = ({ user }) => {
                 </Text>
               </View>
             </View>
+            
             {loggedInUser && item.email !== loggedInUser.email && (
-              <TouchableOpacity
-                style={styles.followButton}
-                onPress={() => handleFollowButton(item.email)}
-              >
-                <Text style={styles.followButtonText}>
-                  {followingStatus[item.email] ? 'Following' : 'Follow'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </TouchableOpacity>
-        )}
+                <TouchableOpacity
+                  style={styles.followButton}
+                  onPress={() => handleFollowButton(item.email)}
+                  disabled={isFetchingMap[item.email]} // Disable the button while fetching for this user
+                >
+                  {isFetchingMap[item.email] ? (
+                    <ActivityIndicator size="small" color="white" /> // Show a spinner while fetching for this user
+                  ) : (
+                    <Text style={styles.followButtonText}>
+                      {followingStatus[item.email] ? 'Following' : 'Follow'}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
+            </TouchableOpacity>
+          )}
         keyExtractor={(item) => item.email}
       />
     </View>

@@ -7,8 +7,8 @@ import checkIfFollowing from '../../handlers/checkIfFollowing';
 import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import { useFocusEffect } from '@react-navigation/native';
-import getUserByToken from '../../handlers/getUserByToken';
 import { useUser } from '../../UserContext';
+import { ActivityIndicator } from 'react-native';
 
 export default function FollowersById() {
   const route = useRoute();
@@ -25,39 +25,59 @@ const Followers = ({ user }) => {
 
   const [followers, setFollowers] = useState([]);
   const [followerStatus, setFollowersStatus] = useState({});
+  const [isFetchingMap, setIsFetchingMap] = useState({}); // Add isFetchingMap state
   const { loggedInUser } = useUser();
 
   const fetchFollowersData = async () => {
-      try {
-        const fetchedFollowers = await getFollowers(user.email);
-        setFollowers(fetchedFollowers);
-        const initialFollowerStatus = {};
-        const followersEmails = fetchedFollowers.map((follower) => follower.email);
-    
-        const followStatusPromises = followersEmails.map(async (followerEmail) => {
-          const isUserFollower = await checkIfFollowing(followerEmail);
-          return { email: followerEmail, isFollowing: isUserFollower };
-        });
-    
-        const followerStatusArray = await Promise.all(followStatusPromises);
-    
-        followerStatusArray.forEach((status) => {
-          initialFollowerStatus[status.email] = status.isFollowing;
-        });
-    
-        setFollowersStatus(initialFollowerStatus);
-        }catch (error) {
-          console.error('Error al obtener los followings:', error);
-        }
-    };
+    try {
+      setIsFetchingMap({}); // Clear previous isFetchingMap when starting a new fetch
+      const fetchedFollowers = await getFollowers(user.email);
+      setFollowers(fetchedFollowers);
+      const initialFollowerStatus = {};
+      const followersEmails = fetchedFollowers.map((follower) => follower.email);
 
-    useFocusEffect(
-      React.useCallback(() => {
-        fetchFollowersData();
-      }, [user])
-    ); 
+      const followStatusPromises = followersEmails.map(async (followerEmail) => {
+        // Set isFetching for each user to true when you start fetching
+        setIsFetchingMap((prevIsFetchingMap) => ({
+          ...prevIsFetchingMap,
+          [followerEmail]: true,
+        }));
+
+        const isUserFollower = await checkIfFollowing(followerEmail);
+
+        // Set isFetching back to false after fetching for each user
+        setIsFetchingMap((prevIsFetchingMap) => ({
+          ...prevIsFetchingMap,
+          [followerEmail]: false,
+        }));
+
+        return { email: followerEmail, isFollowing: isUserFollower };
+      });
+
+      const followerStatusArray = await Promise.all(followStatusPromises);
+
+      followerStatusArray.forEach((status) => {
+        initialFollowerStatus[status.email] = status.isFollowing;
+      });
+
+      setFollowersStatus(initialFollowerStatus);
+    } catch (error) {
+      console.error('Error al obtener los followings:', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchFollowersData();
+    }, [user])
+  );
 
   const handleFollowButton = async (itemEmail) => {
+    setIsFetchingMap((prevIsFetchingMap) => ({
+      ...prevIsFetchingMap,
+      [itemEmail]: true, // Set isFetching to true when you start the action
+    }));
+
     if (followerStatus[itemEmail]) {
       await unfollowUser(itemEmail);
     } else {
@@ -68,7 +88,13 @@ const Followers = ({ user }) => {
       ...prevStatus,
       [itemEmail]: !prevStatus[itemEmail],
     }));
+
+    setIsFetchingMap((prevIsFetchingMap) => ({
+      ...prevIsFetchingMap,
+      [itemEmail]: false, // Set isFetching back to false after completing the action
+    }));
   };
+
 
 
   return (
@@ -82,8 +108,7 @@ const Followers = ({ user }) => {
               if (loggedInUser && item.email === loggedInUser.email) {
                 navigation.navigate('InProfile');
               } else {
-                console.log("ENTROOOOOOOOOOOOOOOO")
-                navigation.push('InProfile', { user_param: item }); // Use push instead of navigate
+                navigation.push('InProfile', { user_param: item });
               }
             }}
           >
@@ -99,23 +124,27 @@ const Followers = ({ user }) => {
             </View>
 
             {loggedInUser && item.email !== loggedInUser.email && (
-            <TouchableOpacity
-              style={styles.followButton}
-               onPress={() => handleFollowButton(item.email)}
-            >
-              <Text style={styles.followButtonText}>
-                {followerStatus[item.email] ? 'Following' : 'Follow'}
-              </Text>
+                <TouchableOpacity
+                  style={styles.followButton}
+                  onPress={() => handleFollowButton(item.email)}
+                  disabled={isFetchingMap[item.email]} // Disable the button while fetching for this user
+                >
+                  {isFetchingMap[item.email] ? (
+                    <ActivityIndicator size="small" color="white" /> // Show a spinner while fetching for this user
+                  ) : (
+                    <Text style={styles.followButtonText}>
+                      {followerStatus[item.email] ? 'Following' : 'Follow'}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
             </TouchableOpacity>
-             )}
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.email} 
+          )}
+        keyExtractor={(item) => item.email}
       />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

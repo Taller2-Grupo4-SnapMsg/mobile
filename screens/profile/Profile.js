@@ -82,7 +82,8 @@ function ProfileUser({ user }) {
   const [followers, setFollowers] = useState(null);
   const [following, setFollowing] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -106,14 +107,12 @@ function ProfileUser({ user }) {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      console.log('user que llega  a use effect ', user)
+  useFocusEffect( 
+    React.useCallback(() => {
       fetchFollowersCount();
       fetchFollowingCount();
-    }
-  }, [user]);
-
+    }, [user])
+  );
   const handleEditButton = () => {
     navigation.push('EditProfile', { user: user });
   };
@@ -131,22 +130,38 @@ function ProfileUser({ user }) {
   };
 
   const handleFollowButton = async () => {
+    setIsFetching(true); // Set isFetching to true when you start the action
+  
     if (isFollowing) {
       await unfollowUser(user.email);
     } else {
       await followUser(user.email);
     }
-
+  
     setIsFollowing(!isFollowing);
     fetchFollowersCount();
     fetchFollowingCount();
+  
+    setIsFetching(false); // Set isFetching back to false after completing the action
   };
 
   useEffect(() => {
     const checkFollowingStatus = async () => {
       if (user) {
-        const isUserFollowing = await checkIfFollowing(user.email);
-        setIsFollowing(isUserFollowing);
+        try {
+          // Set isFetching to true when you start fetching
+          setIsFetching(true);
+
+          const isUserFollowing = await checkIfFollowing(user.email);
+
+          // Update isFollowing state based on the fetch result
+          setIsFollowing(isUserFollowing);
+        } catch (error) {
+          console.error('Error while checking following status:', error);
+        } finally {
+          // Set isFetching back to false after fetching and updating the state
+          setIsFetching(false);
+        }
       }
     };
 
@@ -162,7 +177,7 @@ function ProfileUser({ user }) {
             <EditProfileButton onPress={handleEditButton} />
           )}
           {user && loggedInUser && user.email !== loggedInUser.email && (
-            <FollowButton isFollowing={isFollowing} onPress={handleFollowButton} />
+          <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
           )}
           <View style={styles.profileContainer}>
             <ProfilePicture imageUrl={user.avatar} onPress={toggleModal} />

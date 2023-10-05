@@ -44,11 +44,9 @@ const StackNavigatorProfile = () => {
   );
 };
 
-
 export default function App() {
   const [token, setToken] = useState();
   const colorScheme = useColorScheme();
-  
 
   useEffect(() => {
     const getToken = async () => {

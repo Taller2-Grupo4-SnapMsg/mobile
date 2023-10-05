@@ -21,7 +21,7 @@ import AvatarPicker from "../../components/AvatarPicker";
 import EditProfileTextInputField from "../../components/EditProfileTextInputField";
 import CountryPickerModal from "../../components/CountryPickerModal";
 import { useUser } from '../../UserContext';
-import { useEffect } from "react";
+import { ActivityIndicator } from 'react-native'; 
 import getUserByToken from "../../handlers/getUserByToken";
 
 
@@ -56,6 +56,7 @@ const EditProfile = ({  user  }) => {
 
   const [selectedCountryName, setSelectedCountryName] = useState(user.location);
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // Add isSaving state
 
   const { loggedInUser, setLoggedInUser } = useUser(); // Use the hook to access loggedInUser
 
@@ -108,6 +109,8 @@ const EditProfile = ({  user  }) => {
   const navigation = useNavigation();
 
   const handleSaveButton = async () => {
+    setIsSaving(true); // Set isSaving to true when you start saving
+
     if (nameHasChanged) {
       await changeName(name);
     }
@@ -145,6 +148,7 @@ const EditProfile = ({  user  }) => {
   
     // Call the fetchLoggedInUser function
     fetchLoggedInUser();
+    setIsSaving(false); // Set isSaving back to false after saving
   
     // Navigate back to the previous screen
     navigation.navigate('InProfile');
@@ -265,10 +269,13 @@ const EditProfile = ({  user  }) => {
 
 
       
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
-          <Text style={styles.saveButtonText}>Save</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton} disabled={isSaving}>
+          {isSaving ? (
+            <ActivityIndicator size="small" color="white" /> // Show a spinner while saving
+          ) : (
+            <Text style={styles.saveButtonText}>Save</Text>
+          )}
         </TouchableOpacity>
-
         {renderDatePicker()}
       </ScrollView>
     </View>
