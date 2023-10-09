@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import getFollowings from '../../handlers/getFollowings';
+import getFollowings from '../../handlers/profile/getFollowings';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
-import checkIfFollowing from '../../handlers/checkIfFollowing';
+import checkIfFollowing from '../../handlers/profile/checkIfFollowing';
 import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import { ActivityIndicator } from 'react-native'; 
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 
 export default function FollowingsById() {
   const route = useRoute();

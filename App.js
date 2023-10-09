@@ -5,8 +5,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInScreen from './screens/signIn/SignInScreen';
 import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
-import TweetById from './screens/home/TweetById';
-import NewTweet from './screens/home/NewTweet';
+import TweetById from './components/TweetById';
+import NewTweet from './screens/newTweet/NewTweet';
 import Profile from './screens/profile/Profile';
 import EditProfile from './screens/profile/EditProfile';
 import FollowingsList from './screens/profile/FollowingsList';
@@ -16,9 +16,8 @@ import { useColorScheme } from 'react-native';
 import { View } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-
-// Import the UserProvider
-import { UserProvider, useUser } from './UserContext'; // Import useUser hook
+import { UserProvider} from './contexts/UserContext';
+import { PostProvider} from './contexts/PostContext';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -38,6 +37,7 @@ const StackNavigatorProfile = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="InProfile" component={Profile} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="TweetById" component={TweetById} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
     </Stack.Navigator>
@@ -74,6 +74,7 @@ export default function App() {
 
   return (
     <UserProvider>
+      <PostProvider>
       <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         {token ? (
           <Drawer.Navigator initialRouteName="Home">
@@ -88,6 +89,7 @@ export default function App() {
           </Stack.Navigator>
         )}
       </NavigationContainer>
+      </PostProvider>
     </UserProvider>
   );
 };

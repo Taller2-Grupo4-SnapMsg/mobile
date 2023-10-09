@@ -7,7 +7,7 @@ const getUserByToken = async () => {
         const token = await AsyncStorage.getItem('token');
         if (token) {
             const headers = {
-                'Content-Type': 'application/json;charset=utf-8',
+                "Content-Type": "application/json",
                 'accept': 'application/json',
                 'token': token,
             };
@@ -17,7 +17,6 @@ const getUserByToken = async () => {
                 headers: headers,
               });
 
-            console.log("fetching user by token");
             if (response.status === OK) {
                 const user = await response.json();
                 return user;

@@ -4,7 +4,7 @@ import DatePicker from 'react-native-modern-datepicker';
 
 import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import RegisterHandler from '../../handlers/RegisterHandler';
+import RegisterHandler from '../../handlers/register/RegisterHandler';
 
 
 const SignUpScreen = ({ navigation }) => {

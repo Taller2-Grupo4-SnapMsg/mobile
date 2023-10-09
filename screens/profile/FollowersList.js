@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import getFollowers from '../../handlers/getFollowers';
+import getFollowers from '../../handlers/profile/getFollowers';
 import { useNavigation } from '@react-navigation/native';
-import checkIfFollowing from '../../handlers/checkIfFollowing';
+import checkIfFollowing from '../../handlers/profile/checkIfFollowing';
 import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import { useFocusEffect } from '@react-navigation/native';
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { ActivityIndicator } from 'react-native';
 
 export default function FollowersById() {

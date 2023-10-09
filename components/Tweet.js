@@ -19,7 +19,7 @@ const Tweet = ({ tweet }) => {
     return null;
   }
 
-  const { id, user, content, image, numberOfComments, numberOfRetweets, numberOfLikes, impressions } = tweet;
+  const { user, content, image, numberOfComments, numberOfRetweets, numberOfLikes, impressions } = tweet;
 
   const handlePress = () => {
     navigation.navigate('TweetById', { tweetId: tweet.id });
@@ -45,7 +45,7 @@ const Tweet = ({ tweet }) => {
         <Text style={styles.content}>{content}</Text>
 
         {image && (
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
         )}
 
         <View style={styles.footer}>

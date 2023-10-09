@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 import small_logo from '../../assets/small_logo.png'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import LogInHandler from '../../handlers/LogInHandler';
+import LogInHandler from '../../handlers/login/LogInHandler';
 
 const SignInScreen = ({navigation}) => {
   const [email, setEmail] = useState();

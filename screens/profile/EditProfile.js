@@ -8,19 +8,19 @@ import {
   StyleSheet,
 } from "react-native";
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
-import changeName from "../../handlers/changeName";
-import changeBio from "../../handlers/changeBio";
-import changeAvatar from "../../handlers/changeAvatar";
-import changeLastName from "../../handlers/changeLastName";
-import changeLocation from "../../handlers/changeLocation";
+import changeName from "../../handlers/editProfile/changeName";
+import changeBio from "../../handlers/editProfile/changeBio";
+import changeAvatar from "../../handlers/editProfile/changeAvatar";
+import changeLastName from "../../handlers/editProfile/changeLastName";
+import changeLocation from "../../handlers/editProfile/changeLocation";
 import { useRoute } from "@react-navigation/native";
-import changeDateOfBirth from "../../handlers/changeDateOfBirth";
+import changeDateOfBirth from "../../handlers/editProfile/changeDateOfBirth";
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import AvatarPicker from "../../components/AvatarPicker";
 import EditProfileTextInputField from "../../components/EditProfileTextInputField";
 import CountryPickerModal from "../../components/CountryPickerModal";
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { ActivityIndicator } from 'react-native'; 
 import getUserByToken from "../../handlers/getUserByToken";
 

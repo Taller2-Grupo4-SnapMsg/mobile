@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
-import getUserByToken from '../../handlers/getUserByToken';
-import getFollowersByUsername from '../../handlers/getFollowersByUsername';
-import getFollowingByUsername from '../../handlers/getFollowingByUsername';
+import { useColorScheme, FlatList, Pressable } from 'react-native';
+import getFollowersByUsername from '../../handlers/profile/getFollowersByUsername';
+import getFollowingByUsername from '../../handlers/profile/getFollowingByUsername';
 import { useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,42 +13,48 @@ import ProfileExtraInfo from '../../components/ProfileExtraInfo';
 import { useRoute } from '@react-navigation/native';
 import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
-import checkIfFollowing from '../../handlers/checkIfFollowing';
+import checkIfFollowing from '../../handlers/profile/checkIfFollowing';
 import FollowButton from '../../components/FollowButton';
+import { Entypo } from '@expo/vector-icons';
+import Tweet from '../../components/Tweet';
+import { usePost } from '../../contexts/PostContext';
+import { useUser } from '../../contexts/UserContext';
+import getPostsByToken from '../../handlers/profile/getPostsByToken';
 import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
 } from 'react-native';
 import {
   DarkTheme,
   DefaultTheme,
-  ThemeProvider,
+  ThemeProvider
 } from '@react-navigation/native';
-// Import the UserProvider
-
-import { useUser } from '../../UserContext';
-
 
 
 export default function Profile() {
   const { loggedInUser } = useUser();
+  const { posts } = usePost();
   const route = useRoute();
   const { user_param } = route.params || {};
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { postsChanged, setPostsChanged } = usePost();
+
+  console.log("ENTRO A PROFILE")
+  console.log(postsChanged)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch the logged-in user regardless of user_param
         if (route.params && Object.keys(user_param).length !== 0) {
           setUser(user_param);
         } else {
           setUser(loggedInUser);
         }
         setIsLoading(false);
+        
+        //setPostsChanged(true);
       } catch (error) {
         console.error('Error al obtener usuario:', error);
         setIsLoading(false);
@@ -69,12 +74,12 @@ export default function Profile() {
       </View>
     );
   }
-  return <ProfileUser user={user} />;
+  return <ProfileUser user={user} posts={posts}/>;
 }
 
 
+function ProfileUser({ user, posts}) {
 
-function ProfileUser({ user }) {
   const { loggedInUser } = useUser(); // Use the hook to access loggedInUser
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
@@ -112,6 +117,7 @@ function ProfileUser({ user }) {
       fetchFollowingCount();
     }, [user])
   );
+
   const handleEditButton = () => {
     navigation.push('EditProfile', { user: user });
   };
@@ -166,7 +172,10 @@ function ProfileUser({ user }) {
 
     checkFollowingStatus();
   }, [user]);
-  
+
+  const handlePress = () => {
+    navigation.navigate('NewTweet');
+  };
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -206,6 +215,11 @@ function ProfileUser({ user }) {
             />
           </View>
         </View>
+
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => item && <Tweet tweet={item} />}
+          />
       </View>
     </ThemeProvider>
   );
