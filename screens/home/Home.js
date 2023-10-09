@@ -23,7 +23,7 @@ export default function Home({}) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
-  const handlePress = () => {
+  const handlePressPlus = () => {
     navigation.navigate('NewTweet');
   };
 
@@ -76,18 +76,11 @@ export default function Home({}) {
           />
         }
       />
-      <Pressable style={styles.floatingButton} onPress={handlePress}>
+      <Pressable style={styles.floatingButton} onPress={handlePressPlus}>
         <Entypo
           name="plus"
           size={24}
           color="white"
-        />
-      </Pressable>
-      <Pressable style={styles.floatingButton} onPress={handlePress}>
-        <Entypo
-          name="minus"
-          size={24}
-          //color="white"
         />
       </Pressable>
     </View>
