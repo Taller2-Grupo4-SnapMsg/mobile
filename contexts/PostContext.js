@@ -14,7 +14,7 @@ export function PostProvider({ children }) {
         const fetchedPosts = await getPostsByToken();
         if (fetchedPosts) {
           setPosts(fetchedPosts);
-          setPostsChanged(false); // Establecer los cambios como false después de cargar
+          setPostsChanged(false);
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -22,7 +22,7 @@ export function PostProvider({ children }) {
     };
 
     fetchPosts();
-  }, [postsChanged]); // Agregar postsChanged como una dependencia
+  }, [postsChanged]);
 
   return (
     <PostContext.Provider value={{ posts, postsChanged, setPostsChanged }}>
