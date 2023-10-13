@@ -4,8 +4,9 @@ import getUserByToken from './handlers/getUserByToken';
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [loggedInUser, setLoggedInUser] = useState(null);
 
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  
   useEffect(() => {
     const fetchLoggedInUser = async () => {
       try {
@@ -15,7 +16,7 @@ export function UserProvider({ children }) {
         // Set the loggedInUser if the user is fetched successfully
         if (user) {
           setLoggedInUser(user);
-        }
+        } 
       } catch (error) {
         console.error('Error fetching logged-in user:', error);
       }

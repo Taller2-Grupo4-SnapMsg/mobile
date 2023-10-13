@@ -16,8 +16,6 @@ const getUserByToken = async () => {
                 method: 'GET',
                 headers: headers,
               });
-
-            console.log("fetching user by token");
             if (response.status === OK) {
                 const user = await response.json();
                 return user;
@@ -25,7 +23,7 @@ const getUserByToken = async () => {
                 throw new Error('Error al obtener los datos del usuario: ' ,response.status);
             }
         } else {
-            throw new Error('Token no encontrado en AsyncStorage');
+            return null;
         }
     } catch (error) {
         console.error('Error al obtener el usuario:', error);

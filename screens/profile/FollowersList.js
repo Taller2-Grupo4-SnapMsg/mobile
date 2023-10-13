@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import getFollowers from '../../handlers/getFollowers';
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +16,6 @@ import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../../UserContext';
-import { ActivityIndicator } from 'react-native';
 
 export default function FollowersById() {
   const route = useRoute();
@@ -25,19 +32,21 @@ const Followers = ({ user }) => {
 
   const [followers, setFollowers] = useState([]);
   const [followerStatus, setFollowersStatus] = useState({});
-  const [isFetchingMap, setIsFetchingMap] = useState({}); // Add isFetchingMap state
+  const [isFetchingMap, setIsFetchingMap] = useState({});
   const { loggedInUser } = useUser();
+
+  const [isFetching, setIsFetching] = useState(false); // Set isFetching to false initially
 
   const fetchFollowersData = async () => {
     try {
-      setIsFetchingMap({}); // Clear previous isFetchingMap when starting a new fetch
+      setIsFetching(true); // Set isFetching to true when starting to fetch
+      setIsFetchingMap({});
       const fetchedFollowers = await getFollowers(user.email);
       setFollowers(fetchedFollowers);
       const initialFollowerStatus = {};
       const followersEmails = fetchedFollowers.map((follower) => follower.email);
 
       const followStatusPromises = followersEmails.map(async (followerEmail) => {
-        // Set isFetching for each user to true when you start fetching
         setIsFetchingMap((prevIsFetchingMap) => ({
           ...prevIsFetchingMap,
           [followerEmail]: true,
@@ -45,7 +54,6 @@ const Followers = ({ user }) => {
 
         const isUserFollower = await checkIfFollowing(followerEmail);
 
-        // Set isFetching back to false after fetching for each user
         setIsFetchingMap((prevIsFetchingMap) => ({
           ...prevIsFetchingMap,
           [followerEmail]: false,
@@ -63,6 +71,8 @@ const Followers = ({ user }) => {
       setFollowersStatus(initialFollowerStatus);
     } catch (error) {
       console.error('Error al obtener los followings:', error);
+    } finally {
+      setIsFetching(false); // Set isFetching to false when done fetching
     }
   };
 
@@ -75,7 +85,7 @@ const Followers = ({ user }) => {
   const handleFollowButton = async (itemEmail) => {
     setIsFetchingMap((prevIsFetchingMap) => ({
       ...prevIsFetchingMap,
-      [itemEmail]: true, // Set isFetching to true when you start the action
+      [itemEmail]: true,
     }));
 
     if (followerStatus[itemEmail]) {
@@ -91,46 +101,51 @@ const Followers = ({ user }) => {
 
     setIsFetchingMap((prevIsFetchingMap) => ({
       ...prevIsFetchingMap,
-      [itemEmail]: false, // Set isFetching back to false after completing the action
+      [itemEmail]: false,
     }));
   };
 
-
-
   return (
     <View style={styles.container}>
-      <FlatList
-        data={followers}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.itemContainer}
-            onPress={() => {
-              if (loggedInUser && item.email === loggedInUser.email) {
-                navigation.navigate('InProfile');
-              } else {
-                navigation.push('InProfile', { user_param: item });
-              }
-            }}
-          >
-            <Image style={styles.image} source={{ uri: item.avatar }} />
-            <View style={styles.textContainer}>
-              <Text style={styles.nameText}>{item.name}</Text>
-              <View>
-                <Text style={styles.usernameText}>@{item.username}</Text>
-                <Text numberOfLines={2} style={styles.bioText}>
-                  {item.bio}
-                </Text>
+       {isFetching ? (
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="large" color="#6B5A8E" />
+        </View>
+  ) : followers.length === 0 ? (
+        <Text style={styles.emptyText}>You have no followers yet!</Text>
+      ) : (
+        <FlatList
+          data={followers}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.itemContainer}
+              onPress={() => {
+                if (loggedInUser && item.email === loggedInUser.email) {
+                  navigation.navigate('Profile');
+                } else {
+                  navigation.push('Profile', { user_param: item });
+                }
+              }}
+            >
+              <Image style={styles.image} source={{ uri: item.avatar }} />
+              <View style={styles.textContainer}>
+                <Text style={styles.nameText}>{item.name}</Text>
+                <View>
+                  <Text style={styles.usernameText}>@{item.username}</Text>
+                  <Text numberOfLines={2} style={styles.bioText}>
+                    {item.bio}
+                  </Text>
+                </View>
               </View>
-            </View>
 
-            {loggedInUser && item.email !== loggedInUser.email && (
+              {loggedInUser && item.email !== loggedInUser.email && (
                 <TouchableOpacity
                   style={styles.followButton}
                   onPress={() => handleFollowButton(item.email)}
-                  disabled={isFetchingMap[item.email]} // Disable the button while fetching for this user
+                  disabled={isFetchingMap[item.email]}
                 >
                   {isFetchingMap[item.email] ? (
-                    <ActivityIndicator size="small" color="white" /> // Show a spinner while fetching for this user
+                    <ActivityIndicator size="small" color="white" />
                   ) : (
                     <Text style={styles.followButtonText}>
                       {followerStatus[item.email] ? 'Following' : 'Follow'}
@@ -140,8 +155,9 @@ const Followers = ({ user }) => {
               )}
             </TouchableOpacity>
           )}
-        keyExtractor={(item) => item.email}
-      />
+          keyExtractor={(item) => item.email}
+        />
+      )}
     </View>
   );
 };
@@ -149,15 +165,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   itemContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-start', 
-    justifyContent: 'space-between', 
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
-
   },
+
   image: {
     width: 56,
     height: 56,
@@ -179,14 +200,21 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 50,
-    backgroundColor: "#6B5A8E",
+    backgroundColor: '#6B5A8E',
   },
   followButtonText: {
     color: 'white',
   },
   bioText: {
     fontSize: 14,
-    color: '#555', 
-    marginTop: 4, 
+    color: '#555',
+    marginTop: 4,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 100,
+    color: '#6B5A8E',
   },
 });

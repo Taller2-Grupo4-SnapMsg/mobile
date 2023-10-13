@@ -17,12 +17,12 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
 
         const dob = date_of_birth.replace(/\//g, ' ');
         const requestBody = {
-        email: email,
-        password: password,
-        name: firstName,
-        last_name: lastName,
-        username: username,
-        date_of_birth: dob,
+            email: email,
+            password: password,
+            name: firstName,
+            last_name: lastName,
+            username: username,
+            date_of_birth: dob,
         };
 
         const response = await fetch('https://loginback-lg51.onrender.com/register', {
@@ -32,14 +32,12 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
         });
 
         const responseData = await response.json();
-        console.log("response.status: " + response.status);
 
         switch (response.status) {
             case OK:
                 const token = responseData.token;
                 await AsyncStorage.setItem('token', token);
-                Alert.alert('Alert', 'Sign Up successful');
-                break;
+                return true;
         
             case USER_ALREADY_REGISTERED:
                 if (responseData.detail && responseData.detail.includes(CHECK_USERNAME)) {
@@ -49,12 +47,12 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
                 else {
                     Alert.alert('Alert', 'Unknown error with user data.');
                 }
-                break;
+                return false;
                 
             default:
                 Alert.alert('Alert', 'Registration failed: ' + responseData);
                 console.error('Registration failed:', responseData);
-                break;
+                return false;
         }
     } catch (error) {
         console.log("error!: " +  error);
@@ -62,7 +60,6 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
         error.response?.data?.error ||
         error.message ||
         'Service is not available at the moment';
-        console.log(message);
         throw new Error(message);
     }
 };

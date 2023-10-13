@@ -16,5 +16,10 @@ export default function CountryPickerModal({ handleCountryChange, selectedCountr
 }
 
 const styles = StyleSheet.create({
-  // Your styles...
+  countryPickerContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 20,
+  },
 });

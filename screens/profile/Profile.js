@@ -16,6 +16,8 @@ import followUser from '../../handlers/followUser';
 import unfollowUser from '../../handlers/unfollowUser';
 import checkIfFollowing from '../../handlers/checkIfFollowing';
 import FollowButton from '../../components/FollowButton';
+import checkIfFollower from '../../handlers/checkIfFollower';
+
 import {
   StyleSheet,
   Text,
@@ -82,6 +84,7 @@ function ProfileUser({ user }) {
   const [following, setFollowing] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isFollowing, setIsFollowing] = useState(null);
+  const [isFollower, setIsFollower] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const toggleModal = () => {
@@ -117,13 +120,13 @@ function ProfileUser({ user }) {
   };
 
   const handleFollowersButton = () => {
-    if (isFollowing || (user && loggedInUser && user.email === loggedInUser.email)) {
+    if (isFollowing && isFollower || (user && loggedInUser && user.email === loggedInUser.email)) {
       navigation.push('FollowersList', { user: user });
     }
   };
 
   const handleFollowingButton = () => {
-    if (isFollowing || (user && loggedInUser && user.email === loggedInUser.email)) {
+    if (isFollowing && isFollower|| (user && loggedInUser && user.email === loggedInUser.email)) {
       navigation.push('FollowingsList', { user: user });
     }
   };
@@ -164,7 +167,25 @@ function ProfileUser({ user }) {
       }
     };
 
+    const checkFollowerStatus = async () => {
+      if (user) {
+        try {
+          // Set isFetching to true when you start fetching
+          setIsFetching(true);
+          const isUserFollower = await checkIfFollower(user.email);
+          // Update isFollowing state based on the fetch result
+          setIsFollower(isUserFollower);
+        } catch (error) {
+          console.error('Error while checking following status:', error);
+        }
+        finally {
+          // Set isFetching back to false after fetching and updating the state
+          setIsFetching(false);
+        }
+      }
+    }
     checkFollowingStatus();
+    checkFollowerStatus();
   }, [user]);
   
 
@@ -179,13 +200,21 @@ function ProfileUser({ user }) {
           <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
           )}
           <View style={styles.profileContainer}>
-            <ProfilePicture imageUrl={user.avatar} onPress={toggleModal} />
+            <ProfilePicture imageUrl={user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png'} onPress={toggleModal} />
             <ProfilePictureModal
               isVisible={isModalVisible}
-              imageUrl={user.avatar}
+              imageUrl={user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png'}
               onClose={toggleModal}
             />
+
             <View style={styles.userInfoContainer}>
+            {user && loggedInUser && user.email !== loggedInUser.email && isFollower && (
+              <View style={styles.followsYouContainer}>
+                <Text style={styles.followsYouText}>Follows you</Text>
+              </View>
+            )}
+
+
               {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
               {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
             </View>
@@ -247,5 +276,17 @@ const styles = StyleSheet.create({
   },
   profileContainerWhole: {
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  followsYouContainer: {
+    flexDirection: 'row', // Use flexDirection 'row' to make the text wrap
+    alignItems: 'center', // Align text vertically in the container
+    marginBottom: 5,
+  },
+  followsYouText: {
+    backgroundColor: 'rgba(107, 90, 142, 0.5)', // Background color and opacity
+    borderRadius: 5, // Adjust the border radius as needed
+    paddingHorizontal: 8,
+    color: '#fff', // Text color inside the rectangle
+    fontSize: 12,
   },
 });

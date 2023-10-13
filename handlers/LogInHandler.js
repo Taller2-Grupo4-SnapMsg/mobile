@@ -23,26 +23,20 @@ const headers = {
         headers: headers,
         body: JSON.stringify(requestBody),
       });
-
       const responseData = await response.json();
       switch (response.status) {
         case OK:
             const token = responseData.token;
             await AsyncStorage.setItem('token', token);
-            Alert.alert('Alert', 'Sign Up successful');
             return true;
     
         case USER_NOT_FOUND:
-            Alert.alert('Alert', 'User not found. Check email and password.');
             return false;
 
         case PASSWORD_DOESNT_MATCH:
-            Alert.alert('Alert', 'Incorrect password.');
             return false;
 
-        default:
-            Alert.alert('Alert', 'Sign in failed: ' + responseData);
-            console.error('Sign in failed:', responseData);
+        default:z
             return false;
       }
     } catch (error) {
@@ -50,7 +44,6 @@ const headers = {
         error.response?.data?.error ||
         error.message ||
         'Service is not available at the moment';
-      console.log(message);
       throw new Error(message);
     }
   };
