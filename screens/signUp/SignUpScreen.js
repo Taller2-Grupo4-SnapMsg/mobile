@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-modern-datepicker';
-
+import { fetchLoggedInUser } from '../../handlers/fetchLoggedInUser';
 import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
+import SignInButton from '../../components/SignInButton';
+import { useUser } from '../../UserContext';
+import CountryPickerModal from '../../components/CountryPickerModal';
+import changeLocation from '../../handlers/changeLocation';
 
 
 const SignUpScreen = ({ navigation }) => {
@@ -14,10 +18,10 @@ const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const {setLoggedInUser}= useUser();
   const [modalVisible, setModalVisible] = useState(false);
   const [date_of_birth, setDateOfBirth] = useState('');
-
   const handleDateChange = (date) => {
     setDateOfBirth(date);
     setModalVisible(false);
@@ -26,6 +30,13 @@ const SignUpScreen = ({ navigation }) => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const [selectedCountryName, setSelectedCountryName] = useState('Argentina');
+  const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
+  
+  const handleCountryChange = (country) => {
+    setSelectedCountryName(country.name); // Set the selected country name
+    setCountryNameHasChanged(true);
+  };
 
   const handleSignUp = async () => {
     try {
@@ -33,9 +44,15 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
-      await RegisterHandler(email, password, name, last_name, username, date_of_birth)
-      
-      navigation.navigate('Main');
+      setIsLoading(true); // Start loading
+
+      response = await RegisterHandler(email, password, name, last_name, username, date_of_birth)
+      if (response) {
+        await changeLocation(selectedCountryName);
+        await fetchLoggedInUser({ setLoggedInUser }); // Fetch the logged in user
+        navigation.navigate('Home');
+      }
+      setIsLoading(false); // Start loading
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler
@@ -49,13 +66,12 @@ const SignUpScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={{ uri: 'https://wallpaperaccess.com/full/2923163.jpg' }}
       style={styles.container}
     >
       
     <View style={styles.container}>
     <Image style={styles.logo} source={small_logo} />
-    <Text style={styles.signupTitle}>Sign up to SnapMsg today!</Text>
+    <Text style={styles.signupTitle}>Sign up to <Text style={{color: '#6B5A8E', fontSize: 30}}>SnapMsg</Text> today!</Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputs}
@@ -153,12 +169,21 @@ const SignUpScreen = ({ navigation }) => {
 
       </View>
 
-      <TouchableOpacity
-        style={[styles.buttonContainer, styles.signupButton]}
-        onPress={handleSignUp}>
-        <Text style={styles.signupText}>Sign up!</Text>
-      </TouchableOpacity>
 
+      <View style={styles.inputContainer}>
+          <View style={styles.textInput}>
+            <CountryPickerModal
+              handleCountryChange={handleCountryChange}
+              selectedCountryName={selectedCountryName}/>
+          </View>
+        </View>
+
+
+       {isLoading ? ( // Show the loading spinner while registering
+          <ActivityIndicator size="large" color="#6B5A8E" />
+        ) : (
+          <SignInButton onPress={handleSignUp} text="Sign up!" />
+        )}
       <TouchableOpacity
         style={styles.buttonContainer}
         onPress={handleSignIn}>
@@ -187,20 +212,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
 
-    shadowColor: '#808080',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
 
     elevation: 5
+  },
+  signupButtonContainer: {
+    backgroundColor: '#6B5A8E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50, // Add rounded corners
+    paddingHorizontal: 50,
+    paddingVertical: 10,
+    marginVertical: 20,
   },
   inputs: {
     height: 45,
     marginLeft: 16,
-    borderBottomColor: '#FFFFFF',
     flex: 1,
   },
   inputIcon: {
@@ -230,50 +256,34 @@ const styles = StyleSheet.create({
   },
   signupButton: {
     backgroundColor: '#6B5A8E',
-
-    shadowColor: '#808080',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 12.35,
-
-    elevation: 19,
+    marginTop: 20,
   },
   signupTitle: {
-    color: 'white', 
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 30,
-    marginBottom: 60,
+    fontSize: 26,
+    marginBottom: 30,
+
   },
   signupText: {
-    color: 'white', 
+    color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16,
   },
   btnText: {
-    color: 'white',
     fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
+    marginTop: 20,
   },
   textByRegister: {
-    color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
   },
   logo: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
+    width: 80,
+    height: 80,
+    marginBottom: 20,
+    marginTop: 40,
   },
   modalContainer: {
     flex: 1,

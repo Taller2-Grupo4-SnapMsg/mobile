@@ -179,10 +179,10 @@ function ProfileUser({ user }) {
           <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
           )}
           <View style={styles.profileContainer}>
-            <ProfilePicture imageUrl={user.avatar} onPress={toggleModal} />
+            <ProfilePicture imageUrl={user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png'} onPress={toggleModal} />
             <ProfilePictureModal
               isVisible={isModalVisible}
-              imageUrl={user.avatar}
+              imageUrl={user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png'}
               onClose={toggleModal}
             />
             <View style={styles.userInfoContainer}>

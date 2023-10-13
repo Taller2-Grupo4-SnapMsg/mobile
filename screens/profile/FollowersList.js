@@ -106,9 +106,9 @@ const Followers = ({ user }) => {
             style={styles.itemContainer}
             onPress={() => {
               if (loggedInUser && item.email === loggedInUser.email) {
-                navigation.navigate('InProfile');
+                navigation.navigate('Profile');
               } else {
-                navigation.push('InProfile', { user_param: item });
+                navigation.push('Profile', { user_param: item });
               }
             }}
           >

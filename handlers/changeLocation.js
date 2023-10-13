@@ -20,7 +20,7 @@ const changeCountry = async (location) => {
         method: 'PUT',
         headers: headers,
       });
-
+      console.log(response.status);
       if (response.status === 200) {
         const data = await response.json();
         return data;

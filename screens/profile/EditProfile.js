@@ -19,7 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import AvatarPicker from "../../components/AvatarPicker";
 import EditProfileTextInputField from "../../components/EditProfileTextInputField";
-import CountryPickerModal from "../../components/CountryPickerModal";
+import CountryPickerModalEdit from "../../components/CountryPickerModalEdit";
 import { useUser } from '../../UserContext';
 import { ActivityIndicator } from 'react-native'; 
 import getUserByToken from "../../handlers/getUserByToken";
@@ -38,7 +38,7 @@ export default function EditProfileById() {
 
 const EditProfile = ({  user  }) => {
 
-  const [selectedImage, setSelectedImage] = useState(user.avatar);
+  const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png');
   const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
   
   const [name, setName] = useState(user.name);
@@ -54,13 +54,13 @@ const EditProfile = ({  user  }) => {
   const [lastNameHasChanged, setLastNameHasChanged] = useState(false);
 
 
+  const [isSaving, setIsSaving] = useState(false); // Add isSaving state
+  
+  const { loggedInUser, setLoggedInUser } = useUser(); // Use the hook to access loggedInUser
+  
+  
   const [selectedCountryName, setSelectedCountryName] = useState(user.location);
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
-  const [isSaving, setIsSaving] = useState(false); // Add isSaving state
-
-  const { loggedInUser, setLoggedInUser } = useUser(); // Use the hook to access loggedInUser
-
-
   
   const handleCountryChange = (country) => {
     setSelectedCountryName(country.name); // Set the selected country name
@@ -151,7 +151,7 @@ const EditProfile = ({  user  }) => {
     setIsSaving(false); // Set isSaving back to false after saving
   
     // Navigate back to the previous screen
-    navigation.navigate('InProfile');
+    navigation.navigate('Profile');
   };
   
   function renderDatePicker() {
@@ -261,7 +261,7 @@ const EditProfile = ({  user  }) => {
 
         <View style={styles.inputContainer}>
           <View style={styles.textInput}>
-            <CountryPickerModal
+            <CountryPickerModalEdit
               handleCountryChange={handleCountryChange}
               selectedCountryName={selectedCountryName}/>
           </View>

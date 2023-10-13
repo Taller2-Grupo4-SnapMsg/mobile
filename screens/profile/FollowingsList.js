@@ -111,9 +111,9 @@ const Followings = ({ user }) => {
             style={styles.itemContainer}
             onPress={() => {
               if (loggedInUser && item.email === loggedInUser.email) {
-                navigation.navigate('InProfile');
+                navigation.navigate('Profile');
               } else {
-                navigation.push('InProfile', { user_param: item }); // Use push instead of navigate
+                navigation.push('Profile', { user_param: item }); // Use push instead of navigate
               }
             }}
           >
