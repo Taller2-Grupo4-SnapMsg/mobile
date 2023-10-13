@@ -26,12 +26,15 @@ const Followings = ({ user }) => {
 
   const [followings, setFollowings] = useState([]);
   const [followingStatus, setFollowingStatus] = useState({});
-  const [isFetchingMap, setIsFetchingMap] = useState({}); // Add isFetchingMap state
+  const [isFetchingMap, setIsFetchingMap] = useState({});
   const { loggedInUser } = useUser();
+
+  const [isFetching, setIsFetching] = useState(false); // Set isFetching to false initially
 
   const fetchFollowingsData = async () => {
     try {
-      setIsFetchingMap({}); // Clear previous isFetchingMap when starting a new fetch
+      setIsFetching(true); // Set isFetching to true when starting to fetch
+      setIsFetchingMap({});
       const fetchedFollowings = await getFollowings(user.email);
       setFollowings(fetchedFollowings);
       const initialFollowerStatus = {};
@@ -67,6 +70,8 @@ const Followings = ({ user }) => {
       setFollowingStatus(initialFollowerStatus);
     } catch (error) {
       console.error('Error al obtener los followings:', error);
+    } finally {
+      setIsFetching(false); // Set isFetching to false when done fetching
     }
   };
 
@@ -104,6 +109,13 @@ const Followings = ({ user }) => {
 
   return (
     <View style={styles.container}>
+    {isFetching ? (
+      <View style={styles.spinnerContainer}>
+        <ActivityIndicator size="large" color="#6B5A8E" />
+      </View>
+    ) : followings.length === 0 ? (
+        <Text style={styles.emptyText}>You are not following anyone yet!</Text>
+      ) : (
       <FlatList
         data={followings}
         renderItem={({ item }) => (
@@ -147,6 +159,7 @@ const Followings = ({ user }) => {
           )}
         keyExtractor={(item) => item.email}
       />
+      )}
     </View>
   );
 };
@@ -155,11 +168,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   itemContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-start', 
-    justifyContent: 'space-between', 
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
@@ -194,4 +212,12 @@ const styles = StyleSheet.create({
     color: '#555', 
     marginTop: 4, 
   },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center', // Center the text
+    marginTop: 100, // Add some margin at the top
+    color: '#6B5A8E',
+  },
+
 });
