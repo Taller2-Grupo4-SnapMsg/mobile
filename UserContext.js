@@ -4,7 +4,6 @@ import getUserByToken from './handlers/getUserByToken';
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  console.log('UserProvider called'); // Add this line for debugging
 
   const [loggedInUser, setLoggedInUser] = useState(null);
   

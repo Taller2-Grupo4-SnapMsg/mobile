@@ -6,7 +6,7 @@ const USER_NOT_FOUND = 404;
 
 const API_BASE_URL = 'https://loginback-lg51.onrender.com';
 
-const changeCountry = async (location) => {
+const checkIfFollowing = async (email) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -16,8 +16,8 @@ const changeCountry = async (location) => {
         'token': token,
       };
 
-      const response = await fetch(`${API_BASE_URL}/users/location?new_location=${location}`, { //chequear como cambiar
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}/is_follower/email?email_follower=${email}`, {
+        method: 'GET',
         headers: headers,
       });
       if (response.status === 200) {
@@ -29,7 +29,7 @@ const changeCountry = async (location) => {
       } else if (response.status === USER_NOT_FOUND) {
         Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al actualizar bio:', response.status);
+        console.error('Error al checkear si sigue al usuario:', response.status);
       }
     } catch (error) {
       const message =
@@ -44,7 +44,6 @@ const changeCountry = async (location) => {
   }
 };
 
-  
-  export default changeCountry;
+  export default checkIfFollowing;
 
   
