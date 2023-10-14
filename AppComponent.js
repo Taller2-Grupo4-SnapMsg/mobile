@@ -64,7 +64,7 @@ export default function AppComponent() {
         <Drawer.Navigator initialRouteName="Home">
           <Drawer.Screen name="InHome" component={StackNavigator} options={{ title: 'Home' }} />
           <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile} options={{ title: 'Profile' }} />
-          <Drawer.Screen name="SearchUser" component={StackNavigatorSearch} options={{ title: 'Search' }} />
+          <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
         </Drawer.Navigator>
       ) : (
         <Stack.Navigator screenOptions={{ headerShown: false }}>

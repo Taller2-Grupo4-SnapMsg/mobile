@@ -7,7 +7,7 @@ import {
   TextInput,
   FlatList,
   Image,
-    ActivityIndicator,
+  ActivityIndicator,
 } from 'react-native';
 import searchUserByUsername from '../../handlers/searchUserByUsername';
 import { useUser } from '../../UserContext';
@@ -25,35 +25,37 @@ export default function SearchUser() {
   const [followingStatus, setFollowingStatus] = useState({});
   const { loggedInUser } = useUser();
   const navigation = useNavigation();
+  const [isFetching, setIsFetching] = useState(false); // State to track data fetching
 
   const handleSearchButton = async () => {
     // Handle the search button press
+    setIsFetching(true); // Start fetching
     try {
       const response = await searchUserByUsername(searchText, offset, ammount);
       if (response) {
         const initialFollowingStatus = {};
         const users_emails = response.map((user) => user.email);
-  
+
         const followStatusPromises = users_emails.map(async (user_email) => {
           setIsFetchingMap((prevIsFetchingMap) => ({
             ...prevIsFetchingMap,
             [user_email]: true,
           }));
-  
+
           const isUserFollowing = await checkIfFollowing(user_email);
-  
+
           setIsFetchingMap((prevIsFetchingMap) => ({
             ...prevIsFetchingMap,
             [user_email]: false,
           }));
-          
+
           initialFollowingStatus[user_email] = isUserFollowing;
-          
+
           return { email: user_email, isFollowing: isUserFollowing };
         });
-  
+
         const followingStatusArray = await Promise.all(followStatusPromises);
-  
+
         setFollowingStatus(initialFollowingStatus);
         setUsers(response); // Set the users in state
       } else {
@@ -61,9 +63,11 @@ export default function SearchUser() {
       }
     } catch (error) {
       console.error('Error in search:', error);
+    } finally {
+      setIsFetching(false); // Stop fetching
     }
-  }
-  
+  };
+
   const handleFollowButton = async (itemEmail) => {
     setIsFetchingMap((prevIsFetchingMap) => ({
       ...prevIsFetchingMap,
@@ -96,26 +100,28 @@ export default function SearchUser() {
           value={searchText}
           onChangeText={(text) => setSearchText(text)}
         />
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={handleSearchButton}
-        >
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearchButton}>
           <Text>Search</Text>
         </TouchableOpacity>
       </View>
-      <FlatList
+      {isFetching ? ( // Conditionally render the spinner when fetching
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="large" color="#6B5A8E" />
+        </View>
+      ) : (
+        <FlatList
           data={users}
           keyExtractor={(item) => item.email}
           renderItem={({ item }) => (
             <TouchableOpacity
-            style={styles.itemContainer}
-            onPress={() => {
-              if (loggedInUser && item.email !== loggedInUser.email) {
-                navigation.navigate('Profile', { user_param: item });
-              }
-            }}
-          >
-              <Image style={styles.image} source={{ uri: item.avatar || "https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png"}} />
+              style={styles.itemContainer}
+              onPress={() => {
+                if (loggedInUser && item.email !== loggedInUser.email) {
+                  navigation.navigate('Profile', { user_param: item });
+                }
+              }}
+            >
+              <Image style={styles.image} source={{ uri: item.avatar || "https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png" }} />
               <View style={styles.textContainer}>
                 <Text style={styles.nameText}>{item.name}</Text>
                 <View>
@@ -141,11 +147,10 @@ export default function SearchUser() {
                   )}
                 </TouchableOpacity>
               )}
-
             </TouchableOpacity>
-
           )}
-      />
+        />
+      )}
     </View>
   );
 }
@@ -216,5 +221,10 @@ const styles = StyleSheet.create({
   },
   followButtonText: {
     color: 'white',
+  },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
