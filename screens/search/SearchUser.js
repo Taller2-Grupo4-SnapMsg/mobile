@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function SearchUser() {
   const [searchText, setSearchText] = useState(''); // State for the search text
-  const [ammount, setAmmount] = useState(5); // State for the ammount of users to search
+  const [ammount, setAmmount] = useState(1); // State for the amount of users to search
   const [offset, setOffset] = useState(0); // State for the offset of users to search
   const [users, setUsers] = useState([]); // State to store the list of users
   const [isFetchingMap, setIsFetchingMap] = useState({});
@@ -26,13 +26,17 @@ export default function SearchUser() {
   const { loggedInUser } = useUser();
   const navigation = useNavigation();
   const [isFetching, setIsFetching] = useState(false); // State to track data fetching
+  const [showMoreVisible, setShowMoreVisible] = useState(true); // State to track if "Show More" button is visible
 
   const handleSearchButton = async () => {
-    // Handle the search button press
     setIsFetching(true); // Start fetching
     try {
       const response = await searchUserByUsername(searchText, offset, ammount);
       if (response) {
+        if (response.length < ammount) {
+          // If the number of results is less than the requested amount, there are no more results to load.
+          setShowMoreVisible(false);
+        }
         const initialFollowingStatus = {};
         const users_emails = response.map((user) => user.email);
 
@@ -57,9 +61,13 @@ export default function SearchUser() {
         const followingStatusArray = await Promise.all(followStatusPromises);
 
         setFollowingStatus(initialFollowingStatus);
-        setUsers(response); // Set the users in state
+
+        // Concatenate the new results with the existing ones
+        setUsers(response);
+        setShowMoreVisible(true);
       } else {
         setUsers([]); // Clear the user list
+        setShowMoreVisible(false); // No more results to load
       }
     } catch (error) {
       console.error('Error in search:', error);
@@ -91,6 +99,25 @@ export default function SearchUser() {
     }));
   };
 
+  const handleShowMore = async () => {
+    setOffset(offset + ammount); // Increment the offset to load more results
+    setIsFetching(true);
+    try {
+      const response = await searchUserByUsername(searchText, offset, ammount);
+      if (response) {
+        if (response.length < ammount) {
+          setShowMoreVisible(false);
+        }
+        // Concatenate the new results with the existing ones
+        setUsers((prevUsers) => [...prevUsers, ...response]);
+      }
+    } catch (error) {
+      console.error('Error in search:', error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchBarContainer}>
@@ -104,7 +131,7 @@ export default function SearchUser() {
           <Text>Search</Text>
         </TouchableOpacity>
       </View>
-      {isFetching ? ( // Conditionally render the spinner when fetching
+      {isFetching ? (
         <View style={styles.spinnerContainer}>
           <ActivityIndicator size="large" color="#6B5A8E" />
         </View>
@@ -112,7 +139,7 @@ export default function SearchUser() {
         <FlatList
           data={users}
           keyExtractor={(item) => item.email}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
@@ -121,7 +148,10 @@ export default function SearchUser() {
                 }
               }}
             >
-              <Image style={styles.image} source={{ uri: item.avatar || "https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png" }} />
+              <Image
+                style={styles.image}
+                source={{ uri: item.avatar || "https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png" }}
+              />
               <View style={styles.textContainer}>
                 <Text style={styles.nameText}>{item.name}</Text>
                 <View>
@@ -146,8 +176,18 @@ export default function SearchUser() {
                     </Text>
                   )}
                 </TouchableOpacity>
-              )}
+          )}
             </TouchableOpacity>
+          )}
+          ListFooterComponent={() => (
+            showMoreVisible && (
+              <TouchableOpacity
+                style={styles.showMoreButton}
+                onPress={handleShowMore}
+              >
+                <Text>Show More</Text>
+              </TouchableOpacity>
+            )
           )}
         />
       )}
@@ -187,11 +227,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 50,
   },
-  userItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#6B5A8E',
-  },
   image: {
     width: 56,
     height: 56,
@@ -226,5 +261,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  showMoreButton: {
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#6B5A8E',
+    borderRadius: 50,
   },
 });

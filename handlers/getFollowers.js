@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://back-users-merok23.cloud.okteto.net';
+const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const getFollowers = async (email) => {
   const token = await AsyncStorage.getItem('token');
@@ -27,8 +27,6 @@ const getFollowers = async (email) => {
       } else if (response.status === 422) {
         const errorData = await response.json();
         console.error('Validation Error:', errorData);
-      } else if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
         console.error('Error al obtener followers:', response.status);
       }

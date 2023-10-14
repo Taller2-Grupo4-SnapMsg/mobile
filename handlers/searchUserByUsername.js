@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const searchUserByUsername = async (username, offset, ammount) => {
   const token = await AsyncStorage.getItem('token');

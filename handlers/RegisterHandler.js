@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert }  from 'react-native';
 
-const OK = 201
+const OK = 200
 const USER_ALREADY_REGISTERED = 409
 const CHECK_USERNAME = "Username"
 const CHECK_EMAIL= "Email"
@@ -25,7 +25,7 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
             date_of_birth: dob,
         };
 
-        const response = await fetch('https://loginback-lg51.onrender.com/register', {
+        const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/register', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody),

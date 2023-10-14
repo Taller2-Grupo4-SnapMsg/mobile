@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const getFollowingByUsername = async (email) => {
   const token = await AsyncStorage.getItem('token');
@@ -23,8 +23,6 @@ const getFollowingByUsername = async (email) => {
       if (response.status === OK) {
         const following = await response.json();
         return following;
-      } else if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Alert', 'El usuario no se encontro. Verifica el email.');
       } else {
         console.error('Error al obtener following count:', response.status);
       }

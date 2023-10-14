@@ -7,15 +7,15 @@ const USER_NOT_FOUND = 404
 const PASSWORD_DOESNT_MATCH = 401
 
 
-  const LoginWithGoogle = async (token) => {
+  const LoginWithGoogle = async (firebase_id_token) => {
     const headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json;charset=utf-8',
-        'firebase-id-token': token,
+        'firebase-id-token': firebase_id_token,
     };
     
     try { 
-      const response = await fetch('https://loginback-lg51.onrender.com/login_with_google/', {
+      const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/login_with_google/', {
         method: 'POST',
         headers: headers,
       });

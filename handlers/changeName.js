@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const changeName = async (name) => {
   const token = await AsyncStorage.getItem('token');
@@ -28,8 +28,6 @@ const changeName = async (name) => {
     } else if (response.status === 422) {
       const errorData = await response.json();
       console.error('Validation Error:', errorData);
-    } else if (response.status === USER_NOT_FOUND) {
-      Alert.alert('Alert', 'El usuario no se encontro. Verifica el email.');
     } else {
       console.error('Error al actualizar nombre:', response.status);
     }
