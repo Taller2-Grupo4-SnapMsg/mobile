@@ -18,7 +18,7 @@ const headers = {
         password: password,
       };
   
-      const response = await fetch('https://loginback-lg51.onrender.com/login/', {
+      const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/login/', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(requestBody),
@@ -36,7 +36,7 @@ const headers = {
         case PASSWORD_DOESNT_MATCH:
             return false;
 
-        default:z
+        default:
             return false;
       }
     } catch (error) {

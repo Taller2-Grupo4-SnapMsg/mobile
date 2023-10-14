@@ -5,7 +5,7 @@ const OK = 200;
 const USER_NOT_FOUND = 404;
 
 //ponerlo en un .env como en la clase
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const getFollowersByUsername = async (email) => {
   const token = await AsyncStorage.getItem('token');
@@ -23,8 +23,6 @@ const getFollowersByUsername = async (email) => {
       if (response.status === OK) {
         const followers = await response.json();
         return followers;
-      } else if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Alert', 'El usuario no se encontro. Verifica el email.');
       } else {
         console.error('Error al obtener followers count:', response.status);
       }
@@ -33,12 +31,9 @@ const getFollowersByUsername = async (email) => {
         error.response?.data?.error ||
         error.message ||
         'El servicio no está disponible en este momento';
-      console.log(message);
       throw new Error(message);
     }
-  } else {
-    throw new Error('Token no encontrado en AsyncStorage');
-  }
+  } 
 };
 
 export default getFollowersByUsername;

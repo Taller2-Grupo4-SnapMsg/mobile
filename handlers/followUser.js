@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const followUser = async (email) => {
   const token = await AsyncStorage.getItem('token');
@@ -16,7 +16,7 @@ const followUser = async (email) => {
         'token': token,
       };
 
-      const response = await fetch(`${API_BASE_URL}/follow?email_following=${email}`, {
+      const response = await fetch(`${API_BASE_URL}/follow/${email}`, {
         method: 'POST',
         headers: headers,
       });
@@ -27,10 +27,8 @@ const followUser = async (email) => {
       } else if (response.status === 422) {
         const errorData = await response.json();
         console.error('Validation Error:', errorData);
-      } else if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Alert', 'El usuario no se encontro.');
       } else {
-        console.error('Error al obtener followers:', response.status);
+        console.error('Error al seguir:', response.status);
       }
     } catch (error) {
       const message =
@@ -40,9 +38,7 @@ const followUser = async (email) => {
       console.error(message);
       throw new Error(message);
     } 
-  } else {
-    throw new Error('Token no encontrado en AsyncStorage');
-  }
+  } 
 };
 
   export default followUser;

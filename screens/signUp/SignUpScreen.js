@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-modern-datepicker';
-import { fetchLoggedInUser } from '../../handlers/fetchLoggedInUser';
+import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
@@ -9,8 +9,9 @@ import SignInButton from '../../components/SignInButton';
 import { useUser } from '../../UserContext';
 import CountryPickerModal from '../../components/CountryPickerModal';
 import changeLocation from '../../handlers/changeLocation';
-
-
+import changeAvatar from '../../handlers/changeAvatar';
+import { storage } from '../../firebase';
+import { ref, getDownloadURL } from "firebase/storage";
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [last_name, setLastName] = useState();
@@ -34,7 +35,7 @@ const SignUpScreen = ({ navigation }) => {
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
   
   const handleCountryChange = (country) => {
-    setSelectedCountryName(country.name); // Set the selected country name
+    setSelectedCountryName(country.name); 
     setCountryNameHasChanged(true);
   };
 
@@ -44,18 +45,23 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
 
       response = await RegisterHandler(email, password, name, last_name, username, date_of_birth)
       if (response) {
         await changeLocation(selectedCountryName);
-        await fetchLoggedInUser({ setLoggedInUser }); // Fetch the logged in user
-        navigation.navigate('Home');
+        const storageRef = ref(
+          storage,
+          `/profile_pictures/default/default.png`
+        );
+        const downloadURL = await getDownloadURL(storageRef);
+        await changeAvatar(downloadURL);
+        await fetchLoggedInUser({ setLoggedInUser });
+        navigation.navigate('Interests');
       }
-      setIsLoading(false); // Start loading
+      setIsLoading(false);
     }
     catch (error) {
-      // Handle any errors thrown by RegisterHandler
       console.error('Error in registration:', error);
     }
   };

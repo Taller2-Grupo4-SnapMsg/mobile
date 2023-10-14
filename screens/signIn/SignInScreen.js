@@ -11,7 +11,7 @@ import LoginWithGoogle from '../../handlers/LoginWithGoogle';
 import SignInTextInput from '../../components/SignInTextInput';
 import SignInButton from '../../components/SignInButton';
 import SignInGoogleButton from '../../components/SignInGoogleButton';
-import { fetchLoggedInUser } from '../../handlers/fetchLoggedInUser';
+import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import { useUser } from '../../UserContext';
 WebBrowser.maybeCompleteAuthSession();
 
@@ -71,7 +71,6 @@ const SignInScreen = ({ navigation }) => {
           const user = userCredential.user;
           const idToken = await user.getIdToken(true);
           const response = await LoginWithGoogle(idToken);
-          console.log('response: ' + response);
           if (response) {
             await fetchLoggedInUser({setLoggedInUser});
             navigation.navigate('Home');

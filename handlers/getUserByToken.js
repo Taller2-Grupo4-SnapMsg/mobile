@@ -11,17 +11,14 @@ const getUserByToken = async () => {
                 'accept': 'application/json',
                 'token': token,
             };
-                            
-            const response = await fetch('https://loginback-lg51.onrender.com/get_user_by_token/', {
+            const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/get_user_by_token/', {
                 method: 'GET',
                 headers: headers,
-              });
+            });
             if (response.status === OK) {
                 const user = await response.json();
                 return user;
-            } else {
-                throw new Error('Error al obtener los datos del usuario: ' ,response.status);
-            }
+            } 
         } else {
             return null;
         }
