@@ -27,13 +27,16 @@ export default function SearchUser() {
   const navigation = useNavigation();
   const [isFetching, setIsFetching] = useState(false); // State to track data fetching
   const [showMoreVisible, setShowMoreVisible] = useState(false); // State to track if "Show More" button is visible
+  const [searchingText, setSearchingText] = useState(''); // State to track the text being searched
 
   const handleSearchButton = async () => {
     const newOffset = 0; // Reset the offset
     setOffset(newOffset); // Update the offset
-    setIsFetching(true); // Start fetching
+    setIsFetching(true); // Start fetching}}
+    const user_to_search = searchText;
+    setSearchingText(user_to_search);
     try {
-      const response = await searchUserByUsername(searchText, newOffset, ammount);
+      const response = await searchUserByUsername(user_to_search, newOffset, ammount);
       if (response) {
         if (response.length < ammount) {
           // If the number of results is less than the requested amount, there are no more results to load.
@@ -106,8 +109,7 @@ export default function SearchUser() {
     setOffset(newOffset); // Update the offset
     setIsFetching(true);
     try {
-      const response = await searchUserByUsername(searchText, newOffset, ammount);
-      console.log(response);
+      const response = await searchUserByUsername(searchingText, newOffset, ammount);
       if (response) {
         if (response.length < ammount) {
           setShowMoreVisible(false);
@@ -274,5 +276,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     width: 100,
     marginTop: 20,
+    marginBottom: 40,
   },
 });
