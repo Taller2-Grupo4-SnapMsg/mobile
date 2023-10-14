@@ -15,7 +15,6 @@ const getUserByToken = async () => {
                 method: 'GET',
                 headers: headers,
             });
-            console.log(response.status);
             if (response.status === OK) {
                 const user = await response.json();
                 return user;

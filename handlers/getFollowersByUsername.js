@@ -33,7 +33,6 @@ const getFollowersByUsername = async (email) => {
         error.response?.data?.error ||
         error.message ||
         'El servicio no está disponible en este momento';
-      console.log(message);
       throw new Error(message);
     }
   } 
