@@ -82,6 +82,7 @@ const Followings = ({ user }) => {
     }, [user])
   );
 
+
   const handleFollowButton = async (itemEmail) => {
     setIsFetchingMap((prevIsFetchingMap) => ({
       ...prevIsFetchingMap,
@@ -106,6 +107,8 @@ const Followings = ({ user }) => {
       [itemEmail]: false, // Set isFetching back to false after completing the action
     }));
   };
+
+
 
   return (
     <View style={styles.container}>

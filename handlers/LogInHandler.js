@@ -36,7 +36,7 @@ const headers = {
         case PASSWORD_DOESNT_MATCH:
             return false;
 
-        default:z
+        default:
             return false;
       }
     } catch (error) {

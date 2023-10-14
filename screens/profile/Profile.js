@@ -47,6 +47,7 @@ export default function Profile() {
       try {
         // Fetch the logged-in user regardless of user_param
         if (route.params && Object.keys(user_param).length !== 0) {
+          console.log('user_param', user_param);
           setUser(user_param);
         } else {
           setUser(loggedInUser);

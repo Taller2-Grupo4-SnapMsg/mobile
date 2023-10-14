@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://loginback-lg51.onrender.com';
+const API_BASE_URL = 'https://back-users-merok23.cloud.okteto.net';
 
 const getFollowings = async (email) => {
   const token = await AsyncStorage.getItem('token');
@@ -20,7 +20,6 @@ const getFollowings = async (email) => {
         method: 'GET',
         headers: headers,
       });
-
       if (response.status === 200) {
         const data = await response.json();
         return data;

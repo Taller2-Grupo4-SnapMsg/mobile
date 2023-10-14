@@ -50,7 +50,7 @@ const SignUpScreen = ({ navigation }) => {
       if (response) {
         await changeLocation(selectedCountryName);
         await fetchLoggedInUser({ setLoggedInUser }); // Fetch the logged in user
-        navigation.navigate('Home');
+        navigation.navigate('Interests');
       }
       setIsLoading(false); // Start loading
     }

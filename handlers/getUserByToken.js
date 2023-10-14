@@ -11,11 +11,11 @@ const getUserByToken = async () => {
                 'accept': 'application/json',
                 'token': token,
             };
-                            
-            const response = await fetch('https://loginback-lg51.onrender.com/get_user_by_token/', {
+            const response = await fetch('https://back-users-merok23.cloud.okteto.net/get_user_by_token/', {
                 method: 'GET',
                 headers: headers,
-              });
+            });
+            console.log(response.status);
             if (response.status === OK) {
                 const user = await response.json();
                 return user;
