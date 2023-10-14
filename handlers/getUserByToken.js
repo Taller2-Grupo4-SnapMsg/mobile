@@ -15,13 +15,10 @@ const getUserByToken = async () => {
                 method: 'GET',
                 headers: headers,
             });
-            console.log('getUserByToken response: ', response.status);
             if (response.status === OK) {
                 const user = await response.json();
                 return user;
-            } else {
-                throw new Error('Error al obtener los datos del usuario: ' ,response.status);
-            }
+            } 
         } else {
             return null;
         }

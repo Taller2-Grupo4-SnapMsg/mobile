@@ -4,6 +4,7 @@ import {
   View,
   ActivityIndicator,
   Alert,
+  Text, 
 } from 'react-native';
 import { useUser } from '../../UserContext';
 import { useNavigation } from '@react-navigation/native';
@@ -14,17 +15,18 @@ import UserSearchFlatList from '../../components/UserSearchFlatList';
 import SearchBar from '../../components/SearchBar';
 
 export default function SearchUser() {
-  const [searchText, setSearchText] = useState(''); 
-  const [ammount, setAmmount] = useState(1); 
-  const [offset, setOffset] = useState(0); 
-  const [users, setUsers] = useState([]); 
+  const [searchText, setSearchText] = useState('');
+  const [ammount, setAmmount] = useState(1);
+  const [offset, setOffset] = useState(0);
+  const [users, setUsers] = useState([]);
   const [isFetchingMap, setIsFetchingMap] = useState({});
   const [followingStatus, setFollowingStatus] = useState({});
   const { loggedInUser } = useUser();
   const navigation = useNavigation();
   const [isFetching, setIsFetching] = useState(false);
-  const [showMoreVisible, setShowMoreVisible] = useState(false); 
-  const [searchingText, setSearchingText] = useState(''); 
+  const [showMoreVisible, setShowMoreVisible] = useState(false);
+  const [searchingText, setSearchingText] = useState('');
+  const [searched, setSearched] = useState(false); // Add state to track if a search has been performed
 
   const handleSearchButton = async () => {
     if (searchText !== '') {
@@ -38,7 +40,8 @@ export default function SearchUser() {
         ammount,
         setFollowingStatus,
         setIsFetchingMap,
-    );
+      );
+      setSearched(true); // Mark that a search has been performed
     } else {
       Alert.alert('Please enter a text to search');
     }
@@ -63,7 +66,7 @@ export default function SearchUser() {
       searchingText,
       ammount,
       setFollowingStatus,
-      setIsFetchingMap
+      setIsFetchingMap,
     );
   };
 
@@ -77,6 +80,10 @@ export default function SearchUser() {
       {isFetching ? (
         <View style={styles.spinnerContainer}>
           <ActivityIndicator size="large" color="#6B5A8E" />
+        </View>
+      ) : users.length === 0 && searched ? ( // Check if users array is empty and a search has been performed
+        <View style={styles.noUsersContainer}>
+          <Text>No users found.</Text>
         </View>
       ) : (
         <UserSearchFlatList
@@ -99,6 +106,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noUsersContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
