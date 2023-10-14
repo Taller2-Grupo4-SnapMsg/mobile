@@ -201,10 +201,10 @@ function ProfileUser({ user }) {
           <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
           )}
           <View style={styles.profileContainer}>
-            <ProfilePicture imageUrl={user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png'} onPress={toggleModal} />
+            <ProfilePicture imageUrl={user.avatar || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'} onPress={toggleModal} />
             <ProfilePictureModal
               isVisible={isModalVisible}
-              imageUrl={user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png'}
+              imageUrl={user.avatar || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
               onClose={toggleModal}
             />
 

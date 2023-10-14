@@ -39,9 +39,7 @@ const checkIfFollowing = async (email) => {
       console.error(message);
       throw new Error(message);
     } 
-  } else {
-    throw new Error('Token no encontrado en AsyncStorage');
-  }
+  } 
 };
 
   export default checkIfFollowing;

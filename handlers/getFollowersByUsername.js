@@ -36,9 +36,7 @@ const getFollowersByUsername = async (email) => {
       console.log(message);
       throw new Error(message);
     }
-  } else {
-    throw new Error('Token no encontrado en AsyncStorage');
-  }
+  } 
 };
 
 export default getFollowersByUsername;

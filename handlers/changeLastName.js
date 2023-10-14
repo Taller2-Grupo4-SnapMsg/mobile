@@ -41,9 +41,7 @@ const changeLastName = async (last_name) => {
       console.error(message);
       throw new Error(message);
     }
-  } else {
-    throw new Error('Token no encontrado en AsyncStorage');
-  }
+  } 
 };
 
   

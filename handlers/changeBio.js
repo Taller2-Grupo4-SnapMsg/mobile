@@ -40,9 +40,7 @@ const changeBio = async (bio) => {
       console.error(message);
       throw new Error(message);
     } 
-  } else {
-    throw new Error('Token no encontrado en AsyncStorage');
-  }
+  } 
 };
 
   

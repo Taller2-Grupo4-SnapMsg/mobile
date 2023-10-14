@@ -9,7 +9,7 @@ import SignInButton from '../../components/SignInButton';
 import { useUser } from '../../UserContext';
 import CountryPickerModal from '../../components/CountryPickerModal';
 import changeLocation from '../../handlers/changeLocation';
-
+import changeAvatar from '../../handlers/changeAvatar';
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
@@ -49,6 +49,7 @@ const SignUpScreen = ({ navigation }) => {
       response = await RegisterHandler(email, password, name, last_name, username, date_of_birth)
       if (response) {
         await changeLocation(selectedCountryName);
+        await changeAvatar('https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
         await fetchLoggedInUser({ setLoggedInUser }); // Fetch the logged in user
         navigation.navigate('Interests');
       }
