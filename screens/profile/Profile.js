@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
 import getFollowersByUsername from '../../handlers/getFollowersByUsername';
 import getFollowingByUsername from '../../handlers/getFollowingByUsername';
 import { useNavigation } from '@react-navigation/native';
@@ -63,7 +62,6 @@ export default function Profile() {
 
 function ProfileUser({ user }) {
   const { loggedInUser } = useUser(); 
-  const colorScheme = useColorScheme();
   const navigation = useNavigation();
   const [followers, setFollowers] = useState(null);
   const [following, setFollowing] = useState(null);
@@ -125,6 +123,7 @@ function ProfileUser({ user }) {
     <ProfileBanner user={user} isFollowing={isFollowing} isFollower={isFollower} 
     isFetching={isFetching} toggleModal={toggleModal} handleEditButton={handleEditButton} 
     handleFollowersButton={handleFollowersButton} handleFollowingButton={handleFollowingButton}
-    handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible} />
+    handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
+    loggedInUser={loggedInUser} />
   );
 }

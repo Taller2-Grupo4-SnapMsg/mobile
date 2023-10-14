@@ -38,7 +38,7 @@ export default function EditProfileById() {
 
 const EditProfile = ({  user  }) => {
 
-  const [selectedImage, setSelectedImage] = useState(user.avatar || 'https://static-00.iconduck.com/assets.00/profile-circle-icon-2048x2048-cqe5466q.png');
+  const [selectedImage, setSelectedImage] = useState(user.avatar);
   const [avatarHasChanged, setAvatarHasChanged] = useState(false); 
   
   const [name, setName] = useState(user.name);
@@ -109,7 +109,7 @@ const EditProfile = ({  user  }) => {
   const navigation = useNavigation();
 
   const handleSaveButton = async () => {
-    setIsSaving(true); // Set isSaving to true when you start saving
+    setIsSaving(true); 
 
     if (nameHasChanged) {
       await changeName(name);
@@ -131,13 +131,10 @@ const EditProfile = ({  user  }) => {
       await changeLocation(selectedCountryName);
     }
   
-    // Fetch the user after saving the changes
     const fetchLoggedInUser = async () => {
       try {
-        // Fetch the user here, e.g., using an API call or AsyncStorage
-        const user = await getUserByToken(); // Replace with your actual fetch logic
+        const user = await getUserByToken(); 
   
-        // Set the loggedInUser if the user is fetched successfully
         if (user) {
           setLoggedInUser(user);
         }
@@ -146,11 +143,9 @@ const EditProfile = ({  user  }) => {
       }
     };
   
-    // Call the fetchLoggedInUser function
     fetchLoggedInUser();
-    setIsSaving(false); // Set isSaving back to false after saving
+    setIsSaving(false); 
   
-    // Navigate back to the previous screen
     navigation.navigate('Profile');
   };
   
@@ -214,7 +209,7 @@ const EditProfile = ({  user  }) => {
         <View style={styles.imageContainer}>
         <AvatarPicker
           selectedImage={selectedImage}
-          setSelectedImage={setSelectedImage} // Pass the setSelectedImage function here
+          setSelectedImage={setSelectedImage} 
           onImageSelect={handleAvatarChange}
           user={user}
         />
@@ -271,7 +266,7 @@ const EditProfile = ({  user  }) => {
       
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton} disabled={isSaving}>
           {isSaving ? (
-            <ActivityIndicator size="small" color="white" /> // Show a spinner while saving
+            <ActivityIndicator size="small" color="white" />
           ) : (
             <Text style={styles.saveButtonText}>Save</Text>
           )}
@@ -316,7 +311,7 @@ const styles = StyleSheet.create({
       height: 34,
       width: "100%",
       borderColor: "#ccc",
-      borderBottomWidth: 1, // Add this line
+      borderBottomWidth: 1, 
       borderRadius: 4,
       marginVertical: 6,
       justifyContent: "center",
@@ -330,7 +325,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       width: "40%",
-      alignSelf: "center", // Center button horizontally
+      alignSelf: "center",
     },
     saveButtonText: {
       fontSize: 20,
