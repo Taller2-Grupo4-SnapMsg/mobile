@@ -10,8 +10,8 @@ import getFollowers from '../../handlers/getFollowers';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../../UserContext';
-import { fetchFollowsData } from '../../handlers/Fetchings/fetchFollowData'; 
-import { handleFollowButtonInList } from '../../handlers/Buttons/handleFollowButtonInList'; 
+import { fetchFollowsData } from '../../functions/Fetchings/fetchFollowData'; 
+import { handleFollowButtonInList } from '../../functions/Buttons/handleFollowButtonInList'; 
 import UsersFlatList from '../../components/UsersFlatList';
 
 export default function FollowersById() {

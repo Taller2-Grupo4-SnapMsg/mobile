@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import getUserByToken from '../handlers/getUserByToken';
+import getUserByToken from '../../handlers/getUserByToken';
 
 const fetchLoggedInUser = async ({setLoggedInUser }) => {
     try {

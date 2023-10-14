@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, ActivityIndicator } from 'react-native';
 import DatePicker from 'react-native-modern-datepicker';
-import { fetchLoggedInUser } from '../../handlers/fetchLoggedInUser';
+import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';

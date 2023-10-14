@@ -1,6 +1,6 @@
 import React from 'react';
-import followUser from '../followUser';
-import unfollowUser from '../unfollowUser';
+import followUser from '../../handlers/followUser';
+import unfollowUser from '../../handlers/unfollowUser';
 
 
 export async function handleFollowButtonInList(
