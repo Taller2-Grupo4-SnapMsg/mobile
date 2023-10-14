@@ -71,7 +71,6 @@ const SignInScreen = ({ navigation }) => {
           const user = userCredential.user;
           const idToken = await user.getIdToken(true);
           const response = await LoginWithGoogle(idToken);
-          console.log(idToken)
           if (response) {
             await fetchLoggedInUser({setLoggedInUser});
             navigation.navigate('Home');

@@ -200,10 +200,10 @@ function ProfileUser({ user }) {
           <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
           )}
           <View style={styles.profileContainer}>
-            <ProfilePicture imageUrl={user.avatar || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'} onPress={toggleModal} />
+            <ProfilePicture imageUrl={user.avatar} onPress={toggleModal} />
             <ProfilePictureModal
               isVisible={isModalVisible}
-              imageUrl={user.avatar || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
+              imageUrl={user.avatar}
               onClose={toggleModal}
             />
 
