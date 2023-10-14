@@ -8,7 +8,6 @@ const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
 
 const searchUserByUsername = async (username, offset, ammount) => {
   const token = await AsyncStorage.getItem('token');
-
   if (token) {
     try {
         const headers = {
@@ -16,7 +15,7 @@ const searchUserByUsername = async (username, offset, ammount) => {
           'accept': 'application/json',
           'token': token,
         };
-      const response = await fetch(`${API_BASE_URL}/user/search/${username}?offset=${0}&ammount=${5}`, {
+      const response = await fetch(`${API_BASE_URL}/user/search/${username}?offset=${offset}&ammount=${ammount}`, {
         method: 'GET',
         headers: headers
       });

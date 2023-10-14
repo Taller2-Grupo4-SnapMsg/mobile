@@ -26,12 +26,14 @@ export default function SearchUser() {
   const { loggedInUser } = useUser();
   const navigation = useNavigation();
   const [isFetching, setIsFetching] = useState(false); // State to track data fetching
-  const [showMoreVisible, setShowMoreVisible] = useState(true); // State to track if "Show More" button is visible
+  const [showMoreVisible, setShowMoreVisible] = useState(false); // State to track if "Show More" button is visible
 
   const handleSearchButton = async () => {
+    const newOffset = 0; // Reset the offset
+    setOffset(newOffset); // Update the offset
     setIsFetching(true); // Start fetching
     try {
-      const response = await searchUserByUsername(searchText, offset, ammount);
+      const response = await searchUserByUsername(searchText, newOffset, ammount);
       if (response) {
         if (response.length < ammount) {
           // If the number of results is less than the requested amount, there are no more results to load.
@@ -100,10 +102,12 @@ export default function SearchUser() {
   };
 
   const handleShowMore = async () => {
-    setOffset(offset + ammount); // Increment the offset to load more results
+    const newOffset = offset + ammount; // Calculate the new offset
+    setOffset(newOffset); // Update the offset
     setIsFetching(true);
     try {
-      const response = await searchUserByUsername(searchText, offset, ammount);
+      const response = await searchUserByUsername(searchText, newOffset, ammount);
+      console.log(response);
       if (response) {
         if (response.length < ammount) {
           setShowMoreVisible(false);
@@ -263,9 +267,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   showMoreButton: {
-    alignItems: 'center',
-    padding: 10,
+    alignSelf: 'center', // Center the button horizontally
+    paddingHorizontal: 14,
+    paddingVertical: 5,
     backgroundColor: '#6B5A8E',
     borderRadius: 50,
+    width: 100,
+    marginTop: 20,
   },
 });
