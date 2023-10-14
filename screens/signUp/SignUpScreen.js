@@ -10,7 +10,8 @@ import { useUser } from '../../UserContext';
 import CountryPickerModal from '../../components/CountryPickerModal';
 import changeLocation from '../../handlers/changeLocation';
 import changeAvatar from '../../handlers/changeAvatar';
-
+import { storage } from '../../firebase';
+import { ref, getDownloadURL } from "firebase/storage";
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [last_name, setLastName] = useState();
@@ -34,7 +35,7 @@ const SignUpScreen = ({ navigation }) => {
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
   
   const handleCountryChange = (country) => {
-    setSelectedCountryName(country.name); // Set the selected country name
+    setSelectedCountryName(country.name); 
     setCountryNameHasChanged(true);
   };
 
@@ -44,19 +45,23 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Alert', 'All fields are required.');
         return;
       }
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
 
       response = await RegisterHandler(email, password, name, last_name, username, date_of_birth)
       if (response) {
         await changeLocation(selectedCountryName);
-        await changeAvatar('https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
-        await fetchLoggedInUser({ setLoggedInUser }); // Fetch the logged in user
+        const storageRef = ref(
+          storage,
+          `/profile_pictures/default/default.png`
+        );
+        const downloadURL = await getDownloadURL(storageRef);
+        await changeAvatar(downloadURL);
+        await fetchLoggedInUser({ setLoggedInUser });
         navigation.navigate('Interests');
       }
-      setIsLoading(false); // Start loading
+      setIsLoading(false);
     }
     catch (error) {
-      // Handle any errors thrown by RegisterHandler
       console.error('Error in registration:', error);
     }
   };

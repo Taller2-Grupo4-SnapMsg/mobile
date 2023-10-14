@@ -14,7 +14,7 @@ export default function AvatarPicker({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(false); // Reset the loading state when the selectedImage changes.
+    setIsLoading(false); 
   }, [selectedImage]);
 
   const handleImageSelection = async () => {
@@ -26,7 +26,7 @@ export default function AvatarPicker({
         aspect: [4, 4],
         quality: 1,
       });
-      setIsLoading(true); // Set loading to true when image selection starts.
+      setIsLoading(true); 
 
       if (!result.canceled) {
         const imageUri = result.assets[0].uri;
@@ -47,7 +47,7 @@ export default function AvatarPicker({
     } catch (error) {
       console.error("Error selecting the image:", error);
     } finally {
-      setIsLoading(false); // Set loading back to false when the process is done (even if there's an error).
+      setIsLoading(false); 
     }
   };
 
