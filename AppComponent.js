@@ -5,8 +5,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInScreen from './screens/signIn/SignInScreen';
 import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
-import TweetById from './screens/home/TweetById';
-import NewTweet from './screens/home/NewTweet';
+import PostById from './screens/home/PostById';
+import NewPost from './screens/home/NewPost/NewPost';
 import Profile from './screens/profile/Profile';
 import EditProfile from './screens/profile/EditProfile';
 import FollowingsList from './screens/profile/FollowingsList';
@@ -27,8 +27,8 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="TweetById" component={TweetById} />
-      <Stack.Screen name="NewTweet" component={NewTweet} />
+      <Stack.Screen name="PostById" component={PostById} />
+      <Stack.Screen name="NewPost" component={NewPost} />
     </Stack.Navigator>
   );
 };
