@@ -18,9 +18,12 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { UserProvider} from './contexts/UserContext';
 import { PostProvider} from './contexts/PostContext';
+import CustomDrawerContent from './components/CustomerDrawerContent.js';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+const AuthStack = createStackNavigator();
+const AuthenticationStack = createStackNavigator();
 
 const StackNavigator = () => {
   return (
@@ -43,6 +46,28 @@ const StackNavigatorProfile = () => {
     </Stack.Navigator>
   );
 };
+
+const AuthNavigator = () => {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="SignIn" component={SignInScreen} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+    </AuthStack.Navigator>
+  );
+};
+
+const MainNavigator = () => {
+  return (
+    <Drawer.Navigator
+      initialRouteName="Home"
+      drawerContent={props => <CustomDrawerContent {...props} navigation={props.navigation} />}
+    >
+      <Drawer.Screen name="Home" component={StackNavigator} />
+      <Drawer.Screen name="Profile" component={StackNavigatorProfile} />
+    </Drawer.Navigator>
+  );
+};
+
 
 export default function App() {
   const [token, setToken] = useState();
@@ -77,16 +102,13 @@ export default function App() {
       <PostProvider>
       <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         {token ? (
-          <Drawer.Navigator initialRouteName="Home">
-            <Drawer.Screen name="Home" component={StackNavigator} />
-            <Drawer.Screen name="Profile" component={StackNavigatorProfile} />
-          </Drawer.Navigator>
+            <AuthStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainNavigator">
+              <AuthStack.Screen name="MainNavigator" component={MainNavigator} />
+              <AuthStack.Screen name="SignIn" component={SignInScreen} />
+              <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+            </AuthStack.Navigator>
         ) : (
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="Home" component={StackNavigator} />
-          </Stack.Navigator>
+          <AuthNavigator />
         )}
       </NavigationContainer>
       </PostProvider>

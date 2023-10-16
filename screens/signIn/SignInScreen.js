@@ -25,7 +25,9 @@ const SignInScreen = ({navigation}) => {
         return;
       }
       const response = await LogInHandler(email, password)
-      if (response) navigation.navigate('Home');
+      if (response){
+        navigation.navigate('MainNavigator');
+      } 
     }
     catch (error) {
       // Handle any errors thrown by RegisterHandler

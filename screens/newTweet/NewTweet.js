@@ -13,6 +13,7 @@ import ProfilePicture from '../../components/ProfilePicture';
 import { useUser } from '../../contexts/UserContext';
 import Dialog from '../../components/Alert';
 import uuid from 'uuid';
+import v4 from 'uuid';
 import { usePost } from '../../contexts/PostContext';
 
 export default function NewTweet() {
@@ -69,7 +70,9 @@ function NewTweetComponente({ user}) {
 
     if (selectedImage) {
       const fileName = 'tweet_image.jpg';
-      const postId = uuid.v4();
+      const timestamp = Date.now();
+      const random = Math.random();
+      const postId = `${timestamp}-${random}`;
       const storageRef = ref(storage, `tweet_images/${postId}/${fileName}`);
 
       const response = await fetch(selectedImage);

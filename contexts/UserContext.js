@@ -19,6 +19,8 @@ export function UserProvider({ children }) {
       } catch (error) {
         console.error('Error fetching logged-in user:', error);
       }
+      console.log("SE ENTRA A HACER EL FETCH")
+      console.log(loggedInUser)
     };
 
     // Call the fetchLoggedInUser function when the component mounts
