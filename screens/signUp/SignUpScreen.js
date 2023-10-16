@@ -6,7 +6,7 @@ import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
 import SignInButton from '../../components/SignInButton';
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import CountryPickerModal from '../../components/CountryPickerModal';
 import changeLocation from '../../handlers/changeLocation';
 import changeAvatar from '../../handlers/changeAvatar';

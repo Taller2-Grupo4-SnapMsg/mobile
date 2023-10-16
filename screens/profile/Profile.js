@@ -16,7 +16,7 @@ import {
   View,
 } from 'react-native';
 
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 
 
 

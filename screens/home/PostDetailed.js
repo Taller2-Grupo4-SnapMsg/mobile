@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Post from '../../components/Post';
 import getPostById from '../../handlers/posts/getPostById';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-const PostById = () => {
+const PostDetailed = () => {
   const route = useRoute();
   const [post, setPost] = useState(null);
   const [isFetchingPost, setIsFetchingPost] = useState(false);
@@ -42,4 +42,4 @@ const PostById = () => {
   return <Post post={post} />;
 };
 
-export default PostById;
+export default PostDetailed;

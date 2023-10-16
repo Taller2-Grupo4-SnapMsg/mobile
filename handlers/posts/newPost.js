@@ -37,7 +37,7 @@ const PostHandler = async (content, image) => {
             error.response?.data?.error ||
             error.message ||
             'Service is not available at the moment';
-            console.log(message);
+            //console.log(message);
             throw new Error(message);
         }
     }

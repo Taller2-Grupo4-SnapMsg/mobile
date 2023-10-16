@@ -5,6 +5,7 @@ import IconButton from './IconButton';
 import { Entypo } from '@expo/vector-icons';
 import Avatar from './Avatar';
 import { useColorScheme } from 'react-native';
+import { EvilIcons } from '@expo/vector-icons';
 import {
   DarkTheme,
   DefaultTheme,
@@ -14,58 +15,64 @@ import {
 const Post = ({ post }) => {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
+  //console.log('Post Object:', post); // Log the post object
 
-  if (!post) {
+  if (!post)
     return null;
-  }
 
-  const { user, content, image, numberOfComments, numberOfReposts, numberOfLikes, impressions } = post;
+  const {
+    content,
+    hashtags,
+    id,
+    image,
+    number_likes,
+    number_reposts,
+    posted_at,
+    user,
+    user_repost,
+  } = post;
 
   const handlePress = () => {
-    navigation.navigate('PostById', { postId: post.id });
+    //despues sacar, solo para ios
+    //navigation.navigate('PostDetailed', { postId: post.id });
+    return;
   };
+  <Text style={styles.name}>
+      {user.username}
+    </Text>
+return (
+     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
+       <Pressable style={styles.container} onPress={handlePress}>
+         <Avatar user={post.user}/>
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-    <Pressable style={styles.container} onPress={handlePress}>
-      <Avatar user={post.user}/>
+         <View style={styles.mainContainer}>
+           <View style={{ flexDirection: 'row' }}>
+           <Text style={styles.name}> {user.name} </Text>
+           <Text style={styles.username}> {user.username} · 2h</Text>
+            <Entypo
+              name="dots-three-horizontal"
+              size={16}
+              color="gray"
+              style={{ marginLeft: 'auto' }}
+            />
+            </View>
+          </View>
 
-      <View style={styles.mainContainer}>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.username}>{user.username} · 2h</Text>
-          <Entypo
-            name="dots-three-horizontal"
-            size={16}
-            color="gray"
-            style={{ marginLeft: 'auto' }}
-          />
+          <Text style={styles.content}>{content.toString()}</Text>
+          
+          {image && (
+            <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
+          )}
+
+          <View style={styles.footer}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <IconButton name={"heart"} size={22} color="gray" />
+            <Text style={styles.content}> {number_likes} </Text>
+            <IconButton icon="share-apple" />
+          </View>
         </View>
-
-        <Text style={styles.content}>{content}</Text>
-
-        {image && (
-          <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
-        )}
-
-        <View style={styles.footer}>
-          {numberOfComments && (
-            <IconButton icon="comment" text={numberOfComments} />
-          )}
-          {numberOfReposts && (
-            <IconButton icon="repost" text={numberOfReposts} />
-          )}
-          {numberOfLikes && (
-            <IconButton icon="heart" text={numberOfLikes} />
-          )}
-          {(impressions || impressions === 0) && (
-            <IconButton icon="chart" text={impressions} />
-          )}
-          <IconButton icon="share-apple" />
-        </View>
-      </View>
-    </Pressable>
-    </ThemeProvider>
+      </Pressable>
+     </ThemeProvider>
   );
 };
 

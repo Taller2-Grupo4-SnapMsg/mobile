@@ -31,7 +31,7 @@ const searchUserByUsername = async (username, offset, ammount) => {
         error.response?.data?.error ||
         error.message ||
         'El servicio no está disponible en este momento';
-      console.log(message);
+      //console.log(message);
       throw new Error(message);
     }
   } 

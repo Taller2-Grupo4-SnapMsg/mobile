@@ -1,11 +1,10 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const getPosts = async (oldest_date, n) => {
+const editPostHandler = async (post) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -14,17 +13,25 @@ const getPosts = async (oldest_date, n) => {
                 'Accept': 'application/json',
                 'token': token,
               };
-              date_str = oldest_date.replace(' ', '_');
-              const response = await fetch(`${URL_POST_BACK}/posts/feed/${date_str}/amount/${n}`, {
-                method: 'GET',
+            
+            
+            const encodedImage = encodeURIComponent(post.image);
+            const requestBody = {
+                content: content,
+                image: encodedImage,
+            };
+    
+            const response = await fetch(`https://postsback.onrender.com/posts/`, {
+                method: 'POST',
                 headers: headers,
-              });
+                body: JSON.stringify(requestBody),
+            });
     
             if (response.status === OK) {
                 const post = await response.json();
                 return post;
             } else {
-                console.error('Fallo el request al back de post by id:', response.status);
+                console.error('Fallo el request al back de post:', response.status);
             }
         } catch (error) {
             const message =
@@ -37,4 +44,4 @@ const getPosts = async (oldest_date, n) => {
     }
 };
 
-export default getPosts;
+export default editPostHandler;

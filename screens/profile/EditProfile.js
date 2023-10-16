@@ -20,7 +20,7 @@ import { Feather } from '@expo/vector-icons';
 import AvatarPicker from "../../components/AvatarPicker";
 import EditProfileTextInputField from "../../components/EditProfileTextInputField";
 import CountryPickerModalEdit from "../../components/CountryPickerModalEdit";
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { ActivityIndicator } from 'react-native'; 
 import getUserByToken from "../../handlers/getUserByToken";
 

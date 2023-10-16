@@ -91,9 +91,9 @@ function NewPostComponente({ user}) {
     }
     setText('');
     setIsLoading(false);
-    console.log('Post enviado')
+    //console.log('Post enviado')
     setPostsChanged(true);
-    console.log(postsChanged)
+    //console.log(postsChanged)
   };
 
   const handlePressCancel = () => {

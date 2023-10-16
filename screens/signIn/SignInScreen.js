@@ -12,7 +12,7 @@ import SignInTextInput from '../../components/SignInTextInput';
 import SignInButton from '../../components/SignInButton';
 import SignInGoogleButton from '../../components/SignInGoogleButton';
 import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 WebBrowser.maybeCompleteAuthSession();
 
 const SignInScreen = ({ navigation }) => {

@@ -5,7 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInScreen from './screens/signIn/SignInScreen';
 import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
-import PostById from './screens/home/PostById';
+import PostDetailed from './screens/home/PostDetailed';
 import NewPost from './screens/home/NewPost/NewPost';
 import Profile from './screens/profile/Profile';
 import EditProfile from './screens/profile/EditProfile';
@@ -18,7 +18,7 @@ import { useColorScheme } from 'react-native';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 
-import { useUser } from './UserContext';
+import { useUser } from './contexts/UserContext';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -27,7 +27,7 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="PostById" component={PostById} />
+      <Stack.Screen name="PostDetailed" component={PostDetailed} />
       <Stack.Screen name="NewPost" component={NewPost} />
     </Stack.Navigator>
   );
@@ -51,6 +51,7 @@ const StackNavigatorSearch = () => {
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
+      <Stack.Screen name="PostDetailed" component={PostDetailed} />
     </Stack.Navigator>
   );
 }
