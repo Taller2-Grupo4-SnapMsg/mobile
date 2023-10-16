@@ -62,7 +62,7 @@ const SignInScreen = ({ navigation }) => {
   useEffect(() => {
     const handleGoogleSignIn = async () => {
       if (response?.type === 'success') {
-        setShowSpinner(true); // Show the modal overlay with the spinner
+        setShowSpinner(true); 
 
         const { id_token } = response.params;
         const credential = GoogleAuthProvider.credential(id_token);
@@ -73,6 +73,7 @@ const SignInScreen = ({ navigation }) => {
           const response = await LoginWithGoogle(idToken);
           if (response) {
             await fetchLoggedInUser({setLoggedInUser});
+            setShowSpinner(false);
             navigation.navigate('Home');
           } else {
             setShowSpinner(false); 
