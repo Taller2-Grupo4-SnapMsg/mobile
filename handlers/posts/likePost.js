@@ -9,7 +9,7 @@ const LikePost = async (id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
-      console.log("EL ID DEL POST ES:")
+      console.log("EL ID DEL POST ES")
       console.log(id)
       headers = {
         'Content-Type': 'application/json;charset=utf-8',

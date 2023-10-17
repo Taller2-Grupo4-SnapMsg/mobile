@@ -27,7 +27,7 @@ const Post = ({ post }) => {
   const [postLiked, setPostLiked] = useState(false);
   const [postReposted, setPostReposted] = useState(false);
 
-  const {content, hashtags, id, image, number_likes, number_reposts, posted_at, user, user_repost} = post;
+  var {content, hashtags, id, image, number_likes, number_reposts, posted_at, user, user_repost} = post;
 
   const handlePressPost = () => {
     //comento para en ios no quedarme estancada :D
@@ -68,6 +68,9 @@ const Post = ({ post }) => {
   all_hours = Math.floor((new Date() - new Date(posted_at))/ (1000 * 60 * 60))
   days = Math.floor(all_hours / 24)
   hours =  all_hours - days * 24
+
+
+  console.log(content)
 
   return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
@@ -121,8 +124,8 @@ const styles = StyleSheet.create({
     //backgroundColor: 'white',
   },
   userImage: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 50,
   },
   mainContainer: {
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontWeight: '600',
+    fontWeight: '00',
   },
   username: {
     color: 'gray',
@@ -151,11 +154,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     justifyContent: 'space-between',
     justifyContent: 'center',
-  },
-  userImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
   },
 });
 

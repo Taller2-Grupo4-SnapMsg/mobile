@@ -13,7 +13,7 @@ import {
 import getPosts from "../../handlers/posts/getPosts"
 import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
-AMOUNT_POST = 4
+AMOUNT_POST = 7
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -59,10 +59,8 @@ export default function Home({}) {
     try {
       setLoadingMore(true);
       const fetchedPosts = await getPosts(latestDate, AMOUNT_POST);
-      if (fetchedPosts.length > 0) {
-        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-        setLatestDate(formatDate(fetchedPosts[fetchedPosts.length - 1].posted_at));
-      }
+      setPosts(fetchedPosts);
+      setLatestDate(formatDate(posts[posts.length - 1].posted_at))
     } catch (error) {
       console.error('Error while loading more posts:', error);
     } finally {
@@ -115,8 +113,8 @@ export default function Home({}) {
             colors={['#947EB0']} // Customize the loading spinner color(s)
           />
         }
-        onEndReached={handleGetMorePosts}  // Add this line to call handleGetMorePosts when reaching the end
-        onEndReachedThreshold={0.1}  // Adjust the threshold as needed
+        //onEndReached={handleGetMorePosts}  // Add this line to call handleGetMorePosts when reaching the end
+        //onEndReachedThreshold={0.1}  // Adjust the threshold as needed
       /> }
       <Pressable style={styles.floatingButton} onPress={handlePressPlus}>
         <Entypo
