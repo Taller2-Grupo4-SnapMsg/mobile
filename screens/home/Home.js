@@ -31,7 +31,7 @@ export default function Home({}) {
   const [refreshing, setRefreshing] = useState(false);
   const [posts, setPosts] = useState([]);
   const [isStarting, setIsStarting] = useState(false);
-  const [latestDate, setLatestDate] = useState(formatDate(new Date()));
+  const [latestDate, setLatestDate] = useState(new Date());
   const [loadingMore, setLoadingMore] = useState(false);
 
   const handlePressPlus = () => {
@@ -42,13 +42,14 @@ export default function Home({}) {
     try {
       setRefreshing(true);
       const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
-      setPosts(fetchedPosts);
-      setLatestDate(formatDate(posts[posts.length - 1].posted_at))
+      if (fetchedPosts) {
+        setPosts(fetchedPosts);
+        setLatestDate(posts[posts.length - 1].posted_at);
+      }
     } catch (error) {
       console.error('Error while loading posts:', error);
     } finally {
       setRefreshing(false);
-      setStarting(false);
     }
   };
 
@@ -71,10 +72,14 @@ export default function Home({}) {
     try {
       setIsStarting(true);
       const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
-      setPosts(fetchedPosts);
+      if (fetchedPosts) {
+        setPosts(fetchedPosts);
+        setLatestDate(posts[posts.length - 1].posted_at);
+      }
     } catch (error) {
       console.error('Error while loading posts:', error);
-    } finally {
+    }
+    finally {
       setIsStarting(false);
     }
   };
@@ -83,7 +88,7 @@ export default function Home({}) {
     handleStarting();
   }, []);
 
-   return (
+   return ( !isStarting && (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -94,6 +99,7 @@ export default function Home({}) {
       </View>
       { <FlatList
         data={posts}
+        keyExtractor={(item) => `${item.id}_${item.user_repost.id}`}
         renderItem={({ item }) => item && <Post post={item} />}
         refreshControl={
           <RefreshControl
@@ -114,7 +120,7 @@ export default function Home({}) {
       </Pressable>
     </View>
     </ThemeProvider>
-  );
+   ));
 }
 
 const styles = StyleSheet.create({

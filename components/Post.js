@@ -28,6 +28,8 @@ const Post = ({ post }) => {
 
   const myPost = true;
 
+  //console.log()
+
   var {content, hashtags, id, image, number_likes, number_reposts, posted_at, user, user_repost} = post;
 
   const handlePressPost = () => {

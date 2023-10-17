@@ -6,7 +6,7 @@ URL_POST_BACK = "https://postsback.onrender.com"
     
 const editPostHandler = async (post) => {
     const token = await AsyncStorage.getItem('token');
-    if (token){
+    if (token && post){
         try {
             headers = {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -22,8 +22,8 @@ const editPostHandler = async (post) => {
                 hashtags: post.hashtags,
             };
     
-            const response = await fetch(`https://postsback.onrender.com/posts/`, {
-                method: 'POST',
+            const response = await fetch(`https://postsback.onrender.com/posts/${post.id}`, {
+                method: 'PUT',
                 headers: headers,
                 body: JSON.stringify(requestBody),
             });

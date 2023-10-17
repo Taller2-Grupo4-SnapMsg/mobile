@@ -20,9 +20,11 @@ const getPostsMyProfile = async (oldest_date, n) => {
                 headers: headers,
               });
 
+
             if (response.status === OK) {
-                const user = await response.json();
-                return user;
+                const post = await response.json();
+                console.log(post);
+                return post;
             } else {
                 throw new Error('Error al obtener los posts del usuario: ' ,response.status);
             }

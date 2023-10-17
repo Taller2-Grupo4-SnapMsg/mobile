@@ -20,13 +20,13 @@ import {
 } from 'react-native';
 
 import editPostHandler from '../../handlers/posts/editPost';
-
+import ProfileEditPost from '../../components/ProfileEditPost';
 import { AntDesign } from '@expo/vector-icons';
 import getPostsMyProfile from '../../handlers/posts/getPostsMyProfile';
 import Post from '../../components/Post';
 import { useUser } from '../../contexts/UserContext';
 
-AMOUNT_POST = 2
+AMOUNT_POST = 10
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -78,7 +78,6 @@ export default function Profile() {
 }
 
 
-
 function ProfileUser({ user }) {
   const { loggedInUser } = useUser(); 
   const navigation = useNavigation();
@@ -88,9 +87,12 @@ function ProfileUser({ user }) {
   const [isFollowing, setIsFollowing] = useState(null);
   const [isFollower, setIsFollower] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [isStarting, setIsStarting] = useState(true);
   const [posts, setPosts] = useState([]);
-  const [latestDate, setLatestDate] = useState(formatDate(new Date()));
+  const [latestDate, setLatestDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
+  const [isEditPopupVisible, setEditPopupVisible] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -137,14 +139,25 @@ function ProfileUser({ user }) {
 
   const handlePressEdit = async (post) => {
     try {
-      console.log(post)
-      post.content = "Cambio el post de libros";
-      console.log(post)
-      await editPostHandler(post);
+      // Show the EditPopup
+      setSelectedPost(post);
+      setEditPopupVisible(true);
     } catch (error) {
-      console.error('Error while loading more posts:', error);
+      console.error('Error while editing the post:', error);
     }
   }
+
+  const handleSaveEdit = async  (edited_post) => {
+    // Update the post content here (you may implement your logic)
+    // For demonstration, we'll just log the edited content
+    try {
+      // Show the EditPopup
+      await editPostHandler(post);
+      setEditPopupVisible(false);
+    } catch (error) {
+      console.error('Error while saving the edited post:', error);
+    }
+  };
 
   const handlePressDelete = async () => {
     return;
@@ -154,8 +167,10 @@ function ProfileUser({ user }) {
     try {
       setRefreshing(true);
       const fetchedPosts = await getPostsMyProfile(formatDate(new Date()), AMOUNT_POST);
-      setPosts(fetchedPosts);
-      setLatestDate(formatDate(posts[posts.length - 1].posted_at))
+      if (fetchedPosts) {
+        setPosts(fetchedPosts);
+        setLatestDate(posts[posts.length - 1].posted_at);
+      }
     } catch (error) {
       console.error('Error while loading posts:', error);
     } finally {
@@ -165,10 +180,17 @@ function ProfileUser({ user }) {
 
   const handleStarting = async () => {
     try {
+      setIsStarting(true);
       const fetchedPosts = await getPostsMyProfile(formatDate(new Date()), AMOUNT_POST);
-      setPosts(fetchedPosts);
+      if (fetchedPosts) {
+        setPosts(fetchedPosts);
+        setLatestDate(posts[posts.length - 1].posted_at);
+      }
     } catch (error) {
       console.error('Error while loading posts:', error);
+    }
+    finally {
+      setIsStarting(false);
     }
   };
  
@@ -182,7 +204,8 @@ function ProfileUser({ user }) {
   }, [user]);
   
 
-  return  (
+  return  ( 
+    !isStarting && (
     <View style={{ flex: 1 }}>
       <ProfileBanner user={user} isFollowing={isFollowing} isFollower={isFollower} 
         isFetching={isFetching} toggleModal={toggleModal} handleEditButton={handleEditButton} 
@@ -191,7 +214,7 @@ function ProfileUser({ user }) {
         loggedInUser={loggedInUser}
       />
        <FlatList
-        style={{ flex: 1, marginTop: -300, marginLeft: 10, marginRight: 10  }}
+        style={{ flex: 1, marginTop: -200, marginLeft: 10, marginRight: 10  }}
         scrollIndicatorInsets={{ right: 1 }} // Adjust the right inset as needed
         data={posts}
         renderItem={({ item }) => {
@@ -222,6 +245,11 @@ function ProfileUser({ user }) {
           />
         }
       /> 
+      <ProfileEditPost
+        isVisible={isEditPopupVisible}
+        onCancel={() => setEditPopupVisible(false)}
+        onSave={handleSaveEdit}
+      />
     </View>
-  );
+  ));
 }
