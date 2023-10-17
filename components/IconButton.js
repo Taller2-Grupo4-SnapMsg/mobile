@@ -1,16 +1,21 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { EvilIcons } from '@expo/vector-icons';
 
-const IconButton = ({ icon, text }) => {
-  if (!icon && !text) {
+const IconButton = ({ icon, text, pressed}) => {
+  if (!icon) {
     return null;
   }
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      {icon && <EvilIcons name={icon} size={22} color="gray" />}
-      {text && <Text style={{ fontSize: 12, color: 'gray' }}>{text}</Text>}
+      {pressed ? (
+        // Renderiza el icono lleno cuando el botón se ha presionado
+        <EvilIcons name={icon} size={30} color="red" />
+      ) : (
+        <EvilIcons name={icon} size={30} color="gray" />
+      )}
+      <Text style={{ fontSize: 15, color: 'gray', marginRight: 50 }}>{text || 0}</Text>
     </View>
   );
 };

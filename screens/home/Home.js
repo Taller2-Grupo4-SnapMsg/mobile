@@ -13,7 +13,7 @@ import {
 import getPosts from "../../handlers/posts/getPosts"
 import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
-AMOUNT_POST = 3
+AMOUNT_POST = 4
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -33,7 +33,7 @@ export default function Home({}) {
   const [posts, setPosts] = useState([]);
   const [isStarting, setIsStarting] = useState(false);
   const [latestDate, setLatestDate] = useState(formatDate(new Date()));
-
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const handlePressPlus = () => {
     navigation.navigate('NewPost');
@@ -54,14 +54,19 @@ export default function Home({}) {
   };
 
   const handleGetMorePosts = async () => {
+    if (loadingMore) return; // Evita hacer solicitudes múltiples simultáneas
+
     try {
+      setLoadingMore(true);
       const fetchedPosts = await getPosts(latestDate, AMOUNT_POST);
-      setPosts(fetchedPosts);
-      setLatestDate(formatDate(posts[posts.length - 1].posted_at))
+      if (fetchedPosts.length > 0) {
+        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+        setLatestDate(formatDate(fetchedPosts[fetchedPosts.length - 1].posted_at));
+      }
     } catch (error) {
-      console.error('Error while loading posts:', error);
+      console.error('Error while loading more posts:', error);
     } finally {
-      setStarting(false);
+      setLoadingMore(false);
     }
   };
 
@@ -90,6 +95,16 @@ export default function Home({}) {
           textStyle={{ color: '#FFF' }}
         />
       </View>
+      {/*<FlatList
+          data={posts}
+          renderItem={({ item }) => item && <Post post={item} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#947EB0']} />
+          }
+          onEndReached={handleGetMorePosts}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={() => loadingMore && <Text>Loading more posts...</Text>}
+        />*/}
       { <FlatList
         data={posts}
         renderItem={({ item }) => item && <Post post={item} />}
