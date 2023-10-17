@@ -11,9 +11,8 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 import getPosts from "../../handlers/posts/getPosts"
-import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
-AMOUNT_POST = 7
+AMOUNT_POST = 20
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -93,16 +92,6 @@ export default function Home({}) {
           textStyle={{ color: '#FFF' }}
         />
       </View>
-      {/*<FlatList
-          data={posts}
-          renderItem={({ item }) => item && <Post post={item} />}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#947EB0']} />
-          }
-          onEndReached={handleGetMorePosts}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={() => loadingMore && <Text>Loading more posts...</Text>}
-        />*/}
       { <FlatList
         data={posts}
         renderItem={({ item }) => item && <Post post={item} />}

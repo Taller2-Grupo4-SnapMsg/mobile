@@ -4,7 +4,7 @@ const OK = 200;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const getPostsByToken = async () => {
+const getPostsMyProfile = async (oldest_date, n) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if (token) {
@@ -13,8 +13,9 @@ const getPostsByToken = async () => {
                 'accept': 'application/json',
                 'token': token,
             };
-                            
-            const response = await fetch(`${URL_POST_BACK}/posts/user/`, {
+            
+            date_str = oldest_date.replace(' ', '_');
+            const response = await fetch(`${URL_POST_BACK}/posts/profile/${date_str}/amount/${n}`, {
                 method: 'GET',
                 headers: headers,
               });
@@ -34,4 +35,4 @@ const getPostsByToken = async () => {
     }
 };
 
-export default getPostsByToken;
+export default getPostsMyProfile;

@@ -14,15 +14,19 @@ import checkIfFollower from '../../handlers/checkIfFollower';
 import ProfileBanner from '../../components/ProfileBanner';
 import {
   View,
-  ScrollView,
   FlatList,
   RefreshControl,
+  Pressable,
 } from 'react-native';
-import getPosts from '../../handlers/posts/getPosts';
+
+import editPostHandler from '../../handlers/posts/editPost';
+
+import { AntDesign } from '@expo/vector-icons';
+import getPostsMyProfile from '../../handlers/posts/getPostsMyProfile';
 import Post from '../../components/Post';
 import { useUser } from '../../contexts/UserContext';
 
-AMOUNT_POST = 10
+AMOUNT_POST = 2
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -85,7 +89,7 @@ function ProfileUser({ user }) {
   const [isFollower, setIsFollower] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [isStarting, setIsStarting] = useState(false);
+  const [latestDate, setLatestDate] = useState(formatDate(new Date()));
   const [refreshing, setRefreshing] = useState(false);
 
   const toggleModal = () => {
@@ -131,29 +135,40 @@ function ProfileUser({ user }) {
     setIsFetching(false); 
   };
 
+  const handlePressEdit = async (post) => {
+    try {
+      console.log(post)
+      post.content = "Cambio el post de libros";
+      console.log(post)
+      await editPostHandler(post);
+    } catch (error) {
+      console.error('Error while loading more posts:', error);
+    }
+  }
+
+  const handlePressDelete = async () => {
+    return;
+  }
+
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
-      const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
+      const fetchedPosts = await getPostsMyProfile(formatDate(new Date()), AMOUNT_POST);
       setPosts(fetchedPosts);
       setLatestDate(formatDate(posts[posts.length - 1].posted_at))
     } catch (error) {
       console.error('Error while loading posts:', error);
     } finally {
       setRefreshing(false);
-      setStarting(false);
     }
   };
 
   const handleStarting = async () => {
     try {
-      setIsStarting(true);
-      const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
+      const fetchedPosts = await getPostsMyProfile(formatDate(new Date()), AMOUNT_POST);
       setPosts(fetchedPosts);
     } catch (error) {
       console.error('Error while loading posts:', error);
-    } finally {
-      setIsStarting(false);
     }
   };
  
@@ -176,9 +191,29 @@ function ProfileUser({ user }) {
         loggedInUser={loggedInUser}
       />
        <FlatList
-        style={{ flex: 1, marginTop: -300  }}
+        style={{ flex: 1, marginTop: -300, marginLeft: 10, marginRight: 10  }}
+        scrollIndicatorInsets={{ right: 1 }} // Adjust the right inset as needed
         data={posts}
-        renderItem={({ item }) => item && <Post post={item} />}
+        renderItem={({ item }) => {
+          if (!item) {
+            return null;
+          }
+      
+          return (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, paddingLeft: 10, paddingRight: 30 }}>
+              <Post post={item} />
+              <View style={{ flexDirection: 'column', alignItems: 'flex-end', marginRight: 10 }}>
+              <Pressable onPress={() => handlePressEdit(item)} style={{ marginTop: 15, marginBottom: 15 }}>
+                  <AntDesign name="edit" size={24} color="gray" />
+                </Pressable>
+      
+                <Pressable onPress={() => handlePressDelete(item)}>
+                  <AntDesign name="delete" size={24} color="gray" />
+                </Pressable>
+              </View>
+            </View>
+          );
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

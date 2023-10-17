@@ -17,8 +17,9 @@ const editPostHandler = async (post) => {
             
             const encodedImage = encodeURIComponent(post.image);
             const requestBody = {
-                content: content,
+                content: post.content,
                 image: encodedImage,
+                hashtags: post.hashtags,
             };
     
             const response = await fetch(`https://postsback.onrender.com/posts/`, {

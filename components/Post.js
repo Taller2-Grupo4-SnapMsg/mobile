@@ -3,7 +3,6 @@ import {useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import IconButton from './IconButton';
-import { Entypo } from '@expo/vector-icons';
 import { useColorScheme } from 'react-native';
 
 import LikePost from '../handlers/posts/likePost';
@@ -26,6 +25,8 @@ const Post = ({ post }) => {
 
   const [postLiked, setPostLiked] = useState(false);
   const [postReposted, setPostReposted] = useState(false);
+
+  const myPost = true;
 
   var {content, hashtags, id, image, number_likes, number_reposts, posted_at, user, user_repost} = post;
 
@@ -70,48 +71,48 @@ const Post = ({ post }) => {
   hours =  all_hours - days * 24
 
 
-  console.log(content)
+  console.log(id)
 
   return (
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-      <Pressable style={styles.container} onPress={handlePressPost}>
-        
-        <Image source={{ uri: user.avatar }} style={styles.userImage} />
-
-
-        <View style={styles.mainContainer}>
-          <View style={{ flexDirection: 'row' }}>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
+    <Pressable style={styles.container} onPress={handlePressPost}>
+      <Image source={{ uri: user.avatar }} style={styles.userImage} />
+      <View style={styles.mainContainer}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.username}>{user.username} ·{days}d {hours}h</Text>
-            <Entypo
-              name="dots-three-horizontal"
-              size={16}
-              color="gray"
-              style={{ marginLeft: 'auto' }}
-            />
           </View>
-
-          <Text style={styles.content}>{content}</Text>
-
-
-            {image && (
-              <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
-            )}
-
-          <View style={styles.footer}>
-            <TouchableOpacity onPress={() => handlePressRepost(id)}>
-              <IconButton icon="retweet" text={Number(number_reposts)} />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => handlePressLike(id)}>
-              <IconButton icon="heart" text={Number(number_likes)} pressed={postLiked}/>
-            </TouchableOpacity>
-
-            <IconButton icon="share-apple" />
+          {/* {myPost && (
+          <View style={{ flexDirection: 'row', alignItems: 'flex-end', marginRight: 5 }}>
+            <Pressable onPress={handlePressEdit}>
+              <AntDesign name="edit" size={24} color="gray" />
+            </Pressable>
+            <Pressable onPress={handlePressDelete} style={{ marginLeft: 15 }}>
+              <AntDesign name="delete" size={24} color="gray" />
+            </Pressable>
           </View>
-          </View>
-        </Pressable>
-      </ThemeProvider>
+          )} */}
+        </View>
+        <Text style={styles.content}>{content}</Text>
+
+
+          {image && (
+            <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
+          )}
+
+        <View style={styles.footer}>
+          <TouchableOpacity onPress={() => handlePressRepost(id)}>
+            <IconButton icon="retweet" text={Number(number_reposts)} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => handlePressLike(id)}>
+            <IconButton icon="heart" text={Number(number_likes)} pressed={postLiked}/>
+          </TouchableOpacity>
+        </View>
+        </View>
+      </Pressable>
+    </ThemeProvider>
     );
   };
 
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     marginLeft: 10,
+    marginRight: 10,
     flex: 1,
   },
   name: {
@@ -159,4 +161,10 @@ const styles = StyleSheet.create({
 
 export default Post;
 
-
+//<IconButton icon="share-apple" />
+//<Entypo
+// name="dots-three-horizontal"
+// size={16}
+// color="gray"
+// style={{ marginLeft: 'auto' }}
+// />
