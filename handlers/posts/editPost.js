@@ -4,7 +4,7 @@ const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const editPostHandler = async (post) => {
+const editPostHandler = async (image, content, hashtags) => {
     const token = await AsyncStorage.getItem('token');
     if (token && post){
         try {

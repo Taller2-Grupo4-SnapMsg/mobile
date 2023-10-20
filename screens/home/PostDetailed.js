@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import Post from '../../components/Post';
+import Post from '../../components/posts/Post';
 import getPostById from '../../handlers/posts/getPostById';
 import Spinner from 'react-native-loading-spinner-overlay';
 

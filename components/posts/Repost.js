@@ -2,13 +2,14 @@ import React from 'react';
 import {useState, useEffect} from 'react'; 
 import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import IconButton from './IconButton';
+import IconButton from '../IconButton';
 import { useColorScheme } from 'react-native';
 
-import LikePost from '../handlers/posts/likePost';
-import DislikePost from '../handlers/posts/dislikePost';
-import RepostPost from '../handlers/posts/repostPost';
-import UndoRepostPost from '../handlers/posts/undoRepostPost';
+import LikePost from '../../handlers/posts/likePost';
+import DislikePost from '../../handlers/posts/dislikePost';
+import RepostPost from '../../handlers/posts/repostPost';
+import UndoRepostPost from '../../handlers/posts/undoRepostPost';
+import Avatar from '../Avatar';
 
 import {
   DarkTheme,
@@ -16,7 +17,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const Post = ({ post }) => {
+const Repost = ({ post }) => {
   if (!post)
     return null;
 
@@ -72,59 +73,65 @@ const Post = ({ post }) => {
   days = Math.floor(all_hours / 24)
   hours =  all_hours - days * 24
 
-
-  console.log(id)
-
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-    <Pressable style={styles.container} onPress={handlePressPost}>
-      <Image source={{ uri: user.avatar }} style={styles.userImage} />
-      <View style={styles.mainContainer}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.username}>{user.username} ·{days}d {hours}h</Text>
-          </View>
-          {/* {myPost && (
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end', marginRight: 5 }}>
-            <Pressable onPress={handlePressEdit}>
-              <AntDesign name="edit" size={24} color="gray" />
-            </Pressable>
-            <Pressable onPress={handlePressDelete} style={{ marginLeft: 15 }}>
-              <AntDesign name="delete" size={24} color="gray" />
-            </Pressable>
-          </View>
-          )} */}
+    <View style={styles.container}>
+        <View style={styles.container_reposted}>
+          <Avatar user={user_repost} />
+            <View style={styles.mainContainer}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={styles.name}>{user_repost.name}</Text>
+                    <Text style={styles.username}>{user_repost.username} ·{days}d {hours}h</Text>
+                    </View>
+                </View>
+            </View>
         </View>
-        <Text style={styles.content}>{content}</Text>
+        <Pressable style={styles.container_post} onPress={handlePressPost}>
+            <Avatar user={user} />
+            <View style={styles.mainContainer}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={styles.name}>{user.name}</Text>
+                    <Text style={styles.username}>{user.username} ·{days}d {hours}h</Text>
+                </View>
+                </View>
 
+                <Text style={styles.content}>{content}</Text>
+                {image && (
+                <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
+                )}
+                <View style={styles.footer}>
+                <TouchableOpacity onPress={() => handlePressRepost(id)}>
+                    <IconButton icon="retweet" text={Number(number_reposts)} />
+                </TouchableOpacity>
 
-          {image && (
-            <Image source={{ uri: decodeURIComponent(image) }} style={styles.image} />
-          )}
-
-        <View style={styles.footer}>
-          <TouchableOpacity onPress={() => handlePressRepost(id)}>
-            <IconButton icon="retweet" text={Number(number_reposts)} />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => handlePressLike(id)}>
-            <IconButton icon="heart" text={Number(number_likes)} pressed={postLiked}/>
-          </TouchableOpacity>
+                <TouchableOpacity onPress={() => handlePressLike(id)}>
+                    <IconButton icon="heart" text={Number(number_likes)} pressed={postLiked}/>
+                </TouchableOpacity>
+                </View>
+                </View>
+        </Pressable>
         </View>
-        </View>
-      </Pressable>
     </ThemeProvider>
     );
   };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     padding: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-   // borderColor: 'lightgrey',
-    //backgroundColor: 'white',
+  },
+  container_post: {
+    flexDirection: 'row',
+    padding: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 15,
+    margin: 10,
+  },
+  container_reposted: {
+    flexDirection: 'row',
   },
   userImage: {
     width: 40,
@@ -137,7 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontWeight: '00',
+    fontWeight: 'bold',
   },
   username: {
     color: 'gray',
@@ -161,12 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Post;
-
-//<IconButton icon="share-apple" />
-//<Entypo
-// name="dots-three-horizontal"
-// size={16}
-// color="gray"
-// style={{ marginLeft: 'auto' }}
-// />
+export default Repost;

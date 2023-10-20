@@ -20,11 +20,13 @@ import {
 } from 'react-native';
 
 import editPostHandler from '../../handlers/posts/editPost';
-import ProfileEditPost from '../../components/ProfileEditPost';
+import ProfileEditPost from './ProfileEditPost';
 import { AntDesign } from '@expo/vector-icons';
-import getPostsMyProfile from '../../handlers/posts/getPostsMyProfile';
-import Post from '../../components/Post';
+import getPostsProfile from '../../handlers/posts/getPostsProfile';
+import Post from '../../components/posts/Post';
+import Repost from '../../components/posts/Repost';
 import { useUser } from '../../contexts/UserContext';
+import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
 
 AMOUNT_POST = 10
 
@@ -37,6 +39,14 @@ function formatDate(date) {
   const seconds = String(date.getSeconds()).padStart(2, '0');
 
   return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
+}
+
+function RemoveMillisecondsFromDateStr(dateStr) {
+  const parts = dateStr.split('.');
+  if (parts.length === 2) {
+    return parts[0];
+  }
+  return dateStr;
 }
 
 export default function Profile() {
@@ -93,6 +103,8 @@ function ProfileUser({ user }) {
   const [refreshing, setRefreshing] = useState(false);
   const [isEditPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [reachedEnd, setReachedEnd] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -137,26 +149,8 @@ function ProfileUser({ user }) {
     setIsFetching(false); 
   };
 
-  const handlePressEdit = async (post) => {
-    try {
-      // Show the EditPopup
-      setSelectedPost(post);
-      setEditPopupVisible(true);
-    } catch (error) {
-      console.error('Error while editing the post:', error);
-    }
-  }
-
-  const handleSaveEdit = async  (edited_post) => {
-    // Update the post content here (you may implement your logic)
-    // For demonstration, we'll just log the edited content
-    try {
-      // Show the EditPopup
-      await editPostHandler(post);
-      setEditPopupVisible(false);
-    } catch (error) {
-      console.error('Error while saving the edited post:', error);
-    }
+  const handlePressEdit = (post) => {
+    navigation.navigate('ProfileEditPost', { post: post });
   };
 
   const handlePressDelete = async () => {
@@ -165,11 +159,12 @@ function ProfileUser({ user }) {
 
   const handleRefresh = async () => {
     try {
+      setReachedEnd(false);
       setRefreshing(true);
-      const fetchedPosts = await getPostsMyProfile(formatDate(new Date()), AMOUNT_POST);
+      const fetchedPosts = await getPostsProfile(user.id, formatDate(new Date()), AMOUNT_POST);
       if (fetchedPosts) {
         setPosts(fetchedPosts);
-        setLatestDate(posts[posts.length - 1].posted_at);
+        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
       }
     } catch (error) {
       console.error('Error while loading posts:', error);
@@ -178,22 +173,40 @@ function ProfileUser({ user }) {
     }
   };
 
+  const handleGetMorePosts = async () => {
+    if (loadingMore || reachedEnd) return;
+
+    try {
+      setLoadingMore(true);
+      const fetchedPosts = await getPostsProfile(user.id, RemoveMillisecondsFromDateStr(latestDate), AMOUNT_POST);
+      if (fetchedPosts && fetchedPosts.length > 0) {
+        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+      } else {
+        setReachedEnd(true); // No hay más publicaciones para cargar
+      }
+    } catch (error) {
+      console.error('Error while loading more posts:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   const handleStarting = async () => {
     try {
       setIsStarting(true);
-      const fetchedPosts = await getPostsMyProfile(formatDate(new Date()), AMOUNT_POST);
-      if (fetchedPosts) {
+      const fetchedPosts = await getPostsProfile(user.id, formatDate(new Date()), AMOUNT_POST);
+      if (fetchedPosts && fetchedPosts.length > 0) {
         setPosts(fetchedPosts);
-        setLatestDate(posts[posts.length - 1].posted_at);
+        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
       }
     } catch (error) {
       console.error('Error while loading posts:', error);
-    }
-    finally {
+    } finally {
       setIsStarting(false);
     }
-  };
- 
+  }
+
   useEffect(() => {
     handleStarting();
   }, []);
@@ -203,53 +216,66 @@ function ProfileUser({ user }) {
     fetchFollowStatus({ user, setStatus: setIsFollower, followStatusFunction: checkIfFollower, setIsFetching });
   }, [user]);
   
-
-  return  ( 
-    !isStarting && (
-    <View style={{ flex: 1 }}>
+  return  (
+    <View style={{ flex: 1 , flexDirection: 'column'}}>
       <ProfileBanner user={user} isFollowing={isFollowing} isFollower={isFollower} 
         isFetching={isFetching} toggleModal={toggleModal} handleEditButton={handleEditButton} 
         handleFollowersButton={handleFollowersButton} handleFollowingButton={handleFollowingButton}
         handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
         loggedInUser={loggedInUser}
+        style={{ flex: 1}}
       />
-       <FlatList
-        style={{ flex: 1, marginTop: -200, marginLeft: 10, marginRight: 10  }}
-        scrollIndicatorInsets={{ right: 1 }} // Adjust the right inset as needed
+      <FlatList
+        style={{ flex: 1, maginTop: 0}}
+        keyExtractor={(item) => `${item.id}_${item.user_repost.id}`}
         data={posts}
         renderItem={({ item }) => {
           if (!item) {
             return null;
           }
-      
+
+          if (item.user_repost.id == -1) {
+            return (
+              <View style={{ flexDirection: 'row' , justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                <Post post={item} style={{ flex: 1}}/>
+                {user.username == loggedInUser.username && (
+                <View style={{ position: 'absolute', right: 0, top: 0 , marginRight: 10 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Pressable onPress={() => handlePressEdit(item)} style={{ marginRight: 30, marginTop: 15, marginBottom: 10}}>
+                      <AntDesign name="edit" size={24} color="gray" />
+                    </Pressable>
+
+                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
+                      <AntDesign name="delete" size={24} color="gray" />
+                    </Pressable>
+                  </View>
+                </View>)}
+              </View>);
+        } else {
           return (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, paddingLeft: 10, paddingRight: 30 }}>
-              <Post post={item} />
-              <View style={{ flexDirection: 'column', alignItems: 'flex-end', marginRight: 10 }}>
-              <Pressable onPress={() => handlePressEdit(item)} style={{ marginTop: 15, marginBottom: 15 }}>
-                  <AntDesign name="edit" size={24} color="gray" />
-                </Pressable>
-      
-                <Pressable onPress={() => handlePressDelete(item)}>
-                  <AntDesign name="delete" size={24} color="gray" />
-                </Pressable>
-              </View>
-            </View>
-          );
-        }}
+            <View>
+              <Repost post={item} style={{ flex: 1}}/>
+              {user.username == loggedInUser.username && (
+              <View style={{ position: 'absolute', right: 0, top: 0, marginRight: 10}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
+                      <AntDesign name="delete" size={24} color="gray" />
+                    </Pressable>
+                </View>
+              </View>)}
+            </View>);
+        }}}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={['#947EB0']} // Customize the loading spinner color(s)
+            colors={['#947EB0']}
           />
         }
-      /> 
-      <ProfileEditPost
-        isVisible={isEditPopupVisible}
-        onCancel={() => setEditPopupVisible(false)}
-        onSave={handleSaveEdit}
-      />
-    </View>
-  ));
+        onEndReached={handleGetMorePosts}
+        onEndReachedThreshold={0.1}
+        />
+      {loadingMore && <LoadingMoreIndicator />}
+      </View>
+  );
 }

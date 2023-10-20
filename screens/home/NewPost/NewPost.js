@@ -8,68 +8,32 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import PostHandler from '../../../handlers/posts/newPost';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { useRoute } from '@react-navigation/native';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
 import Dialog from '../../../components/Alert';
 import uuid from 'uuid';
-import { usePost } from '../../../contexts/PostContext';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function NewPost() {
-  const { loggedInUser } = useUser();
-  const route = useRoute();
-  const { user_param } = route.params || {};
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (route.params && Object.keys(user_param).length !== 0) {
-          setUser(user_param);
-        } else {
-          setUser(loggedInUser);
-        }
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error al obtener usuario:', error);
-        setIsLoading(false);
-      }
-    };
-  
-    fetchData();
-  }, [loggedInUser, user_param]);
-  
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Spinner
-          visible={isLoading}
-          textStyle={{ color: '#FFF' }}
-        />
-      </View>
-    );
-  }
-
-  return <NewPostComponente user={user} />;
-}
-
-function NewPostComponente({ user}) {
   const navigation = useNavigation();
+  const { loggedInUser } = useUser();
   const [text, setText] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [postPreview, setPostPreview] = useState('');
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
   const [isSuccessAlertVisible, setSuccessAlertVisible] = useState(false);
-  const { postsChanged, setPostsChanged } = usePost();
+  const [tagInput, setTagInput] = useState('');
+  const [tags, setTags] = useState([]);
 
   const onPostPress = async () => {
     setIsLoading(true);
 
     if (selectedImage) {
+      const { nanoid } = require('nanoid');
       const fileName = 'post_image.jpg';
-      const postId = uuid.v4();
+      //const postId = uuid.v4();
+      const postId = nanoid();
       const storageRef = ref(storage, `post_images/${postId}/${fileName}`);
 
       const response = await fetch(selectedImage);
@@ -78,26 +42,21 @@ function NewPostComponente({ user}) {
 
       const downloadURL = await getDownloadURL(storageRef);
 
-      //const tweetText = text + (text ? '\n' : '') + `Image: ${downloadURL}`;
-      //setTweetPreview(tweetText);
-
       setSelectedImage('');
-      PostHandler(text, downloadURL);
+      PostHandler(text, downloadURL, tags);
       setSuccessAlertVisible(true);
     } else {
       setSelectedImage('');
-      PostHandler(text, '');
+      PostHandler(text, '', tags);
       setSuccessAlertVisible(true);
     }
     setText('');
     setIsLoading(false);
-    //console.log('Post enviado')
-    setPostsChanged(true);
-    //console.log(postsChanged)
+    setTags([]);
   };
 
   const handlePressCancel = () => {
-    navigation.navigate('InHome');
+    navigation.navigate('Home');
   };
 
   const handleImageSelection = async () => {
@@ -118,47 +77,52 @@ function NewPostComponente({ user}) {
     }
   };
 
+  const addTag = (tag) => {
+    setTags([...tags, tag]);
+    setTagInput(''); // Limpia el campo de entrada de etiquetas después de agregar una etiqueta.
+  };
+
+  const removeTag = (tag) => {
+    const updatedTags = tags.filter((existingTag) => existingTag !== tag);
+    setTags(updatedTags);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.container}>
-        <View style={styles.buttonContainer}>
-          <Pressable onPress={handlePressCancel} style={styles.button}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </Pressable>
-
-          <Pressable onPress={onPostPress} style={styles.button}>
-            {isLoading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text style={styles.buttonText}>Post</Text>
-            )}
-          </Pressable>
-        </View>
-
         <View style={styles.inputContainer}>
-          <ProfilePicture imageUrl={user.avatar}/>
+          <ProfilePicture imageUrl={loggedInUser.avatar}/>
           <TextInput
             value={text}
             onChangeText={setText}
             placeholder="What's happening?"
             multiline
             numberOfLines={5}
-            style={{ flex: 1 , marginLeft: '50px', paddingLeft: 10, fontSize: 18}}
+            style={{ flex: 1 , marginLeft: 50, paddingLeft: 10, fontSize: 18}}
           />
         </View>
 
-        {selectedImage && (
+        {selectedImage && 
           <Image
             source={{ uri: selectedImage }}
-            style={{ width: 100, height: 100, marginTop: 10 }}
+            style={styles.imagePreview}
           />
-        )}
+        }
 
-        <Text style={styles.postPreview}>{postPreview}</Text>
+        <View style={styles.tagsContainer}>
+          {tags.map((tag) => (
+            <View style={styles.tag} key={tag}>
+              <Text style={styles.tagName}>{tag}</Text>
+              <Pressable onPress={() => removeTag(tag)} style={styles.removeTagButton}>
+                <Text style={styles.removeTagButtonText}>x</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
 
         <Pressable onPress={() => setImagePickerVisible(true)} style={styles.imagePicker}>
           <MaterialIcons name="add-a-photo" size={24} color="#6B5A8E" />
-          <Text style={{ marginLeft: 10, color: '#6B5A8E' }}>Add Image</Text>
+          <Text style={{ marginLeft: 10, color: '#6B5A8E', }}>Add Image</Text>
         </Pressable>
 
         <Modal
@@ -174,6 +138,32 @@ function NewPostComponente({ user}) {
             </Pressable>
           </View>
         </Modal>
+
+        <View style={styles.tagInputContainer}>
+          <TextInput
+            value={tagInput}
+            onChangeText={setTagInput}
+            placeholder="Add Tag"
+            style={styles.tagInput}
+          />
+          <Pressable onPress={() => addTag(tagInput)} style={styles.addTagButton}>
+            <Text style={styles.addTagButtonText}>Add</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <Pressable onPress={handlePressCancel} style={styles.button}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </Pressable>
+
+          <Pressable onPress={onPostPress} style={styles.button}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={styles.buttonText}>Post</Text>
+            )}
+          </Pressable>
+        </View>
 
         <Dialog
           isVisible={isSuccessAlertVisible}
@@ -191,6 +181,9 @@ const styles = {
     flex: 1,
   },
   buttonContainer: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 30,
     flexDirection: 'row',
     marginVertical: 10,
     justifyContent: 'space-between',
@@ -219,7 +212,14 @@ const styles = {
     borderRadius: 50,
     marginRight: 10,
   },
+  imagePreview: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    marginVertical: 10,
+    borderRadius: 15,
+  },
   imagePicker: {
+    marginLeft: 15,
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
@@ -241,4 +241,59 @@ const styles = {
     fontSize: 18,
     color: '#6B5A8E',
   },
+  tagsContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  tag: {
+    backgroundColor: '#6B5A8E',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 5,
+  },
+  tagName: {
+    color: 'white',
+    marginRight: 5,
+  },
+  removeTagButton: {
+    backgroundColor: '#6B5A8E',
+    borderRadius: 50,
+    padding: 5,
+  },
+  removeTagButtonText: {
+    color: 'white',
+  },
+  tagInputContainer: {
+    marginTop: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  tagInput: {
+    flex: 1,
+    marginLeft: 10,
+    paddingLeft: 10,
+    fontSize: 18,
+    borderWidth: 1,
+    borderColor: '#6B5A8E',
+    borderRadius: 20,
+    paddingVertical: 5,
+  },
+  addTagButton: {
+    margin: 10,
+    backgroundColor: '#6B5A8E',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  addTagButtonText: {
+    color: 'white',
+  },
 };
+

@@ -1,10 +1,14 @@
 import { StyleSheet, FlatList, View, Pressable, RefreshControl} from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
-import Post from "../../components/Post";
+import Post from "../../components/posts/Post";
+import Repost from "../../components/posts/Repost";
 import { useColorScheme } from 'react-native';
 import React, {useState, useEffect} from 'react'; 
 import Spinner from 'react-native-loading-spinner-overlay';
+import LoadingMoreIndicator from "../../components/LoadingMoreIndicator";
+
 import {
   DarkTheme,
   DefaultTheme,
@@ -12,7 +16,7 @@ import {
 } from '@react-navigation/native';
 import getPosts from "../../handlers/posts/getPosts"
 
-AMOUNT_POST = 20
+AMOUNT_POST = 10
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -25,70 +29,84 @@ function formatDate(date) {
   return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
 }
 
+function removeMillisecondsFromDateStr(dateStr) {
+  const parts = dateStr.split('.');
+  if (parts.length === 2) {
+    return parts[0];
+  }
+  return dateStr;
+}
+
 export default function Home({}) {
-  const colorScheme = useColorScheme();
-  const navigation = useNavigation();
-  const [refreshing, setRefreshing] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [isStarting, setIsStarting] = useState(false);
-  const [latestDate, setLatestDate] = useState(new Date());
-  const [loadingMore, setLoadingMore] = useState(false);
+    const colorScheme = useColorScheme();
+    const navigation = useNavigation();
+    const [refreshing, setRefreshing] = useState(false);
+    const [posts, setPosts] = useState([]);
+    const [isStarting, setIsStarting] = useState(true);
+    const [latestDate, setLatestDate] = useState(new Date());
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [reachedEnd, setReachedEnd] = useState(false); // Nuevo estado para controlar si se ha llegado al final
 
-  const handlePressPlus = () => {
-    navigation.navigate('NewPost');
-  };
+    const handlePressPlus = () => {
+      navigation.navigate('NewPost');
+    };
 
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
-      if (fetchedPosts) {
-        setPosts(fetchedPosts);
-        setLatestDate(posts[posts.length - 1].posted_at);
+    const handleRefresh = async () => {
+      try {
+        setReachedEnd(false);
+        setRefreshing(true);
+        const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
+        if (fetchedPosts) {
+          setPosts(fetchedPosts);
+          setLatestDate(removeMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+        }
+      } catch (error) {
+        console.error('Error while loading posts:', error);
+      } finally {
+        setRefreshing(false);
       }
-    } catch (error) {
-      console.error('Error while loading posts:', error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
+    };
 
-  const handleGetMorePosts = async () => {
-    if (loadingMore) return; // Evita hacer solicitudes múltiples simultáneas
+    const handleGetMorePosts = async () => {
+      if (loadingMore || reachedEnd) return; // Evitar solicitudes innecesarias
 
-    try {
-      setLoadingMore(true);
-      const fetchedPosts = await getPosts(latestDate, AMOUNT_POST);
-      setPosts(fetchedPosts);
-      setLatestDate(formatDate(posts[posts.length - 1].posted_at))
-    } catch (error) {
-      console.error('Error while loading more posts:', error);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
-
-  const handleStarting = async () => {
-    try {
-      setIsStarting(true);
-      const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
-      if (fetchedPosts) {
-        setPosts(fetchedPosts);
-        setLatestDate(posts[posts.length - 1].posted_at);
+      try {
+        setLoadingMore(true);
+        const fetchedPosts = await getPosts(removeMillisecondsFromDateStr(latestDate), AMOUNT_POST);
+        if (fetchedPosts.length > 0) {
+          setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+          setLatestDate(removeMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+        } else {
+          setReachedEnd(true); // No hay más publicaciones para cargar
+        }
+      } catch (error) {
+        console.error('Error while loading more posts:', error);
+      } finally {
+        setLoadingMore(false);
       }
-    } catch (error) {
-      console.error('Error while loading posts:', error);
-    }
-    finally {
-      setIsStarting(false);
-    }
-  };
- 
-  useEffect(() => {
-    handleStarting();
-  }, []);
+    };
 
-   return ( !isStarting && (
+    const handleStarting = async () => {
+      try {
+        console.log("Starting")
+        setIsStarting(true);
+        const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST);
+        if (fetchedPosts.length > 0) {
+          setPosts(fetchedPosts);
+          setLatestDate(removeMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+        }
+      } catch (error) {
+        console.error('Error while loading posts:', error);
+      } finally {
+        setIsStarting(false);
+      }
+    }
+
+    useEffect(() => {
+      handleStarting();
+    }, []);
+
+   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -97,20 +115,27 @@ export default function Home({}) {
           textStyle={{ color: '#FFF' }}
         />
       </View>
-      { <FlatList
+      <FlatList
         data={posts}
         keyExtractor={(item) => `${item.id}_${item.user_repost.id}`}
-        renderItem={({ item }) => item && <Post post={item} />}
+        renderItem={({ item }) => {
+          if (item.user_repost.id == -1) {
+            return <Post post={item} />;
+          } else {
+            return <Repost post={item} />;
+          }
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={['#947EB0']} // Customize the loading spinner color(s)
+            colors={['#947EB0']}
           />
         }
-        //onEndReached={handleGetMorePosts}  // Add this line to call handleGetMorePosts when reaching the end
-        //onEndReachedThreshold={0.1}  // Adjust the threshold as needed
-      /> }
+        onEndReached={handleGetMorePosts}
+        onEndReachedThreshold={0.1}
+      />
+      {loadingMore && <LoadingMoreIndicator />}
       <Pressable style={styles.floatingButton} onPress={handlePressPlus}>
         <Entypo
           name="plus"
@@ -120,7 +145,7 @@ export default function Home({}) {
       </Pressable>
     </View>
     </ThemeProvider>
-   ));
+   );
 }
 
 const styles = StyleSheet.create({

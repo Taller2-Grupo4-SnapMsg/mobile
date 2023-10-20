@@ -13,6 +13,8 @@ import FollowingsList from './screens/profile/FollowingsList';
 import FollowersList from './screens/profile/FollowersList';
 import Interests from './screens/signUp/Interests';
 import SearchUser from './screens/search/SearchUser';
+import ProfileEditPost from './screens/profile/ProfileEditPost';
+
 
 import { useColorScheme } from 'react-native';
 
@@ -23,12 +25,13 @@ import { useUser } from './contexts/UserContext';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const StackNavigator = () => {
+const StackNavigatorHome = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="PostDetailed" component={PostDetailed} />
       <Stack.Screen name="NewPost" component={NewPost} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
 };
@@ -40,6 +43,7 @@ const StackNavigatorProfile = () => {
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
+      <Stack.Screen name="ProfileEditPost" component={ProfileEditPost} />
     </Stack.Navigator>
   );
 };
@@ -63,7 +67,7 @@ export default function AppComponent() {
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {loggedInUser ? (
         <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen name="InHome" component={StackNavigator} options={{ title: 'Home' }} />
+          <Drawer.Screen name="InHome" component={StackNavigatorHome} options={{ title: 'Home' }} />
           <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile} options={{ title: 'Profile' }} />
           <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
         </Drawer.Navigator>

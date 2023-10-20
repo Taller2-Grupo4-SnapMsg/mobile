@@ -79,7 +79,9 @@ export default function ProfileBanner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 15
+    marginVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'column',
   },
   profileContainer: {
     flexDirection: 'row',
@@ -111,6 +113,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   profileContainerWhole: {
+    flex: 1,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   followsYouContainer: {

@@ -30,7 +30,7 @@ export function PostProvider({ children }) {
           setPostsChanged(false);
         }
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        //console.error('Error fetching posts:', error);
       }
     };
 

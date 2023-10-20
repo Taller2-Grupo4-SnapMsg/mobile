@@ -23,7 +23,7 @@ const getPostsMyProfile = async (oldest_date, n) => {
 
             if (response.status === OK) {
                 const post = await response.json();
-                console.log(post);
+                //console.log(post);
                 return post;
             } else {
                 throw new Error('Error al obtener los posts del usuario: ' ,response.status);
