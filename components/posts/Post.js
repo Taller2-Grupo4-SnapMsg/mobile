@@ -2,14 +2,16 @@ import React from 'react';
 import {useState, useEffect} from 'react'; 
 import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import IconButton from '../IconButton';
+import IconButton from './LikeButton';
 import { useColorScheme } from 'react-native';
 
 import LikePost from '../../handlers/posts/likePost';
-import DislikePost from '../../handlers/posts/dislikePost';
+import UnlikePost from '../../handlers/posts/unlikePost';
 import RepostPost from '../../handlers/posts/repostPost';
 import UndoRepostPost from '../../handlers/posts/undoRepostPost';
 import Avatar from '../Avatar';
+import LikeButton from './LikeButton';
+import RepostButton from './RepostButton';
 
 import {
   DarkTheme,
@@ -23,14 +25,16 @@ const Post = ({ post }) => {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [postLiked, setPostLiked] = useState(false);
-  const [postReposted, setPostReposted] = useState(false);
-
   const myPost = true;
 
   //console.log()
 
   var {content, hashtags, id, image, number_likes, number_reposts, posted_at, user, user_repost} = post;
+
+  //const [isLiked, setIsLiked] = useState(isLiked);
+  const [isLiked, setIsLiked] = useState(false);
+  //const [isReposted, setIsReposted] = useState(isReposted);
+  const [isReposted, setIsReposted] = useState(false);
 
   const handlePressPost = () => {
     //comento para en ios no quedarme estancada :D
@@ -40,13 +44,13 @@ const Post = ({ post }) => {
 
   const handlePressRepost = async (post_id) => {
     try {
-      if (postReposted == false) {
+      if (isReposted == false) {
         await RepostPost(post_id);
-        setPostReposted(true);
+        setIsReposted(true);
       }
       else {
         await UndoRepostPost(post_id);
-        setPostReposted(false);
+        setIsReposted(false);
       }
     } catch (error) {
       console.error('Error while reposting:', error);
@@ -55,13 +59,13 @@ const Post = ({ post }) => {
 
   const handlePressLike = async (post_id) => {
   try {
-    if (postLiked == false) {
+    if (isLiked == false) {
       await LikePost(post_id);
-      setPostLiked(true);
+      setIsLiked(true);
     }
     else {
-      await DislikePost(post_id);
-      setPostLiked(false);
+      await UnlikePost(post_id);
+      setIsLiked(false);
     }
   } catch (error) {
     console.error('Error while liking:', error);
@@ -74,7 +78,14 @@ const Post = ({ post }) => {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-    <Pressable style={styles.container} onPress={handlePressPost}>
+    <Pressable
+        style={
+          post.user_repost.id === -1
+            ? styles.containerStylePost
+            : styles.containerStyleRepost
+        }
+        onPress={handlePressPost}
+      >
       <Avatar user={user} />
       <View style={styles.mainContainer}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -90,24 +101,31 @@ const Post = ({ post }) => {
         )}
         <View style={styles.footer}>
           <TouchableOpacity onPress={() => handlePressRepost(id)}>
-            <IconButton icon="retweet" text={Number(number_reposts)} />
+            <RepostButton icon="retweet" initialReposts={post.number_reposts} isReposted={isReposted}/>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => handlePressLike(id)}>
-            <IconButton icon="heart" text={Number(number_likes)} pressed={postLiked}/>
+            <LikeButton icon="heart" initialLikes={post.number_likes} isLiked={isLiked}/>
           </TouchableOpacity>
         </View>
         </View>
-      </Pressable>
+        </Pressable>
     </ThemeProvider>
     );
   };
 
 const styles = StyleSheet.create({
-  container: {
+  containerStylePost: {
     flexDirection: 'row',
     padding: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  containerStyleRepost: {
+    flexDirection: 'row',
+    padding: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 15,
+    margin: 10,
   },
   mainContainer: {
     marginLeft: 10,
@@ -140,11 +158,3 @@ const styles = StyleSheet.create({
 });
 
 export default Post;
-
-//<IconButton icon="share-apple" />
-//<Entypo
-// name="dots-three-horizontal"
-// size={16}
-// color="gray"
-// style={{ marginLeft: 'auto' }}
-// />

@@ -3,8 +3,7 @@ import { View, TextInput, Image, Text, Button, ActivityIndicator, StyleSheet, Fl
 import editPostHandler from '../../handlers/posts/editPost';
 import * as ImagePicker from 'expo-image-picker';
 import { Pressable } from 'react-native';
-import notImage1 from '../../assets/notImage1.jpg';
-import notImage2 from '../../assets/notImage2.jpeg';
+import { AntDesign } from '@expo/vector-icons';
 
 const ProfileEditPost = ({ route }) => {
   const { post } = route.params;
@@ -62,20 +61,38 @@ const ProfileEditPost = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={handleSelectImage}>
-        
-        {newImage && <Image source={{ uri: newImage }} style={styles.image} />}
-        {!newImage && (
-          <Image source={{ uri: "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"}} style={styles.image} />
-        )}
-      </Pressable>
+        <Text style={styles.sectionLabel}>Image Post</Text>
+        <Pressable onPress={handleSelectImage}>
+          <View style={styles.imageContainer}>
+            {newImage && (
+              <Image source={{ uri: newImage }} style={styles.image} />
+            )}
+            {!newImage && (
+              <Image source={{ uri: "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"}} style={styles.image} />
+            )}
+            <AntDesign name="edit" size={35} color="black" style={styles.editIcon} />
+          </View>
+        </Pressable>
 
-      <TextInput
-        style={styles.textInput}
-        multiline
-        value={newText}
-        onChangeText={(text) => setNewText(text)}
-      />
+        <Text style={styles.sectionLabel}>Content Post</Text>
+        <TextInput
+          style={styles.textInput}
+          multiline
+          value={newText}
+          onChangeText={(text) => setNewText(text)}
+        />
+
+        <Text style={styles.sectionLabel}>Hashtags of the Post</Text>
+        <View style={styles.tagsContainer}>
+          {newHashtags.map((tag) => (
+            <View style={styles.tag} key={tag}>
+              <Text style={styles.tagName}>{tag}</Text>
+              <Pressable onPress={() => removeTag(tag)} style={styles.removeTagButton}>
+                <Text style={styles.removeTagButtonText}>x</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
 
       <View style={styles.tagInputContainer}>
           <TextInput
@@ -89,19 +106,6 @@ const ProfileEditPost = ({ route }) => {
           </Pressable>
         </View>
 
-      <FlatList
-        data={newHashtags}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <View style={styles.tag}>
-            <Text style={styles.tagName}>{item}</Text>
-            <Pressable onPress={() => removeTag(item)} style={styles.removeTagButton}>
-              <Text style={styles.removeTagButtonText}>x</Text>
-            </Pressable>
-          </View>
-        )}
-      />
-
       <View style={styles.saveButtonContainer}>
         <Button title={isSaving ? 'Save...' : 'Save'} onPress={handleSave} disabled={isSaving} color="#6B5A8E" />
       </View>
@@ -113,6 +117,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  imageContainer: {
+    position: "relative",
+  },
+  sectionLabel: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    marginTop: 15,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  editIcon: {
+    position: "absolute",
+    top: 20,
+    right: 20,
   },
   textInput: {
     borderWidth: 1,
@@ -134,6 +157,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginVertical: 10,
   },
+  tagsContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   tag: {
     backgroundColor: '#6B5A8E',
     borderRadius: 20,
@@ -154,11 +184,6 @@ const styles = StyleSheet.create({
   },
   removeTagButtonText: {
     color: 'white',
-  },
-  saveButtonContainer: {
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: 10,
   },
   tagInputContainer: {
     marginTop: 30,

@@ -5,7 +5,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const DislikePost = async (id) => {
+const UnlikePost = async (id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -39,4 +39,4 @@ const DislikePost = async (id) => {
   } 
 };
 
-  export default DislikePost;
+  export default UnlikePost;
