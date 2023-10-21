@@ -25,7 +25,7 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
             date_of_birth: dob,
         };
 
-        const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/register', {
+        const response = await fetch('https://gateway-api-service-merok23.cloud.okteto.net/register', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody),

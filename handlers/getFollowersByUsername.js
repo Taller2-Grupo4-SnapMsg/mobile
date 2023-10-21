@@ -5,7 +5,7 @@ const OK = 200;
 const USER_NOT_FOUND = 404;
 
 //ponerlo en un .env como en la clase
-const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
+const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
 const getFollowersByUsername = async (email) => {
   const token = await AsyncStorage.getItem('token');

@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { ScrollView, View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import RoundedCheckboxButton from "../../components/RoundedCheckBox";
 import interestsData from "./interestsData";
-import SignInButton from "../../components/SignInButton";
+import SignInButton from "../../components/PurpleButton";
 import { useNavigation } from "@react-navigation/native";
 import changeInterests from "../../handlers/changeInterests";
+import NextButton from "../../components/PurpleButton";
 
 export default function InterestsList() {
-  const itemsPerRow = 3; // Number of items per row
+  const itemsPerRow = 3; 
   const navigation = useNavigation();
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,18 +42,22 @@ export default function InterestsList() {
 
   const handleNextButton = async () => {
     if (canProceed) {
-      setIsLoading(true); // Set loading state to true
+      setIsLoading(true); 
       try {
         const response = await changeInterests(selectedInterests);
         if (response) {
           navigation.navigate("Home");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          });
         } else {
           Alert.alert("Error", "Error al actualizar intereses");
         }
       } catch (error) {
         Alert.alert("Error", "An error occurred.");
       } finally {
-        setIsLoading(false); // Set loading state back to false
+        setIsLoading(false); 
       }
     } else {
       Alert.alert("Please select at least one interest");
@@ -81,11 +86,7 @@ export default function InterestsList() {
         </View>
       ))}
       <View style={styles.button}>
-      {isLoading ? ( 
-          <ActivityIndicator size="small" color="#6B5A8E" />
-        ) : (
-          <SignInButton onPress={handleNextButton} text="Sign in" />
-        )}
+        <NextButton onPress={handleNextButton} text="Next" loading={isLoading} />
       </View>
     </ScrollView>
   );
