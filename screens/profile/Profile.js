@@ -28,15 +28,6 @@ import {
 AMOUNT_POST = 10
 
 function formatDate(date) {
-  //date.setHours(date.getHours() + 6);
-
-  // const year = date.getFullYear();
-  // const month = String(date.getMonth() + 1).padStart(2, '0');
-  // const day = String(date.getDate()).padStart(2, '0');
-  // const hours = String(date.getHours()).padStart(2, '0');
-  // const minutes = String(date.getMinutes()).padStart(2, '0');
-  // const seconds = String(date.getSeconds()).padStart(2, '0');
-  //return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
   return date.replace("T", "_").split(".")[0];
 }
 
@@ -146,37 +137,38 @@ function ProfileUser({ user }) {
     setIsFetching(false); 
   };
 
+  const updatePost = (updatedPost) => {
+    // Find the index of the post to be updated in the posts array
+    const postIndex = posts.findIndex((p) => p.post_id === updatedPost.post_id);
+  
+    if (postIndex !== -1) {
+      // Create a copy of the posts array with the updated post
+      const updatedPosts = [...posts];
+    
+    // Compare the new values with the original post
+    const originalPost = updatedPosts[postIndex];
+    if (originalPost.text !== updatedPost.text) {
+      originalPost.text = updatedPost.text;
+    }
+    if (originalPost.image !== updatedPost.image) {
+      originalPost.image = updatedPost.image;
+    }
+    if (originalPost.hashtags !== updatedPost.hashtags) {
+      originalPost.hashtags = updatedPost.hashtags;
+    }
+  
+      // Update the state with the new posts array
+      setPosts(updatedPosts);
+    }
+  };
+
   const handlePressEdit = (post) => {
-    navigation.navigate('ProfileEditPost', { post: post });
+    navigation.navigate('ProfileEditPost', { post: post, updatePost: updatePost });
   };
 
   const handlePressDelete = async () => {
     return;
   }
-
-  const handleRefresh = async () => {
-    // try {
-    //   setReachedEnd(false);
-    //   setRefreshing(true);
-    //   const fetchedPosts = await getPostsProfile(formatDate((new Date()).toISOString()), AMOUNT_POST, user.email, onlyReposts);
-    //   if (fetchedPosts) {
-    //     setPosts(fetchedPosts);
-    //     setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
-    //   }
-    // } catch (error) {
-    //   console.error('Error while loading posts:', error);
-    // } finally {
-    //   setRefreshing(false);
-    // }
-    //setRefreshing(true);
-    //if (loadingMore) return;
-    setRefreshing(true);
-    setLatestDate((new Date()).toISOString());
-   // setPosts(posts[]);
-    setReachedEnd(false);
-    //handleGetMorePosts();
-    //setRefreshing(false);
-  };
 
   const handleGetMorePosts = async (date, refresh) => {
     if (loadingMore || (reachedEnd && !refresh)) return;
@@ -209,7 +201,7 @@ function ProfileUser({ user }) {
   }, [user]);
 
   useEffect(() => {  
-     handleRefresh()
+    handleGetMorePosts((new Date()).toISOString(), true)
    }, [onlyReposts]);
   
   return  (

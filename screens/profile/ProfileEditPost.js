@@ -4,9 +4,13 @@ import editPostHandler from '../../handlers/posts/editPost';
 import * as ImagePicker from 'expo-image-picker';
 import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+
+DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"
 
 const ProfileEditPost = ({ route }) => {
-  const { post } = route.params;
+  navigation = useNavigation();
+  const { post, updatePost } = route.params;
 
   const [newText, setNewText] = useState(post.text);
   const [newImage, setNewImage] = useState(decodeURIComponent(post.image));
@@ -34,8 +38,11 @@ const ProfileEditPost = ({ route }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      console.log("Entra a edit post handler con: ", post.post_id, newImage, newText, newHashtags)
+      console.log("imagen original: ", decodeURIComponent(post.image))
+      console.log("imagen nueva: ", newImage)
       await editPostHandler(post.post_id, newImage, newText, newHashtags);
+      updatePost({ ...post, text: newText, image: newImage, hashtags: newHashtags });
+      navigation.navigate('Profile');
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
@@ -55,7 +62,6 @@ const ProfileEditPost = ({ route }) => {
     setNewHashtags(updatedHashtags);
   };
 
-  console.log("newImage: ", newImage)
   return (
     <View style={styles.container}>
 
@@ -73,7 +79,7 @@ const ProfileEditPost = ({ route }) => {
               <Image source={{ uri: newImage }} style={styles.image} />
             )}
             {!newImage && (
-              <Image source={{ uri: "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"}} style={styles.image} />
+              <Image source={{ uri: DEFAULT_IMAGE}} style={styles.image} />
             )}
           </View>
         </Pressable>

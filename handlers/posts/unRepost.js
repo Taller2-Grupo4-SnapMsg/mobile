@@ -15,11 +15,13 @@ const UnRepost = async (post_id) => {
         'token': token,
       };
 
+      console.log("entra a sacar el repost:", post_id)
       const response = await fetch(`${URL_POST_BACK}/reposts/${post_id}`, {
         method: 'DELETE',
         headers: headers,
       });
 
+      console.log(response)
       if (response.status === 200) {
         return;
       } else if (response.status === 422) {

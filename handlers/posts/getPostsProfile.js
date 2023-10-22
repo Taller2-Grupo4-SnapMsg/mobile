@@ -7,7 +7,6 @@ URL_POST_BACK = "https://postsback.onrender.com"
 const getPostsProfile = async (oldest_date, n, email, only_repost) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        console.log("ENTRA A FETCHEAR EN PROFILE");
         if (token) {
             const headers = {
                 "Content-Type": "application/json",
@@ -15,14 +14,12 @@ const getPostsProfile = async (oldest_date, n, email, only_repost) => {
                 'token': token,
             };
             date_str = oldest_date.replace(' ', '_');
-            console.log(date_str);
             const response = await fetch(`${URL_POST_BACK}/posts/profile/${email}/oldest_date/${date_str}/amount/${n}/only_reposts/?only_reposts=${only_repost}`, {
                 method: 'GET',
                 headers: headers,
             });
             if (response.status === OK) {
                 const post = await response.json();
-                console.log(post);
                 return post;
             } else {
                 throw new Error('Error al obtener los posts del usuario: ' ,response.status);

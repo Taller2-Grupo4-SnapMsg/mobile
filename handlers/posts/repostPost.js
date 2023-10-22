@@ -15,12 +15,12 @@ const RepostPost = async (post_id) => {
         'token': token,
       };
 
-      console.log("entra a sacar el repost:", post_id)
-      const response = await fetch(`${URL_POST_BACK}/resposts/${post_id}`, {
+      const response = await fetch(`${URL_POST_BACK}/reposts/${post_id}`, {
         method: 'POST',
         headers: headers,
       });
 
+      //console.log("response:", response)
       if (response.status === 200) {
         return;
       } else if (response.status === 422) {

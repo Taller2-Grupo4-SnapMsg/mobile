@@ -72,7 +72,7 @@ const Post = ({ post }) => {
         )}
 
         <View style={styles.footer}>
-          <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={isReposted}/>
+          <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={isReposted} post_id={post_id}/>
           <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id}/>
         </View>
         </View>
