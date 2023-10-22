@@ -1,16 +1,10 @@
 import React from 'react';
 import {useState, useEffect} from 'react'; 
 import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
-
-import LikePost from '../../handlers/posts/likePost';
-import UnlikePost from '../../handlers/posts/unlikePost';
-import RepostPost from '../../handlers/posts/repostPost';
-import UndoRepostPost from '../../handlers/posts/getReposts';
 import Avatar from '../Avatar';
-import LikeButton from './LikeButton';
 import RepostButton from './RepostButton';
+import LikeButton from './LikeButton';
 
 import {
   DarkTheme,
@@ -33,45 +27,13 @@ const Post = ({ post }) => {
       did_i_like, 
       did_i_repost} = post;
   
-  const navigation = useNavigation();
   const colorScheme = useColorScheme();
-  const [isLiked, setIsLiked] = useState(did_i_like);
   const [isReposted, setIsReposted] = useState(did_i_repost);
 
   const handlePressPost = () => {
     //navigation.navigate('PostDetailed', { postId: post.post_id });
     return;
   };
-
-  const handlePressRepost = async (post_id) => {
-    try {
-      if (isReposted == false) {
-        await RepostPost(post_id);
-        setIsReposted(true);
-      }
-      else {
-        await UndoRepostPost(post_id);
-        setIsReposted(false);
-      }
-    } catch (error) {
-      console.error('Error while reposting:', error);
-    }
-  };
-
-  const handlePressLike = async (post_id) => {
-  try {
-    if (isLiked == false) {
-      await LikePost(post_id);
-      setIsLiked(true);
-    }
-    else {
-      await UnlikePost(post_id);
-      setIsLiked(false);
-    }
-  } catch (error) {
-    console.error('Error while liking:', error);
-  }
-};
 
   all_hours = Math.floor((new Date() - new Date(created_at))/ (1000 * 60 * 60))
   days = Math.floor(all_hours / 24)
@@ -110,13 +72,8 @@ const Post = ({ post }) => {
         )}
 
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => handlePressRepost(post_id)}>
-            <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={isReposted}/>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => handlePressLike(post_id)}>
-            <LikeButton icon="heart" initialLikes={number_likes} isLiked={isLiked}/>
-          </TouchableOpacity>
+          <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={isReposted}/>
+          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id}/>
         </View>
         </View>
         </Pressable>

@@ -28,13 +28,14 @@ import {
 AMOUNT_POST = 10
 
 function formatDate(date) {
+  date.setHours(date.getHours() - 6);
+
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
-
   return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
 }
 
@@ -178,7 +179,9 @@ function ProfileUser({ user }) {
       const fetchedPosts = await getPostsProfile(RemoveMillisecondsFromDateStr(latestDate), AMOUNT_POST, user.email, false);
       if (fetchedPosts && fetchedPosts.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
+        date = fetchedPosts[fetchedPosts.length - 1].created_at;
+        date.setHours(date.getHours() - 6);
+        setLatestDate(RemoveMillisecondsFromDateStr(date));
       } else {
         setReachedEnd(true);
       }

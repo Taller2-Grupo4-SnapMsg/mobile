@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { EvilIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import LikePost from '../../handlers/posts/likePost';
+import UnlikePost from '../../handlers/posts/unlikePost';
 
-const LikeButton = ({ icon, initialLikes, isLiked }) => {
+
+const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(initialLikes);
 
-  const handleLikePress = () => {
-    if (liked) {
-      setLikes(likes - 1);
-      setLiked(false);
-    } else {
-      setLikes(likes + 1);
-      setLiked(true);
+  const handleLikePress = async (post_id) => {
+    try {
+      if (liked) {
+        console.log("ENTRA A LIKEAR")
+        setLikes(likes - 1);
+        setLiked(false);
+        response = await UnlikePost(post_id);
+      } else {
+        console.log("ENTRA AL UNLIKE")
+        setLikes(likes + 1);
+        setLiked(true);
+        response = await LikePost(post_id);
+      }
+    }catch (error) {
+      console.error('Error while liking:', error);
     }
   };
 
