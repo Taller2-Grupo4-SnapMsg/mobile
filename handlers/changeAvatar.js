@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const OK = 200;
 const USER_NOT_FOUND = 404;
 
-const API_BASE_URL = 'https://gateway-api-merok23.cloud.okteto.net';
+const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
 const changeAvatar = async (avatar) => {
   const token = await AsyncStorage.getItem('token');

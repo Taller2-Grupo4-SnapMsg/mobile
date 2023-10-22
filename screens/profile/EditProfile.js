@@ -23,7 +23,8 @@ import CountryPickerModalEdit from "../../components/CountryPickerModalEdit";
 import { useUser } from '../../UserContext';
 import { ActivityIndicator } from 'react-native'; 
 import getUserByToken from "../../handlers/getUserByToken";
-
+import SaveButton from "../../components/PurpleButton";
+import PurpleButton from "../../components/PurpleButton";
 
 export default function EditProfileById() {
   const route = useRoute();
@@ -261,16 +262,7 @@ const EditProfile = ({  user  }) => {
               selectedCountryName={selectedCountryName}/>
           </View>
         </View>
-
-
-      
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton} disabled={isSaving}>
-          {isSaving ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <Text style={styles.saveButtonText}>Save</Text>
-          )}
-        </TouchableOpacity>
+        <PurpleButton onPress={handleSaveButton} text="Save" loading={isSaving} />
         {renderDatePicker()}
       </ScrollView>
     </View>

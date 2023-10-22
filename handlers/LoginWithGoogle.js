@@ -15,7 +15,7 @@ const PASSWORD_DOESNT_MATCH = 401
     };
     
     try { 
-      const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/login_with_google/', {
+      const response = await fetch('https://gateway-api-service-merok23.cloud.okteto.net/login_with_google/', {
         method: 'POST',
         headers: headers,
       });

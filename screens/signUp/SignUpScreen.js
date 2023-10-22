@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert, Modal, ActivityIndicator, ScrollView } from 'react-native';
 import DatePicker from 'react-native-modern-datepicker';
 import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
-import SignInButton from '../../components/SignInButton';
+import SignUpButton from '../../components/PurpleButton';
 import { useUser } from '../../UserContext';
 import CountryPickerModal from '../../components/CountryPickerModal';
 import changeLocation from '../../handlers/changeLocation';
 import changeAvatar from '../../handlers/changeAvatar';
 import { storage } from '../../firebase';
 import { ref, getDownloadURL } from "firebase/storage";
+
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [last_name, setLastName] = useState();
@@ -74,7 +75,10 @@ const SignUpScreen = ({ navigation }) => {
     <ImageBackground
       style={styles.container}
     >
-      
+     <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
     <View style={styles.container}>
     <Image style={styles.logo} source={small_logo} />
     <Text style={styles.signupTitle}>Sign up to <Text style={{color: '#6B5A8E', fontSize: 30}}>SnapMsg</Text> today!</Text>
@@ -99,7 +103,6 @@ const SignUpScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputs}
-          //placeholderTextColor={"black"}
           placeholder="Username"
           underlineColorAndroid="transparent"
           onChangeText={text => setUserName(text)}
@@ -136,11 +139,11 @@ const SignUpScreen = ({ navigation }) => {
               borderColor: 'rgba(122, 146, 165, 0.1)',
             }}
             current="1998-01-01"
-            selected="1998-01-01" //creo que estos dos me dejan poner un default, pero probar por las dudas
+            selected="1998-01-01" 
             style={{ borderRadius: 10 }}
           />
           <TouchableOpacity
-            style={[styles.buttonContainer, styles.signupButton]} 
+            style={[styles.buttonContainer, styles.signupButton]}
              onPress={() => setModalVisible(false) }>
               <Text style={styles.signupText}>Close</Text>
             </TouchableOpacity>
@@ -185,17 +188,15 @@ const SignUpScreen = ({ navigation }) => {
         </View>
 
 
-       {isLoading ? ( // Show the loading spinner while registering
-          <ActivityIndicator size="large" color="#6B5A8E" />
-        ) : (
-          <SignInButton onPress={handleSignUp} text="Sign up!" />
-        )}
+      <SignUpButton onPress={handleSignUp} text="Sign Up!" loading={isLoading} />
+
       <TouchableOpacity
         style={styles.buttonContainer}
         onPress={handleSignIn}>
         <Text style={styles.btnText}>Already have an account? Sign in</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
     </ImageBackground>
   )
 }
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
   modalContent: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
