@@ -15,6 +15,7 @@ const RepostPost = async (post_id) => {
         'token': token,
       };
 
+      console.log("entra a sacar el repost:", post_id)
       const response = await fetch(`${URL_POST_BACK}/resposts/${post_id}`, {
         method: 'POST',
         headers: headers,

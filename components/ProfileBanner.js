@@ -94,12 +94,15 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: 'column',
+    //height: 'auto', 
   },
   profileContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 5,
     paddingHorizontal: 16,
+    //backgroundColor: 'blue',
   },
   userInfoContainer: {
     marginLeft: 16,
@@ -158,7 +161,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   BioAndStatsContainer: {
+    flex: 1.1,
     paddingHorizontal: 16,
+    //backgroundColor: 'green',
   },
   profileContainerWhole: {
     flex: 1,

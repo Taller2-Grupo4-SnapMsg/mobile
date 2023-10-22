@@ -28,15 +28,16 @@ import {
 AMOUNT_POST = 10
 
 function formatDate(date) {
-  date.setHours(date.getHours() + 6);
+  //date.setHours(date.getHours() + 6);
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
+  // const year = date.getFullYear();
+  // const month = String(date.getMonth() + 1).padStart(2, '0');
+  // const day = String(date.getDate()).padStart(2, '0');
+  // const hours = String(date.getHours()).padStart(2, '0');
+  // const minutes = String(date.getMinutes()).padStart(2, '0');
+  // const seconds = String(date.getSeconds()).padStart(2, '0');
+  //return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
+  return date.replace("T", "_").split(".")[0];
 }
 
 function RemoveMillisecondsFromDateStr(dateStr) {
@@ -95,9 +96,8 @@ function ProfileUser({ user }) {
   const [isFollowing, setIsFollowing] = useState(null);
   const [isFollower, setIsFollower] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [isStarting, setIsStarting] = useState(true);
   const [posts, setPosts] = useState([]);
-  const [latestDate, setLatestDate] = useState(new Date());
+  const [latestDate, setLatestDate] = useState((new Date()).toISOString());
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
@@ -155,35 +155,44 @@ function ProfileUser({ user }) {
   }
 
   const handleRefresh = async () => {
-    try {
-      setReachedEnd(false);
-      setRefreshing(true);
-      console.log("NEW DATE CUANDO REFRESCA:", formatDate(new Date()));
-      const fetchedPosts = await getPostsProfile(formatDate(new Date()), AMOUNT_POST, user.email, onlyReposts);
-      if (fetchedPosts) {
-        setPosts(fetchedPosts);
-        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
-      }
-    } catch (error) {
-      console.error('Error while loading posts:', error);
-    } finally {
-      setRefreshing(false);
-    }
+    // try {
+    //   setReachedEnd(false);
+    //   setRefreshing(true);
+    //   const fetchedPosts = await getPostsProfile(formatDate((new Date()).toISOString()), AMOUNT_POST, user.email, onlyReposts);
+    //   if (fetchedPosts) {
+    //     setPosts(fetchedPosts);
+    //     setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
+    //   }
+    // } catch (error) {
+    //   console.error('Error while loading posts:', error);
+    // } finally {
+    //   setRefreshing(false);
+    // }
+    //setRefreshing(true);
+    //if (loadingMore) return;
+    setRefreshing(true);
+    setLatestDate((new Date()).toISOString());
+   // setPosts(posts[]);
+    setReachedEnd(false);
+    //handleGetMorePosts();
+    //setRefreshing(false);
   };
 
-  const handleGetMorePosts = async () => {
-    if (loadingMore || reachedEnd) return;
+  const handleGetMorePosts = async (date, refresh) => {
+    if (loadingMore || (reachedEnd && !refresh)) return;
 
     try {
       setLoadingMore(true);
-      console.log("NEW DATE CUANDO VA PARA ABAJO:", RemoveMillisecondsFromDateStr(latestDate));
-      const fetchedPosts = await getPostsProfile(RemoveMillisecondsFromDateStr(latestDate), AMOUNT_POST, user.email, false);
+      setRefreshing(refresh);
+      const fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts);
       if (fetchedPosts && fetchedPosts.length > 0) {
-        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-        date = fetchedPosts[fetchedPosts.length - 1].created_at;
-        console.log("date:", date)
-        date.setHours(date.getHours() + 6);
-        setLatestDate(RemoveMillisecondsFromDateStr(date));
+        if (refresh) {
+          setPosts(fetchedPosts);
+          setRefreshing(false);
+          setReachedEnd(false);
+        }
+        else {setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);}
+        setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
       } else {
         setReachedEnd(true);
       }
@@ -194,55 +203,31 @@ function ProfileUser({ user }) {
     }
   };
 
-  const handleStarting = async () => {
-    try {
-      setIsStarting(true);
-      console.log("NEW DATE CUANDO REFRESCA:", new Date());
-      const fetchedPosts = await getPostsProfile(formatDate(new Date()), AMOUNT_POST, user.email, false);
-      if (fetchedPosts && fetchedPosts.length > 0) {
-        setPosts(fetchedPosts);
-        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
-      }
-    } catch (error) {
-      console.error('Error while loading posts:', error);
-    } finally {
-      setIsStarting(false);
-    }
-  }
-
-  useEffect(() => {
-    handleStarting();
-  }, []);
-
   useEffect(() => {  
     fetchFollowStatus({ user, setStatus: setIsFollowing, followStatusFunction: checkIfFollowing, setIsFetching });
     fetchFollowStatus({ user, setStatus: setIsFollower, followStatusFunction: checkIfFollower, setIsFetching });
   }, [user]);
 
   useEffect(() => {  
-    handleRefresh()
-  }, [onlyReposts]);
+     handleRefresh()
+   }, [onlyReposts]);
   
   return  (
     <View style={{ flex: 1 , flexDirection: 'column'}}>
-      <ProfileBanner user={user} isFollowing={isFollowing} isFollower={isFollower} 
-        isFetching={isFetching} toggleModal={toggleModal} handleEditButton={handleEditButton} 
-        handleFollowersButton={handleFollowersButton} handleFollowingButton={handleFollowingButton}
-        handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
-        loggedInUser={loggedInUser} 
-        onlyReposts={onlyReposts} 
-        setOnlyReposts={setOnlyReposts}
-        style={{ flex: 1}}
-      />      
-      {isStarting && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Spinner
-        visible={isStarting}
-        textStyle={{ color: '#FFF' }}
-      />
-      </View>}
       <FlatList
+        ListHeaderComponent={
+          <ProfileBanner user={user} isFollowing={isFollowing} isFollower={isFollower} 
+          isFetching={isFetching} toggleModal={toggleModal} handleEditButton={handleEditButton} 
+          handleFollowersButton={handleFollowersButton} handleFollowingButton={handleFollowingButton}
+          handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
+          loggedInUser={loggedInUser} 
+          onlyReposts={onlyReposts} 
+          setOnlyReposts={setOnlyReposts}
+          style={{ flex: 1}}
+          />
+        }
         style={{ flex: 1, maginTop: 0}}
-        data={posts}
+        data={posts} 
         renderItem={({ item }) => {
           if (!item) {
             return null;
@@ -282,11 +267,11 @@ function ProfileUser({ user }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={() => handleGetMorePosts((new Date()).toISOString(), true)}
             colors={['#947EB0']}
           />
         }
-        onEndReached={handleGetMorePosts}
+        onEndReached={() => handleGetMorePosts(latestDate, false)}
         onEndReachedThreshold={0.1}
         />
       {loadingMore && <LoadingMoreIndicator />}

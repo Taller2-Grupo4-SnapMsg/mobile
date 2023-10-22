@@ -26,19 +26,14 @@ const RepostButton = ({ icon, initialReposts, isReposted}) => {
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 90 }}>
-      <TouchableOpacity onPress={handlePressRepost}>
+    <TouchableOpacity onPress={handlePressRepost}>
       {reposted ? (
-          <AntDesign
-            name={icon}
-            size={30}
-            color="black"
-            style={{ fontWeight: 'bold' }}
-          />
-      ) : (
-        <AntDesign name={icon} size={30} color="gray" />
-      )}
-      <Text style={{ fontSize: 15, color: 'gray', marginLeft: 5 }}>{reposts}</Text>
-      </TouchableOpacity>
+          <AntDesign name={icon} size={27} color="black" />
+        ) : (
+          <AntDesign name={icon} size={27} color="gray" />
+        )}
+    </TouchableOpacity>
+    <Text style={{ fontSize: 15, color: 'gray', marginLeft: 5 }}>{reposts}</Text>
     </View>
   );
 };
