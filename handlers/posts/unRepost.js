@@ -5,7 +5,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const UnlikePost = async (post_id) => {
+const UnRepost = async (post_id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -15,7 +15,7 @@ const UnlikePost = async (post_id) => {
         'token': token,
       };
 
-      const response = await fetch(`${URL_POST_BACK}/likes/${post_id}`, {
+      const response = await fetch(`${URL_POST_BACK}/reposts/${post_id}`, {
         method: 'DELETE',
         headers: headers,
       });
@@ -39,4 +39,4 @@ const UnlikePost = async (post_id) => {
   } 
 };
 
-  export default UnlikePost;
+  export default UnRepost;

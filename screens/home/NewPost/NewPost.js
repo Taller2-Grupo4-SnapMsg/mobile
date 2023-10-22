@@ -11,8 +11,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
 import Dialog from '../../../components/Alert';
-import uuid from 'uuid';
-import { v4 as uuidv4 } from 'uuid';
+//import uuid from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 
 export default function NewPost() {
   const navigation = useNavigation();
@@ -32,8 +32,8 @@ export default function NewPost() {
     if (selectedImage) {
       const { nanoid } = require('nanoid');
       const fileName = 'post_image.jpg';
-      //const postId = uuid.v4();
-      const postId = nanoid();
+      //const postId = nanoid();
+      const postId = Math.floor(Math.random() * (10000000 - 0 + 1)) + 0;
       const storageRef = ref(storage, `post_images/${postId}/${fileName}`);
 
       const response = await fetch(selectedImage);
@@ -43,6 +43,7 @@ export default function NewPost() {
       const downloadURL = await getDownloadURL(storageRef);
 
       setSelectedImage('');
+      console.log("llega a new post con: ", text, downloadURL, tags)
       PostHandler(text, downloadURL, tags);
       setSuccessAlertVisible(true);
     } else {
@@ -79,7 +80,7 @@ export default function NewPost() {
 
   const addTag = (tag) => {
     setTags([...tags, tag]);
-    setTagInput(''); // Limpia el campo de entrada de etiquetas después de agregar una etiqueta.
+    setTagInput('');
   };
 
   const removeTag = (tag) => {
@@ -167,7 +168,7 @@ export default function NewPost() {
 
         <Dialog
           isVisible={isSuccessAlertVisible}
-          message="Post generated successfully" // Puedes personalizar el mensaje aquí
+          message="Post generated successfully"
           onClose={() => setSuccessAlertVisible(false)}
         />
       </View>

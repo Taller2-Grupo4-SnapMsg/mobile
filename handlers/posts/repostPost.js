@@ -5,7 +5,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const RepostPost = async (id) => {
+const RepostPost = async (post_id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -15,7 +15,7 @@ const RepostPost = async (id) => {
         'token': token,
       };
 
-      const response = await fetch(`${URL_POST_BACK}/resposts/${id}`, {
+      const response = await fetch(`${URL_POST_BACK}/resposts/${post_id}`, {
         method: 'POST',
         headers: headers,
       });

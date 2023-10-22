@@ -22,7 +22,7 @@ const PostHandler = async (content, image, tags) => {
             };
     
             //console.log("REQUEST BODY: ",requestBody)
-            const response = await fetch(`https://postsback.onrender.com/posts/`, {
+            const response = await fetch(`https://postsback.onrender.com/posts`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(requestBody),

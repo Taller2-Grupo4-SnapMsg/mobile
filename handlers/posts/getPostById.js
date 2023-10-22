@@ -1,3 +1,4 @@
+// Aun no esta implementado en el otro front
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
@@ -30,7 +31,7 @@ const getPostById = async (id) => {
             error.response?.data?.error ||
             error.message ||
             'Service is not available at the moment';
-            //console.log(message);
+            console.log(message);
             throw new Error(message);
         }
     }

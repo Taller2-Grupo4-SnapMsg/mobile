@@ -1,3 +1,4 @@
+//queda completar cuando este
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
@@ -5,7 +6,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const UndoRepostPost = async (id) => {
+const UndoRepostPost = async () => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -15,7 +16,7 @@ const UndoRepostPost = async (id) => {
         'token': token,
       };
 
-      const response = await fetch(`${URL_POST_BACK}/resposts/${id}`, {
+      const response = await fetch(`${URL_POST_BACK}/resposts`, {
         method: 'DELETE',
         headers: headers,
       });

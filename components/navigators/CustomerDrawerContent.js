@@ -17,7 +17,6 @@ function CustomDrawerContent({ navigation }) {
     const fetchUser = async () => {
       try {
         const user = await getUserByToken();
-        //console.log(user);
         if (user) {
           setUser(user);
           setIsLoading(false);

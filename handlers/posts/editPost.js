@@ -4,9 +4,9 @@ const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const editPostHandler = async (image, content, hashtags) => {
+const editPostHandler = async (post_id, image, content, hashtags) => {
     const token = await AsyncStorage.getItem('token');
-    if (token && post){
+    if (token){
         try {
             headers = {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -15,14 +15,14 @@ const editPostHandler = async (image, content, hashtags) => {
               };
             
             
-            const encodedImage = encodeURIComponent(post.image);
+            const encodedImage = encodeURIComponent(image);
             const requestBody = {
-                content: post.content,
+                content: content,
                 image: encodedImage,
-                hashtags: post.hashtags,
+                hashtags: hashtags,
             };
     
-            const response = await fetch(`https://postsback.onrender.com/posts/${post.id}`, {
+            const response = await fetch(`${URL_POST_BACK}/posts/${post_id}`, {
                 method: 'PUT',
                 headers: headers,
                 body: JSON.stringify(requestBody),
@@ -39,7 +39,7 @@ const editPostHandler = async (image, content, hashtags) => {
             error.response?.data?.error ||
             error.message ||
             'Service is not available at the moment';
-            //console.log(message);
+            console.log(message);
             throw new Error(message);
         }
     }

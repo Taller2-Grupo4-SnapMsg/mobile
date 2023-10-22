@@ -5,7 +5,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const LikePost = async (id) => {
+const LikePost = async (post_id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -15,7 +15,7 @@ const LikePost = async (id) => {
         'token': token,
       };
 
-      const response = await fetch(`${URL_POST_BACK}/likes/${id}`, {
+      const response = await fetch(`${URL_POST_BACK}/likes/${post_id}`, {
         method: 'POST',
         headers: headers,
       });

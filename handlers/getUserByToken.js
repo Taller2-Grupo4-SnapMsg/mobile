@@ -11,7 +11,7 @@ const getUserByToken = async () => {
                 'accept': 'application/json',
                 'token': token,
             };
-            const response = await fetch('https://gateway-api-merok23.cloud.okteto.net/get_user_by_token/', {
+            const response = await fetch('https://gateway-api-service-merok23.cloud.okteto.net/get_user_by_token/', {
                 method: 'GET',
                 headers: headers,
             });

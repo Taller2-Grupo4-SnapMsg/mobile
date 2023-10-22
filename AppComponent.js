@@ -63,6 +63,8 @@ const StackNavigatorSearch = () => {
 export default function AppComponent() {
   const colorScheme = useColorScheme();
   const {loggedInUser} = useUser(); 
+  //console.log("loggedInUser:", loggedInUser)
+  //console.log(token)
   return (
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {loggedInUser ? (
@@ -88,6 +90,7 @@ export default function AppComponent() {
         </Stack.Navigator>
       )}
     </NavigationContainer>
+
   );
 
 };

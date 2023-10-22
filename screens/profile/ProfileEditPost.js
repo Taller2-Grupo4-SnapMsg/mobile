@@ -8,12 +8,9 @@ import { AntDesign } from '@expo/vector-icons';
 const ProfileEditPost = ({ route }) => {
   const { post } = route.params;
 
-  const [newText, setNewText] = useState(post.content);
-  const [newImage, setNewImage] = useState(post.image);
+  const [newText, setNewText] = useState(post.text);
+  const [newImage, setNewImage] = useState(decodeURIComponent(post.image));
   const [newHashtags, setNewHashtags] = useState(post.hashtags);
-
-  const [isEditingText, setIsEditingText] = useState(false);
-  const [isEditingImage, setIsEditingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [tagInput, setTagInput] = useState('');
 
@@ -37,9 +34,8 @@ const ProfileEditPost = ({ route }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await editPostHandler(post.id, newImage, newText, newHashtags);
-      setIsEditingText(false);
-      setIsEditingImage(false);
+      console.log("Entra a edit post handler con: ", post.post_id, newImage, newText, newHashtags)
+      await editPostHandler(post.post_id, newImage, newText, newHashtags);
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
@@ -59,10 +55,19 @@ const ProfileEditPost = ({ route }) => {
     setNewHashtags(updatedHashtags);
   };
 
+  console.log("newImage: ", newImage)
   return (
     <View style={styles.container}>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={styles.sectionLabel}>Image Post</Text>
+          <Pressable onPress={handleSelectImage} style={{ marginLeft: 'auto', marginBottom: 45 }}>
+            <AntDesign name="edit" size={35} color="black" style={styles.editIcon} />
+          </Pressable>
+        </View>
+      <View>
         <Pressable onPress={handleSelectImage}>
+          <AntDesign name="edit" size={35} color="black" style={styles.editIcon} />
           <View style={styles.imageContainer}>
             {newImage && (
               <Image source={{ uri: newImage }} style={styles.image} />
@@ -70,9 +75,9 @@ const ProfileEditPost = ({ route }) => {
             {!newImage && (
               <Image source={{ uri: "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"}} style={styles.image} />
             )}
-            <AntDesign name="edit" size={35} color="black" style={styles.editIcon} />
           </View>
         </Pressable>
+      </View>
 
         <Text style={styles.sectionLabel}>Content Post</Text>
         <TextInput
@@ -107,7 +112,7 @@ const ProfileEditPost = ({ route }) => {
         </View>
 
       <View style={styles.saveButtonContainer}>
-        <Button title={isSaving ? 'Save...' : 'Save'} onPress={handleSave} disabled={isSaving} color="#6B5A8E" />
+        <Button title={isSaving ? 'Save...' : 'Save'} onPress={handleSave} disabled={isSaving} color="#6B5A8E"/>
       </View>
     </View>
   );
@@ -126,6 +131,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 15,
     marginTop: 15,
+  }, 
+  container_edit: {
+    flexDirection: 'row',
   },
   image: {
     width: 100,
@@ -158,11 +166,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   tagsContainer: {
-    marginTop: 20,
+    marginTop: 10,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    marginBottom: 10,
   },
   tag: {
     backgroundColor: '#6B5A8E',
@@ -186,10 +193,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   tagInputContainer: {
-    marginTop: 30,
+    marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   tagInput: {
     flex: 1,
@@ -211,6 +218,9 @@ const styles = StyleSheet.create({
   addTagButtonText: {
     color: 'white',
   },
+  saveButtonContainer: {
+    borderRadius: 20,
+  }
 });
 
 export default ProfileEditPost;

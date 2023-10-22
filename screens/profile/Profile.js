@@ -12,21 +12,18 @@ import { fetchFollowStatus } from '../../functions/Fetchings/fetchFollowStatus';
 import checkIfFollowing from '../../handlers/checkIfFollowing';
 import checkIfFollower from '../../handlers/checkIfFollower';
 import ProfileBanner from '../../components/ProfileBanner';
-import {
-  View,
-  FlatList,
-  RefreshControl,
-  Pressable,
-} from 'react-native';
-
-import editPostHandler from '../../handlers/posts/editPost';
-import ProfileEditPost from './ProfileEditPost';
 import { AntDesign } from '@expo/vector-icons';
 import getPostsProfile from '../../handlers/posts/getPostsProfile';
 import Post from '../../components/posts/Post';
 import Repost from '../../components/posts/Repost';
 import { useUser } from '../../contexts/UserContext';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  Pressable,
+} from 'react-native';
 
 AMOUNT_POST = 10
 
@@ -101,8 +98,6 @@ function ProfileUser({ user }) {
   const [posts, setPosts] = useState([]);
   const [latestDate, setLatestDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
-  const [isEditPopupVisible, setEditPopupVisible] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
 
@@ -161,10 +156,11 @@ function ProfileUser({ user }) {
     try {
       setReachedEnd(false);
       setRefreshing(true);
-      const fetchedPosts = await getPostsProfile(user.id, formatDate(new Date()), AMOUNT_POST);
+      console.log("NEW DATE CUANDO REFRESCA:", new Date());
+      const fetchedPosts = await getPostsProfile(formatDate(new Date()), AMOUNT_POST, user.email, false);
       if (fetchedPosts) {
         setPosts(fetchedPosts);
-        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
       }
     } catch (error) {
       console.error('Error while loading posts:', error);
@@ -178,12 +174,13 @@ function ProfileUser({ user }) {
 
     try {
       setLoadingMore(true);
-      const fetchedPosts = await getPostsProfile(user.id, RemoveMillisecondsFromDateStr(latestDate), AMOUNT_POST);
+      console.log("NEW DATE CUANDO VA PARA ABAJO:", RemoveMillisecondsFromDateStr(latestDate));
+      const fetchedPosts = await getPostsProfile(RemoveMillisecondsFromDateStr(latestDate), AMOUNT_POST, user.email, false);
       if (fetchedPosts && fetchedPosts.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
       } else {
-        setReachedEnd(true); // No hay más publicaciones para cargar
+        setReachedEnd(true);
       }
     } catch (error) {
       console.error('Error while loading more posts:', error);
@@ -195,10 +192,11 @@ function ProfileUser({ user }) {
   const handleStarting = async () => {
     try {
       setIsStarting(true);
-      const fetchedPosts = await getPostsProfile(user.id, formatDate(new Date()), AMOUNT_POST);
+      console.log("NEW DATE CUANDO REFRESCA:", new Date());
+      const fetchedPosts = await getPostsProfile(formatDate(new Date()), AMOUNT_POST, user.email, false);
       if (fetchedPosts && fetchedPosts.length > 0) {
         setPosts(fetchedPosts);
-        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].posted_at));
+        setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
       }
     } catch (error) {
       console.error('Error while loading posts:', error);
@@ -224,21 +222,26 @@ function ProfileUser({ user }) {
         handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
         loggedInUser={loggedInUser}
         style={{ flex: 1}}
+      />      
+      {isStarting && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Spinner
+        visible={isStarting}
+        textStyle={{ color: '#FFF' }}
       />
+      </View>}
       <FlatList
         style={{ flex: 1, maginTop: 0}}
-        keyExtractor={(item) => `${item.id}_${item.user_repost.id}`}
         data={posts}
         renderItem={({ item }) => {
           if (!item) {
             return null;
           }
 
-          if (item.user_repost.id == -1) {
+          if (item.user_poster.email == item.user_creator.email) {
             return (
               <View style={{ flexDirection: 'row' , justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <Post post={item} style={{ flex: 1}}/>
-                {user.username == loggedInUser.username && (
+                {user.email == loggedInUser.email && (
                 <View style={{ position: 'absolute', right: 0, top: 0 , marginRight: 10 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Pressable onPress={() => handlePressEdit(item)} style={{ marginRight: 30, marginTop: 15, marginBottom: 10}}>
@@ -255,7 +258,7 @@ function ProfileUser({ user }) {
           return (
             <View>
               <Repost post={item} style={{ flex: 1}}/>
-              {user.username == loggedInUser.username && (
+              {user.email == loggedInUser.email && (
               <View style={{ position: 'absolute', right: 0, top: 0, marginRight: 10}}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
