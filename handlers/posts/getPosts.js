@@ -16,14 +16,14 @@ const getPosts = async (oldest_date, n, user_visited) => {
                 'token': token,
               };
               date_str = oldest_date.replace(' ', '_');
-              console.log("date_str:", date_str)
+              //console.log("date_str:", date_str)
               const response = await fetch(`${URL_POST_BACK}/posts/feed/oldest_date/${date_str}/amount/${n}`, {
                 method: 'GET',
                 headers: headers,
               });
             if (response.status === OK) {
                 const posts = await response.json();
-                console.log("response:", posts)
+                //console.log("response:", posts)
                 return posts;
             } else {
                 console.error('Fallo el request al back de getPosts:', response.status);

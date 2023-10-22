@@ -20,7 +20,7 @@ const LikePost = async (post_id) => {
         headers: headers,
       });
 
-      console.log("RESPUESTA DEL LIKE:", response)
+      //console.log("RESPUESTA DEL LIKE:", response)
       if (response.status === 200) {
         return;
       } else if (response.status === 422) {

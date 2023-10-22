@@ -7,7 +7,7 @@ URL_POST_BACK = "https://postsback.onrender.com"
 const getPostsProfile = async (oldest_date, n, email, only_repost) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        console.log("ENTRA A FETCHEAR");
+        console.log("ENTRA A FETCHEAR EN PROFILE");
         if (token) {
             const headers = {
                 "Content-Type": "application/json",

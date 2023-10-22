@@ -55,7 +55,7 @@ const RegisterHandler = async (email, password, firstName, lastName, username, d
                 return false;
         }
     } catch (error) {
-        //console.log("error!: " +  error);
+        console.log("error!: " +  error);
         const message =
         error.response?.data?.error ||
         error.message ||

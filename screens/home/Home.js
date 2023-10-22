@@ -88,7 +88,6 @@ export default function Home({}) {
 
     const handleStarting = async () => {
       try {
-        console.log("Starting")
         setIsStarting(true);
         const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST, loggedInUser.email);
         if (fetchedPosts.length > 0) {

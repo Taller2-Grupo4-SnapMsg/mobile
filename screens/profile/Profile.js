@@ -28,7 +28,7 @@ import {
 AMOUNT_POST = 10
 
 function formatDate(date) {
-  date.setHours(date.getHours() - 6);
+  date.setHours(date.getHours() + 6);
 
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -101,6 +101,7 @@ function ProfileUser({ user }) {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
+  const [onlyReposts, setOnlyReposts] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -157,8 +158,8 @@ function ProfileUser({ user }) {
     try {
       setReachedEnd(false);
       setRefreshing(true);
-      console.log("NEW DATE CUANDO REFRESCA:", new Date());
-      const fetchedPosts = await getPostsProfile(formatDate(new Date()), AMOUNT_POST, user.email, false);
+      console.log("NEW DATE CUANDO REFRESCA:", formatDate(new Date()));
+      const fetchedPosts = await getPostsProfile(formatDate(new Date()), AMOUNT_POST, user.email, onlyReposts);
       if (fetchedPosts) {
         setPosts(fetchedPosts);
         setLatestDate(RemoveMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
@@ -180,7 +181,8 @@ function ProfileUser({ user }) {
       if (fetchedPosts && fetchedPosts.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
         date = fetchedPosts[fetchedPosts.length - 1].created_at;
-        date.setHours(date.getHours() - 6);
+        console.log("date:", date)
+        date.setHours(date.getHours() + 6);
         setLatestDate(RemoveMillisecondsFromDateStr(date));
       } else {
         setReachedEnd(true);
@@ -216,6 +218,10 @@ function ProfileUser({ user }) {
     fetchFollowStatus({ user, setStatus: setIsFollowing, followStatusFunction: checkIfFollowing, setIsFetching });
     fetchFollowStatus({ user, setStatus: setIsFollower, followStatusFunction: checkIfFollower, setIsFetching });
   }, [user]);
+
+  useEffect(() => {  
+    handleRefresh()
+  }, [onlyReposts]);
   
   return  (
     <View style={{ flex: 1 , flexDirection: 'column'}}>
@@ -223,7 +229,9 @@ function ProfileUser({ user }) {
         isFetching={isFetching} toggleModal={toggleModal} handleEditButton={handleEditButton} 
         handleFollowersButton={handleFollowersButton} handleFollowingButton={handleFollowingButton}
         handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
-        loggedInUser={loggedInUser}
+        loggedInUser={loggedInUser} 
+        onlyReposts={onlyReposts} 
+        setOnlyReposts={setOnlyReposts}
         style={{ flex: 1}}
       />      
       {isStarting && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

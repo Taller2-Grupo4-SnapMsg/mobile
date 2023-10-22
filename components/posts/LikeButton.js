@@ -11,12 +11,10 @@ const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
   const handleLikePress = async () => {
     try {
       if (liked) {
-        console.log("ENTRA AL UNLIKE")
         setLikes(likes - 1);
         setLiked(false);
         response = await UnlikePost(post_id);
       } else {
-        console.log("ENTRA A LIKEAR")
         setLikes(likes + 1);
         setLiked(true);
         response = await LikePost(post_id);
