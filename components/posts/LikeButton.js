@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import LikePost from '../../handlers/posts/likePost';
 import UnlikePost from '../../handlers/posts/unlikePost';
-
+//para que deje pushear
 
 const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
   const [liked, setLiked] = useState(isLiked);
