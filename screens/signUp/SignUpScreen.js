@@ -6,12 +6,12 @@ import small_logo from '../../assets/small_logo.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegisterHandler from '../../handlers/RegisterHandler';
 import SignUpButton from '../../components/PurpleButton';
-import { useUser } from '../../UserContext';
 import CountryPickerModal from '../../components/CountryPickerModal';
 import changeLocation from '../../handlers/changeLocation';
 import changeAvatar from '../../handlers/changeAvatar';
 import { storage } from '../../firebase';
 import { ref, getDownloadURL } from "firebase/storage";
+import { useUser } from '../../contexts/UserContext';
 
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();

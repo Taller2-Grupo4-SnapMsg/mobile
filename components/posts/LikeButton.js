@@ -28,9 +28,9 @@ const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <TouchableOpacity onPress={handleLikePress}>
         {liked ? (
-            <AntDesign name="heart" size={27} color="#FF5733" />
+            <AntDesign name="heart" size={17} color="#6B5A8E" />
           ) : (
-            <AntDesign name="hearto" size={27} color="gray" />
+            <AntDesign name="hearto" size={17} color="gray" />
           )}
       </TouchableOpacity>
       <Text style={{ fontSize: 15, color: 'gray', marginLeft: 5 }}>{likes}</Text>
