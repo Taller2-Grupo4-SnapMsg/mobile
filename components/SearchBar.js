@@ -15,7 +15,7 @@ export default function SearchBar(
           onChangeText={(text) => setSearchText(text)}
         />
         <TouchableOpacity style={styles.searchButton} onPress={handleSearchButton}>
-          <Text>Search</Text>
+          <Text style = {styles.buttonText}>Search</Text>
         </TouchableOpacity>
       </View>
     )
@@ -41,5 +41,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#6B5A8E',
         padding: 10,
         borderRadius: 50,
+      },
+      buttonText: {
+        color: 'white',
       },
 });    

@@ -60,12 +60,17 @@ export default function ProfileBanner({
                 imageUrl={user.avatar}
                 onClose={toggleModal}
               />
-              
-              <View>
+
+              <View style={styles.userInfoContainer}>
+              {user && loggedInUser && user.email !== loggedInUser.email && isFollower && (
+                <View style={styles.followsYouContainer}>
+                  <Text style={styles.followsYouText}>Follows you</Text>
+                </View>
+              )}
+
                 {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
                 {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
               </View>
-              
             </View>
 
             <View style={styles.BioAndStatsContainer}>

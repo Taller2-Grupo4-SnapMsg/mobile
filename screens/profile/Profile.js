@@ -232,12 +232,12 @@ function ProfileUser({ user }) {
                 {user.email == loggedInUser.email && (
                 <View style={{ position: 'absolute', right: 0, top: 0 , marginRight: 10 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Pressable onPress={() => handlePressEdit(item)} style={{ marginRight: 30, marginTop: 15, marginBottom: 10}}>
-                      <AntDesign name="edit" size={24} color="gray" />
+                    <Pressable onPress={() => handlePressEdit(item)} style={{ marginRight: 30, marginTop: 19, marginBottom: 10}}>
+                      <AntDesign name="edit" size={20} color="gray" />
                     </Pressable>
 
-                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
-                      <AntDesign name="delete" size={24} color="gray" />
+                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
+                      <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
                   </View>
                 </View>)}
@@ -249,8 +249,8 @@ function ProfileUser({ user }) {
               {user.email == loggedInUser.email && (
               <View style={{ position: 'absolute', right: 0, top: 0, marginRight: 10}}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
-                      <AntDesign name="delete" size={24} color="gray" />
+                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
+                      <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
                 </View>
               </View>)}
