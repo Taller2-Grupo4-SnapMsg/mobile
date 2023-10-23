@@ -51,7 +51,9 @@ const Followings = ({ user }) => {
         <ActivityIndicator size="large" color="#6B5A8E" />
       </View>
     ) : followings.length === 0 ? (
-        <Text style={styles.emptyText}>You are not following anyone yet!</Text>
+      <View style={styles.noUsersContainer}>
+        <Text>No users found.</Text>
+      </View>
       ) : (
         <UsersFlatList
           list={followings}
@@ -74,12 +76,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  emptyText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center', 
-    marginTop: 100,
-    color: '#6B5A8E',
-  },
-
+  noUsersContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });

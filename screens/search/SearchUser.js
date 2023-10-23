@@ -26,7 +26,7 @@ export default function SearchUser() {
   const [isFetching, setIsFetching] = useState(false);
   const [showMoreVisible, setShowMoreVisible] = useState(false);
   const [searchingText, setSearchingText] = useState('');
-  const [searched, setSearched] = useState(false); // Add state to track if a search has been performed
+  const [searched, setSearched] = useState(false);
 
   const handleSearchButton = async () => {
     if (searchText !== '') {
@@ -41,7 +41,7 @@ export default function SearchUser() {
         setFollowingStatus,
         setIsFetchingMap,
       );
-      setSearched(true); // Mark that a search has been performed
+      setSearched(true); 
     } else {
       Alert.alert('Please enter a text to search');
     }
@@ -81,7 +81,7 @@ export default function SearchUser() {
         <View style={styles.spinnerContainer}>
           <ActivityIndicator size="large" color="#6B5A8E" />
         </View>
-      ) : users.length === 0 && searched ? ( // Check if users array is empty and a search has been performed
+      ) : users.length === 0 && searched ? (
         <View style={styles.noUsersContainer}>
           <Text>No users found.</Text>
         </View>

@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import LoginWithGoogle from '../../handlers/LoginWithGoogle';
 import SignInTextInput from '../../components/SignInTextInput';
-import SignInButton from '../../components/SignInButton';
+import SignInButton from '../../components/PurpleButton';
 import SignInGoogleButton from '../../components/SignInGoogleButton';
 import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import { useUser } from '../../contexts/UserContext';
@@ -43,6 +43,10 @@ const SignInScreen = ({ navigation }) => {
       if (response) {
         await fetchLoggedInUser({ setLoggedInUser }); 
         navigation.navigate('Home');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
       } else {
         setLoading(false); 
         Alert.alert('Alert', 'Incorrect email or password.');
@@ -62,7 +66,7 @@ const SignInScreen = ({ navigation }) => {
   useEffect(() => {
     const handleGoogleSignIn = async () => {
       if (response?.type === 'success') {
-        setShowSpinner(true); // Show the modal overlay with the spinner
+        setShowSpinner(true); 
 
         const { id_token } = response.params;
         const credential = GoogleAuthProvider.credential(id_token);
@@ -73,12 +77,19 @@ const SignInScreen = ({ navigation }) => {
           const response = await LoginWithGoogle(idToken);
           if (response) {
             await fetchLoggedInUser({setLoggedInUser});
+            setShowSpinner(false);
             navigation.navigate('Home');
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            });
           } else {
             setShowSpinner(false); 
             Alert.alert('Alert', 'To be able to log in with Google you must have an account. Please sign up.');
           }
         } catch (error) {
+          setShowSpinner(false); 
+          Alert.alert('Alert', 'Error signing in with Google. Please try again.');
           console.error('Google Sign-In Error:', error);
         }
       } else if (response?.type === 'error') {
@@ -110,13 +121,9 @@ const SignInScreen = ({ navigation }) => {
       <View style={styles.inputsContainer}>
         <SignInTextInput setEmail={setEmail} setPassword={setPassword} showPassword={showPassword} togglePasswordVisibility={togglePasswordVisibility} />
       </View>
-      <View style={styles.signInButton}>
-        {loading ? ( 
-          <ActivityIndicator size="small" color="#6B5A8E" />
-        ) : (
-          <SignInButton onPress={handleSignIn} text="Sign in" />
-        )}
-      </View>
+ 
+       <SignInButton onPress={handleSignIn} text="Sign in" loading={loading} />
+
       <View style={{ marginVertical: 30 }}>
         <SignInGoogleButton onPress={handleSignInWithGoogle} text="Sign in with Google" />
       </View>
@@ -138,9 +145,6 @@ const styles = StyleSheet.create({
   inputsContainer: {
     alignItems: 'center',
     marginVertical: 20,
-  },
-  signInButton: {
-    alignItems: 'center', // Center the button
   },
   signinTitleSnapMsg: {
     color: '#6B5A8E',
@@ -176,10 +180,9 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent black background
-    zIndex: 999, // Set a high zIndex value
-  },
-  
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', 
+    zIndex: 999, 
+  },  
 });
 
 export default SignInScreen;
