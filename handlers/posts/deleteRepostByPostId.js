@@ -5,7 +5,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const RepostPost = async (post_id) => {
+const DeleteRepostByPostId = async (post_id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -14,8 +14,9 @@ const RepostPost = async (post_id) => {
         'accept': 'application/json',
         'token': token,
       };
-      const response = await fetch(`${URL_POST_BACK}/reposts/${post_id}`, {
-        method: 'POST',
+
+      const response = await fetch(`${URL_POST_BACK}/reposts/from_post/${post_id}`, {
+        method: 'DELETE',
         headers: headers,
       });
 
@@ -41,4 +42,4 @@ const RepostPost = async (post_id) => {
   } 
 };
 
-  export default RepostPost;
+export default DeleteRepostByPostId;

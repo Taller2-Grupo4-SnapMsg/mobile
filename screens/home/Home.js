@@ -31,8 +31,8 @@ export default function Home({}) {
     const [refreshing, setRefreshing] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const [reachedEnd, setReachedEnd] = useState(false);
-    const [alertMessageRepost, setMessageRepost] = useState('');
-    const [alerMessageRepostColor, setMessageRepostColor] = useState(true);
+    const [alertMessageRepost, setAlertMessage] = useState('');
+    const [alerMessageRepostColor, setAlertMessageColor] = useState(true);
 
     const handlePressPlus = () => {
       navigation.navigate('NewPost');
@@ -40,18 +40,21 @@ export default function Home({}) {
 
     const handleGetMorePosts = async (date, refresh) => {
       if (loadingMore || (reachedEnd && !refresh)) return;
-  
+    
       try {
         setLoadingMore(true);
         setRefreshing(refresh);
+    
         const fetchedPosts = await getPosts(formatDate(date), AMOUNT_POST, loggedInUser.email);
+    
         if (fetchedPosts && fetchedPosts.length > 0) {
           if (refresh) {
             setPosts(fetchedPosts);
             setRefreshing(false);
             setReachedEnd(false);
+          } else {
+            setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
           }
-          else {setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);}
           setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
         } else {
           setReachedEnd(true);
@@ -62,7 +65,7 @@ export default function Home({}) {
         setLoadingMore(false);
       }
     };
-
+    
     useEffect(() => {  
       handleGetMorePosts((new Date()).toISOString(), true)
      }, []);
@@ -74,9 +77,9 @@ export default function Home({}) {
         data={posts}
         renderItem={({ item }) => {
           if (item.user_poster.email == item.user_creator.email) {
-            return <Post post={item} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>;
+            return <Post post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>;
           } else {
-            return <Repost post={item} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>;
+            return <Repost post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>;
           }
         }}
         refreshControl={
