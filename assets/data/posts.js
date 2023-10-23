@@ -1,4 +1,4 @@
-const tweets = [
+const posts = [
   {
     id: 't0',
     user: {

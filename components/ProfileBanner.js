@@ -8,6 +8,7 @@ import ProfileStats from './ProfileStats';
 import ProfileExtraInfo from './ProfileExtraInfo';
 import EditProfileButton from './EditProfileButton';
 import FollowButton from './FollowButton';
+import { AntDesign } from '@expo/vector-icons';
 
 
 export default function ProfileBanner({ 
@@ -25,13 +26,29 @@ export default function ProfileBanner({
   handleFollowingButton,
   handleFollowersButton,
   colorScheme, 
+  onlyReposts,
+  setOnlyReposts
  }) {
     return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
           <View style={styles.profileContainerWhole}>
             {user && loggedInUser && user.email === loggedInUser.email && (
-              <EditProfileButton onPress={handleEditButton} />
+              <View style={styles.buttonContainer}>
+                <EditProfileButton onPress={handleEditButton} />
+                <View style={onlyReposts
+                  ? styles.iconContainerPress
+                  : styles.iconContainer
+                }>
+                <AntDesign name={"retweet"} size={25} color="white"
+                onPress={() => {
+                  setOnlyReposts(!onlyReposts);
+                }}
+                />
+                </View>
+              </View>
+                
+                
             )}
             {user && loggedInUser && user.email !== loggedInUser.email && (
             <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
@@ -43,17 +60,12 @@ export default function ProfileBanner({
                 imageUrl={user.avatar}
                 onClose={toggleModal}
               />
-
-              <View style={styles.userInfoContainer}>
-              {user && loggedInUser && user.email !== loggedInUser.email && isFollower && (
-                <View style={styles.followsYouContainer}>
-                  <Text style={styles.followsYouText}>Follows you</Text>
-                </View>
-              )}
-
+              
+              <View>
                 {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
                 {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
               </View>
+              
             </View>
 
             <View style={styles.BioAndStatsContainer}>
@@ -79,13 +91,18 @@ export default function ProfileBanner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 15
+    marginVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'column',
+    //height: 'auto', 
   },
   profileContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 5,
     paddingHorizontal: 16,
+    //backgroundColor: 'blue',
   },
   userInfoContainer: {
     marginLeft: 16,
@@ -107,10 +124,49 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 0,
   },
+  repostContainer: {
+    flexDirection: 'row',
+    marginRight: 70,
+    marginTop: 5,
+  },
+  iconContainer: {
+    flex: 1,
+    marginTop: 2,
+    width: 30,
+    height: 30,
+    backgroundColor: '#B8ADCC',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 33,
+    top: 60,
+  },
+  iconContainerPress: {
+    flex: 1,
+    marginTop: 2,
+    width: 30,
+    height: 30,
+    backgroundColor: '#6B5A8E',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 33,
+    top: 60,
+  },
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   BioAndStatsContainer: {
+    flex: 1.1,
     paddingHorizontal: 16,
+    //backgroundColor: 'green',
   },
   profileContainerWhole: {
+    flex: 1,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   followsYouContainer: {

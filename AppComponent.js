@@ -5,30 +5,33 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInScreen from './screens/signIn/SignInScreen';
 import SignUpScreen from './screens/signUp/SignUpScreen';
 import Home from './screens/home/Home';
-import TweetById from './screens/home/TweetById';
-import NewTweet from './screens/home/NewTweet';
+import PostDetailed from './screens/home/PostDetailed';
+import NewPost from './screens/home/NewPost/NewPost';
 import Profile from './screens/profile/Profile';
 import EditProfile from './screens/profile/EditProfile';
 import FollowingsList from './screens/profile/FollowingsList';
 import FollowersList from './screens/profile/FollowersList';
 import Interests from './screens/signUp/Interests';
 import SearchUser from './screens/search/SearchUser';
+import ProfileEditPost from './screens/profile/ProfileEditPost';
+
 
 import { useColorScheme } from 'react-native';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 
-import { useUser } from './UserContext';
+import { useUser } from './contexts/UserContext';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const StackNavigator = () => {
+const StackNavigatorHome = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="TweetById" component={TweetById} />
-      <Stack.Screen name="NewTweet" component={NewTweet} />
+      <Stack.Screen name="PostDetailed" component={PostDetailed} />
+      <Stack.Screen name="NewPost" component={NewPost} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
 };
@@ -40,6 +43,7 @@ const StackNavigatorProfile = () => {
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
+      <Stack.Screen name="ProfileEditPost" component={ProfileEditPost} />
     </Stack.Navigator>
   );
 };
@@ -51,6 +55,7 @@ const StackNavigatorSearch = () => {
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
+      <Stack.Screen name="PostDetailed" component={PostDetailed} />
     </Stack.Navigator>
   );
 }
@@ -62,7 +67,7 @@ export default function AppComponent() {
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {loggedInUser ? (
         <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen name="InHome" component={StackNavigator} options={{ title: 'Home' }} />
+          <Drawer.Screen name="InHome" component={StackNavigatorHome} options={{ title: 'Home' }} />
           <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile} options={{ title: 'Profile' }} />
           <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
         </Drawer.Navigator>
@@ -83,6 +88,7 @@ export default function AppComponent() {
         </Stack.Navigator>
       )}
     </NavigationContainer>
+
   );
 
 };

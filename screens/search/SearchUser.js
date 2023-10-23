@@ -6,7 +6,7 @@ import {
   Alert,
   Text, 
 } from 'react-native';
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { handleSearch } from '../../functions/Buttons/handleSearchButton';
 import { handleFollowButtonInList } from '../../functions/Buttons/handleFollowButtonInList';

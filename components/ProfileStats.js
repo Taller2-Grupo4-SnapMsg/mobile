@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     statsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginBottom: 20,    
+        marginBottom: 20,   //este esta bien 
     },
     statsCountText: {
         fontWeight: 'bold',

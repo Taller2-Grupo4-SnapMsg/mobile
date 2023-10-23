@@ -4,16 +4,16 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function Avatar({user}){
 
-    const navigation = useNavigation();
-  
-    const handlePressAvatar = () => {
-      navigation.navigate('ProfileById', { userId: user.id });
-    };
+  const navigation = useNavigation();
+
+  const handlePressAvatar = () => {
+    navigation.navigate('Profile', { user_param: user });
+  };
 
   return (
     <Pressable onPress={handlePressAvatar}>
-        {user.image && (
-            <Image source={{ uri: user.image }} style={styles.userImage} />
+        {user.avatar && (
+            <Image source={{ uri: user.avatar }} style={styles.userImage} />
         )}
     </Pressable>
   );
@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
   backgroundColor: 'white',
   },
   userImage: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 50,
   },
 });

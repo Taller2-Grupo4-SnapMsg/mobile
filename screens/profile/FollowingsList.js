@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native'; 
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { handleFollowButtonInList } from '../../functions/Buttons/handleFollowButtonInList';
 import UsersFlatList from '../../components/UsersFlatList';
 import { fetchFollowsData } from '../../functions/Fetchings/fetchFollowData'; 

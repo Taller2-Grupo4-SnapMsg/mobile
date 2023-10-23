@@ -1,6 +1,6 @@
 // UserContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import getUserByToken from './handlers/getUserByToken';
+import getUserByToken from '../handlers/getUserByToken';
 const UserContext = createContext();
 
 export function UserProvider({ children }) {

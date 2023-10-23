@@ -9,7 +9,7 @@ import { useRoute } from '@react-navigation/native';
 import getFollowers from '../../handlers/getFollowers';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
-import { useUser } from '../../UserContext';
+import { useUser } from '../../contexts/UserContext';
 import { fetchFollowsData } from '../../functions/Fetchings/fetchFollowData'; 
 import { handleFollowButtonInList } from '../../functions/Buttons/handleFollowButtonInList'; 
 import UsersFlatList from '../../components/UsersFlatList';

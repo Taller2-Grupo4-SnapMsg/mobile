@@ -17,7 +17,6 @@ const headers = {
         email: email,
         password: password,
       };
-  
       const response = await fetch('https://gateway-api-service-merok23.cloud.okteto.net/login/', {
         method: 'POST',
         headers: headers,

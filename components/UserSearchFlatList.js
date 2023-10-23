@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, FlatList, TouchableOpacity, Image, Text, View, ActivityIndicator } from "react-native";
-
+import Avatar from "./Avatar";
 export default function UserSearchFlatList(
     {users,
     loggedInUser,
@@ -25,10 +25,7 @@ export default function UserSearchFlatList(
                 }
               }}
             >
-              <Image
-                style={styles.image}
-                source={{ uri: item.avatar }}
-              />
+              <Avatar user={item}/>
               <View style={styles.textContainer}>
                 <Text style={styles.nameText}>{item.name}</Text>
                 <View>
