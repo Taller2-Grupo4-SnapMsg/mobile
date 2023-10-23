@@ -23,10 +23,7 @@ const ProfileEditPost = ({ route }) => {
   const [newHashtags, setNewHashtags] = useState(post.hashtags);
   const [isSaving, setIsSaving] = useState(false);
   const [tagInput, setTagInput] = useState('');
-  const [alertMessage, setAlertMessage] = useState(null);
-  const [alerMessageColor, setAlertMessageColor] = useState(true);
-  const [imageURI, setImageURI] = useState(null);
-
+  const [changeImage, setChangeImage] = useState(false);
 
 const handleSelectImage = async () => {
 
@@ -40,37 +37,27 @@ const handleSelectImage = async () => {
 
     if (!result.canceled) {
       setNewImage(result.assets[0].uri);
+      setChangeImage(true);
     }
   } catch (error) {
     console.error('Error seleccionando la imagen:', error);
   }
 };
   
-  const setAlert = (message, color, timeout) => {
-    setAlertMessageColor(color);
-    setAlertMessage(message);
-    setTimeout(() => {
-      setAlertMessage(null);
-      setAlertMessageColor(null);
-    }, timeout);
-  }
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const timestamp = new Date().getTime();
-      const uniqueFileName = `image_${timestamp}.jpg`;
-      const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`;
-      const storageRef = ref(storage, file_route);
-
-      const response = await fetch(newImage);
-      const blob = await response.blob();
-      await uploadBytes(storageRef, blob);
-
-      await editPostHandler(post.post_id, file_route, newText, newHashtags);
+      if (changeImage) {
+        const storageRef = ref(storage, post.image);
+        const response = await fetch(newImage);
+        const blob = await response.blob();
+        await uploadBytes(storageRef, blob);
+      }
+      await editPostHandler(post.post_id, post.image, newText, newHashtags);
 
       navigation.navigate('Profile');
-       Alert.alert('Alert', 'Post edited successfully');
+      Alert.alert('Alert', 'Post edited successfully');
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
@@ -162,13 +149,6 @@ useEffect(() => {
       <View style={styles.saveButtonContainer}>
         <Button title={isSaving ? 'Save...' : 'Save'} onPress={handleSave} disabled={isSaving} color="#6B5A8E"/>
       </View>
-      {alertMessage && (
-          <AlertBottomBanner
-            message={alertMessage}
-            backgroundColor={alerMessageColor}
-            timeout={TIMEOUT_ALERT_EDIT}
-          />
-        )}
     </View>
   );
 };
