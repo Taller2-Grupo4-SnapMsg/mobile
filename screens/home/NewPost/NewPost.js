@@ -7,12 +7,9 @@ import { storage } from '../../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import PostHandler from '../../../handlers/posts/newPost';
-import Spinner from 'react-native-loading-spinner-overlay';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
 import AlertBottomBanner from "../../../components/communicating_info/AlertBottomBanner"
-//import uuid from 'uuid';
-//import { v4 as uuidv4 } from 'uuid';
 
 TIMEOUT_ALERT_POST = 1500
 
@@ -42,24 +39,16 @@ export default function NewPost() {
     setIsLoading(true);
 
     if (selectedImage) {
-      const { nanoid } = require('nanoid');
-      //const fileName = 'post_image.jpg';
-      //const postId = nanoid();
-      //const postId = Math.floor(Math.random() * 10000000);
       const timestamp = new Date().getTime();
       const uniqueFileName = `image_${timestamp}.jpg`;
       const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
-      //const storageRef = ref(storage, `post_images/${postId}/${uniqueFileName}`);
       const storageRef = ref(storage, file_route);
 
       const response = await fetch(selectedImage);
       const blob = await response.blob();
       await uploadBytes(storageRef, blob);
 
-      //const downloadURL = await getDownloadURL(storageRef);
-
       setSelectedImage('');
-      //PostHandler(text, downloadURL, tags);
       PostHandler(text, file_route, tags);
     } else {
       setSelectedImage('');

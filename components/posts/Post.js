@@ -8,6 +8,7 @@ import Avatar from '../Avatar';
 import RepostButton from './RepostButton';
 import LikeButton from './LikeButton';
 
+
 import {
   DarkTheme,
   ThemeProvider,
@@ -31,13 +32,25 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
   
   const colorScheme = useColorScheme();
   const [isReposted, setIsReposted] = useState(did_i_repost);
+  const [imageURI, setImageURI] = useState(null);
   
-  const getImageURI = async (file_route) => {
-    const storageRef = ref(storage, file_route);
-    const downloadURL = await getDownloadURL(storageRef);
-    return decodeURIComponent(downloadURL);
-  }
-  
+
+  useEffect(() => {
+    if (post.image) {
+      const fetchImageURL = async () => {
+        try {
+          setImageURI(null);
+          const decoded_file_route = decodeURIComponent(post.image);
+          const storageRef = ref(storage, decoded_file_route);
+          setImageURI(await getDownloadURL(storageRef));
+        } catch (error) {
+          console.error('Error fetching image URL:', error);
+        }
+      };
+
+      fetchImageURL();
+    }
+  }, [post.image]);
 
   function formatDate(dateString) {
     // Split the date and time parts
@@ -52,9 +65,11 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
   }
 
   const handlePressPost = () => {
-    navigation.navigate('PostDetailed', { postId: post.post_id });
+    //navigation.navigate('PostDetailed', { postId: post.post_id });
     return;
   };
+
+  
   all_hours = Math.floor((new Date() - new Date(formatDate(created_at)))/ (1000 * 60 * 60));
   days = Math.floor(all_hours / 24);
   hours = all_hours - days * 24;
@@ -87,8 +102,8 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
         </View>
 
         <Text style={styles.content}>{text}</Text>
-        {image && (
-          <Image source={{ uri: getImageURI(image) }} style={styles.image} />
+        {post.image && (
+          <Image source={{ uri: imageURI}} style={styles.image} />
         )}
 
         <View style={styles.footer}>

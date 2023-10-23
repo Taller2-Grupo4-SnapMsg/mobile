@@ -146,33 +146,8 @@ function ProfileUser({ user }) {
     setIsFetching(false); 
   };
 
-  const updatePost = (updatedPost) => {
-    // Find the index of the post to be updated in the posts array
-    const postIndex = posts.findIndex((p) => p.post_id === updatedPost.post_id);
-  
-    if (postIndex !== -1) {
-      // Create a copy of the posts array with the updated post
-      const updatedPosts = [...posts];
-    
-    // Compare the new values with the original post
-    const originalPost = updatedPosts[postIndex];
-    if (originalPost.text !== updatedPost.text) {
-      originalPost.text = updatedPost.text;
-    }
-    if (originalPost.image !== updatedPost.image) {
-      originalPost.image = updatedPost.image;
-    }
-    if (originalPost.hashtags !== updatedPost.hashtags) {
-      originalPost.hashtags = updatedPost.hashtags;
-    }
-  
-      // Update the state with the new posts array
-      setPosts(updatedPosts);
-    }
-  };
-
   const handlePressEdit = (post) => {
-    navigation.navigate('ProfileEditPost', { post: post, updatePost: updatePost });
+    navigation.navigate('ProfileEditPost', { post: post });
   };
 
   const setAlert = (message, color, timeout) => {
@@ -185,15 +160,6 @@ function ProfileUser({ user }) {
   }
   const handlePressDelete = async (post) => {
     try {
-      // if (!postDeleted) {
-      //   await DeletePost(post.post_id);
-      //   setAlert("Post deleted successfully. Please reload to see changes.", SOFT_GREEN, TIMEOUT_ALERT); 
-      //   setPostDeleted(true);
-      // }
-      // else {
-      //   setAlert("Post already deleted. Please reload to see changes.", SOFT_RED, TIMEOUT_ALERT);
-      // }
-
       await DeletePost(post.post_id);
       
       // Remove the deleted post from the posts array

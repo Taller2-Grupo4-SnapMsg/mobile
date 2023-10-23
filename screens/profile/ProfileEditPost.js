@@ -1,48 +1,50 @@
-import React, { useState } from 'react';
-import { View, TextInput, Image, Text, Button, ActivityIndicator, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Image, Text, Button, StyleSheet } from 'react-native';
 import editPostHandler from '../../handlers/posts/editPost';
 import * as ImagePicker from 'expo-image-picker';
+import { storage } from '../../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner"
+import { useUser } from '../../contexts/UserContext';
 
 TIMEOUT_ALERT_EDIT = 1500
 DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"
 
 const ProfileEditPost = ({ route }) => {
   navigation = useNavigation();
-  const { post, updatePost } = route.params;
+  const { loggedInUser } = useUser();
+  const { post } = route.params;
 
   const [newText, setNewText] = useState(post.text);
-  const [newImage, setNewImage] = useState(decodeURIComponent(post.image));
+  const [newImage, setNewImage] = useState(null);
   const [newHashtags, setNewHashtags] = useState(post.hashtags);
   const [isSaving, setIsSaving] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
+  const [imageURI, setImageURI] = useState(null);
 
-  const handleSelectImage = async () => {
 
-    // const imageRef = storage.ref().child('images/image.jpg');
-    // // Delete the image
-    // imageRef.delete()
+const handleSelectImage = async () => {
 
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 4],
-        quality: 1,
-      });
+  try {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
 
-      if (!result.cancelled) {
-        setNewImage(result.uri);
-      }
-    } catch (error) {
-      console.error('Error seleccionando la imagen:', error);
+    if (!result.canceled) {
+      setNewImage(result.assets[0].uri);
     }
-  };
+  } catch (error) {
+    console.error('Error seleccionando la imagen:', error);
+  }
+};
   
   const setAlert = (message, color, timeout) => {
     setAlertMessageColor(color);
@@ -56,19 +58,18 @@ const ProfileEditPost = ({ route }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      const timestamp = new Date().getTime();
+      const uniqueFileName = `image_${timestamp}.jpg`;
+      const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`;
+      const storageRef = ref(storage, file_route);
 
-      //crear nueva imagen
-      //borrar link a imagen vieja en firebase
+      const response = await fetch(newImage);
+      const blob = await response.blob();
+      await uploadBytes(storageRef, blob);
 
-
-      await editPostHandler(post.post_id, newImage, newText, newHashtags);
-      updatePost({ ...post, text: newText, image: newImage, hashtags: newHashtags });
+      await editPostHandler(post.post_id, file_route, newText, newHashtags);
       setAlert("Post edited successfully", SOFT_GREEN, TIMEOUT_ALERT_EDIT);
-      // navigation.navigate('Profile');
 
-      setTimeout(() => {
-        navigation.navigate('Profile');
-      }, TIMEOUT_ALERT_EDIT);
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
@@ -88,21 +89,35 @@ const ProfileEditPost = ({ route }) => {
     setNewHashtags(updatedHashtags);
   };
 
+const fetchImageURL = async () => {
+  try {
+    const decoded_file_route = decodeURIComponent(post.image);
+    const storageRef = ref(storage, decoded_file_route);
+    const url = await getDownloadURL(storageRef);
+    setNewImage(url);
+  } catch (error) {
+    console.error('Error fetching image URL:', error);
+  }
+};
+
+// Call the function when the component mounts
+useEffect(() => {
+  fetchImageURL();
+}, []);
+
+
   return (
     <View style={styles.container}>
 
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={styles.sectionLabel}>Image Post</Text>
-          <Pressable onPress={handleSelectImage} style={{ marginLeft: 'auto', marginBottom: 45 }}>
-            <AntDesign name="edit" size={35} color="black" style={styles.editIcon} />
-          </Pressable>
-        </View>
+      </View>
       <View>
         <Pressable onPress={handleSelectImage}>
           <AntDesign name="edit" size={35} color="black" style={styles.editIcon} />
           <View style={styles.imageContainer}>
             {newImage && (
-              <Image source={{ uri: newImage }} style={styles.image} />
+              <Image source={{ uri: newImage}} style={styles.image} />
             )}
             {!newImage && (
               <Image source={{ uri: DEFAULT_IMAGE}} style={styles.image} />
