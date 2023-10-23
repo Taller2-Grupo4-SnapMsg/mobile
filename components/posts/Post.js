@@ -151,17 +151,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tagsContainer: {
-    marginTop: 20,
+    marginTop: 10,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   tag: {
-    backgroundColor: '#6B5A8E',
-    borderRadius: 10,
+    backgroundColor: 'rgba(107, 90, 142, 0.5)', 
+    borderRadius: 5, 
+    color: '#fff',
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 2,
     flexDirection: 'row',
     alignItems: 'center',
     margin: 5,
@@ -179,9 +180,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    marginVertical: 10,
-    justifyContent: 'space-between',
+    marginVertical: 5,
     justifyContent: 'center',
+    paddingRight: 25,
   },
 });
 

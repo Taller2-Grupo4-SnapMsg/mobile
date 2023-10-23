@@ -41,15 +41,16 @@ const Repost = ({ post, setMessageRepost, setMessageRepostColor }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={styles.name}>{post.user_poster.name}</Text>
                     <Text style={styles.username}>{post.user_poster.username} ·{days}d {hours}h</Text>
+                    <View style={styles.repostContainer}>
+                      <View style={styles.iconContainer}>
+                        <AntDesign name={"retweet"} size={14} color="white" />
+                      </View>
+                      <Text style={styles.reposted_text}>Reposted</Text>
                     </View>
+                  </View>
                 </View>
             </View>
-            <View style={styles.repostContainer}>
-              <View style={styles.iconContainer}>
-                <AntDesign name={"retweet"} size={25} color="white" />
-              </View>
-              <Text style={styles.reposted_text}>Reposted</Text>
-            </View>
+      
         </View>
           <Post post={post} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>
         </View>
@@ -89,12 +90,13 @@ const styles = StyleSheet.create({
   repostContainer: {
     flexDirection: 'row',
     marginRight: 70,
-    marginTop: 5,
+    marginTop: 8,
+    paddingLeft: 50,
+    alignItems: 'center',
   },
   iconContainer: {
-    marginTop: 2,
-    width: 30,
-    height: 30,
+    width: 20,
+    height: 20,
     backgroundColor: '#6B5A8E',
     borderRadius: 10,
     justifyContent: 'center',
@@ -104,7 +106,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   reposted_text: {
-    marginTop: 8,
     color: 'gray',
     fontSize: 14,
   }

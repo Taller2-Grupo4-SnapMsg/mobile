@@ -65,13 +65,13 @@ export default function AppComponent() {
   const {loggedInUser} = useUser(); 
   return (
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {loggedInUser ? (
+      {/*{loggedInUser ? (
         <Drawer.Navigator initialRouteName="Home">
           <Drawer.Screen name="InHome" component={StackNavigatorHome} options={{ title: 'Home' }} />
           <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile} options={{ title: 'Profile' }} />
           <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
         </Drawer.Navigator>
-      ) : (
+      ) : (*/}
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
@@ -79,14 +79,13 @@ export default function AppComponent() {
           <Stack.Screen name="Home" options={{ title: 'Home' }}>
             {() => (
               <Drawer.Navigator initialRouteName="Home">
-                <Drawer.Screen name="InHome" component={StackNavigator}  options={{ title: 'Home' }} />
+                <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
                 <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
                 <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
               </Drawer.Navigator>
             )}
           </Stack.Screen>
         </Stack.Navigator>
-      )}
     </NavigationContainer>
 
   );

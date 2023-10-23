@@ -21,13 +21,16 @@ import Repost from '../../components/posts/Repost';
 import { useUser } from '../../contexts/UserContext';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
 import DeleteRepost from '../../handlers/posts/deleteRepost';
+import { fetchSnaps } from '../../functions/Fetchings/fetchSnaps';
+import { Text } from 'react-native';
 import {
   View,
   FlatList,
   RefreshControl,
   Pressable,
 } from 'react-native';
-
+import { set } from 'react-native-reanimated';
+import { StyleSheet } from 'react-native';
 AMOUNT_POST = 10
 SOFT_GREEN = "#B4D3B2"
 SOFT_RED = "#FF5733"
@@ -97,6 +100,7 @@ function ProfileUser({ user }) {
   const [postDeleted, setPostDeleted] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
+  const [userSnaps, setUserSnaps] = useState(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -106,6 +110,7 @@ function ProfileUser({ user }) {
     React.useCallback(() => {
       fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
       fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
+      fetchSnaps({ user, setSnaps: setUserSnaps })
     }, [user])
   );
 
@@ -189,6 +194,7 @@ function ProfileUser({ user }) {
         setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
       } else {
         setReachedEnd(true);
+        setRefreshing(false);
       }
     } catch (error) {
       console.error('Error while loading more posts:', error);
@@ -216,12 +222,18 @@ function ProfileUser({ user }) {
           handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
           loggedInUser={loggedInUser} 
           onlyReposts={onlyReposts} 
+          snaps = {userSnaps}
           setOnlyReposts={setOnlyReposts}
           style={{ flex: 1}}
           />
         }
         style={{ flex: 1, maginTop: 0}}
         data={posts} 
+        ListEmptyComponent={() => (
+          <View style={styles.noUsersContainer}>
+          <Text>No snaps found.</Text>
+        </View>
+        )}
         renderItem={({ item }) => {
           if (!item) {
             return null;
@@ -234,12 +246,12 @@ function ProfileUser({ user }) {
                 {user.email == loggedInUser.email && (
                 <View style={{ position: 'absolute', right: 0, top: 0 , marginRight: 10 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Pressable onPress={() => handlePressEdit(item)} style={{ marginRight: 30, marginTop: 15, marginBottom: 10}}>
-                      <AntDesign name="edit" size={24} color="gray" />
+                    <Pressable onPress={() => handlePressEdit(item)} style={{ marginRight: 30, marginTop: 19, marginBottom: 10}}>
+                      <AntDesign name="edit" size={20} color="gray" />
                     </Pressable>
 
-                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
-                      <AntDesign name="delete" size={24} color="gray" />
+                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
+                      <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
                   </View>
                 </View>)}
@@ -251,8 +263,8 @@ function ProfileUser({ user }) {
               {user.email == loggedInUser.email && (
               <View style={{ position: 'absolute', right: 0, top: 0, marginRight: 10}}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 15, marginBottom: 15, marginRight: 5}}>
-                      <AntDesign name="delete" size={24} color="gray" />
+                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
+                      <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
                 </View>
               </View>)}
@@ -279,3 +291,12 @@ function ProfileUser({ user }) {
       </View>
   );
 }
+
+const styles = StyleSheet.create({
+  noUsersContainer: {
+    paddingTop: 150,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
