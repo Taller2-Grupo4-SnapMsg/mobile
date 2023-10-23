@@ -37,13 +37,6 @@ function formatDate(date) {
   return date.replace("T", "_").split(".")[0];
 }
 
-function RemoveMillisecondsFromDateStr(dateStr) {
-  const parts = dateStr.split('.');
-  if (parts.length === 2) {
-    return parts[0];
-  }
-  return dateStr;
-}
 
 export default function Profile() {
   const { loggedInUser } = useUser();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Image, Text, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Image, Text, Button, StyleSheet, Alert} from 'react-native';
 import editPostHandler from '../../handlers/posts/editPost';
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from '../../firebase';
@@ -70,6 +70,7 @@ const handleSelectImage = async () => {
       await editPostHandler(post.post_id, file_route, newText, newHashtags);
 
       navigation.navigate('Profile');
+       Alert.alert('Alert', 'Post edited successfully');
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
