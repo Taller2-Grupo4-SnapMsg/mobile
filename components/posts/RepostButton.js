@@ -26,16 +26,13 @@ const RepostButton = ({ icon,
 
   const handlePressRepost = async () => {
     try {
-      if (reposted) {
-        setAlert("no se puede", SOFT_RED, TIMEOUT_ALERT)
+      response = await RepostPost(post_id);
+      console.log(response)
+      if (response) {
+        setReposts(reposts + 1);
+        setReposted(true);
       } else {
-        response = await RepostPost(post_id);
-        if (response) {
-          setReposts(reposts + 1);
-          setReposted(true);
-        } else {
-          setAlert("The user is private", SOFT_RED, TIMEOUT_ALERT);
-        }
+        setAlert("The user is private", SOFT_RED, TIMEOUT_ALERT);
       }
     } catch (error) {
       console.error(error);

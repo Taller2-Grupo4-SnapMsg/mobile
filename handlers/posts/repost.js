@@ -26,6 +26,7 @@ const RepostPost = async (post_id) => {
       } else if (response.status === 403) {
         return false;
       } else {
+        console.log(response.status)
         throw new Error('Error desconocido');
       }
     } catch (error) {

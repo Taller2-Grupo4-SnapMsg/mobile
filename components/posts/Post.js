@@ -31,6 +31,7 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
       did_i_repost} = post;
   
   const colorScheme = useColorScheme();
+
   const [imageURI, setImageURI] = useState(null);
   
 
