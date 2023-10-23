@@ -15,9 +15,21 @@ const Repost = ({ post, setMessageRepost, setMessageRepostColor }) => {
 
   const colorScheme = useColorScheme();
 
-  all_hours = Math.floor((new Date() - new Date(post.created_at))/ (1000 * 60 * 60))
-  days = Math.floor(all_hours / 24)
-  hours =  all_hours - days * 24
+  function formatDate(dateString) {
+    // Split the date and time parts
+    const [datePart, timePart] = dateString.split(' ');
+  
+    // Extract milliseconds (if present) and convert to a three-digit string
+    const milliseconds = timePart.split('.')[1] || '000';
+    const millisecondsString = milliseconds.slice(0, 3);
+  
+    // Concatenate the date and time parts in ISO 8601 format
+    return `${datePart}T${timePart.split('.')[0]}.${millisecondsString}Z`;
+  }
+
+  all_hours = Math.floor((new Date() - new Date(formatDate(post.created_at)))/ (1000 * 60 * 60));
+  days = Math.floor(all_hours / 24);
+  hours = all_hours - days * 24;
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>

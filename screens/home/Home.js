@@ -15,25 +15,10 @@ import {
 } from '@react-navigation/native';
 import getPosts from "../../handlers/posts/getPosts"
 
-AMOUNT_POST = 10
+AMOUNT_POST = 6
 
 function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-
-  return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
-}
-
-function removeMillisecondsFromDateStr(dateStr) {
-  const parts = dateStr.split('.');
-  if (parts.length === 2) {
-    return parts[0];
-  }
-  return dateStr;
+  return date.replace("T", "_").split(".")[0];
 }
 
 export default function Home({}) {
@@ -41,10 +26,9 @@ export default function Home({}) {
     const { loggedInUser } = useUser();
     const colorScheme = useColorScheme();
     const navigation = useNavigation();
-    const [refreshing, setRefreshing] = useState(false);
     const [posts, setPosts] = useState([]);
-    const [isStarting, setIsStarting] = useState(true);
     const [latestDate, setLatestDate] = useState(new Date());
+    const [refreshing, setRefreshing] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const [reachedEnd, setReachedEnd] = useState(false);
     const [alertMessageRepost, setMessageRepost] = useState('');
@@ -54,31 +38,21 @@ export default function Home({}) {
       navigation.navigate('NewPost');
     };
 
-    const handleRefresh = async () => {
-      try {
-        setReachedEnd(false);
-        setRefreshing(true);
-        const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST, loggedInUser.email);
-        if (fetchedPosts) {
-          setPosts(fetchedPosts);
-          setLatestDate(removeMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
-        }
-      } catch (error) {
-        console.error('Error while loading posts:', error);
-      } finally {
-        setRefreshing(false);
-      }
-    };
-
-    const handleGetMorePosts = async () => {
-      if (loadingMore || reachedEnd) return;
-
+    const handleGetMorePosts = async (date, refresh) => {
+      if (loadingMore || (reachedEnd && !refresh)) return;
+  
       try {
         setLoadingMore(true);
-        const fetchedPosts = await getPosts(removeMillisecondsFromDateStr(latestDate), AMOUNT_POST, loggedInUser.email);
-        if (fetchedPosts.length > 0) {
-          setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-          setLatestDate(removeMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
+        setRefreshing(refresh);
+        const fetchedPosts = await getPosts(formatDate(date), AMOUNT_POST, loggedInUser.email);
+        if (fetchedPosts && fetchedPosts.length > 0) {
+          if (refresh) {
+            setPosts(fetchedPosts);
+            setRefreshing(false);
+            setReachedEnd(false);
+          }
+          else {setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);}
+          setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
         } else {
           setReachedEnd(true);
         }
@@ -89,34 +63,13 @@ export default function Home({}) {
       }
     };
 
-    const handleStarting = async () => {
-      try {
-        setIsStarting(true);
-        const fetchedPosts = await getPosts(formatDate(new Date()), AMOUNT_POST, loggedInUser.email);
-        if (fetchedPosts.length > 0) {
-          setPosts(fetchedPosts);
-          setLatestDate(removeMillisecondsFromDateStr(fetchedPosts[fetchedPosts.length - 1].created_at));
-        }
-      } catch (error) {
-        console.error('Error while loading posts:', error);
-      } finally {
-        setIsStarting(false);
-      }
-    }
-
-    useEffect(() => {
-      handleStarting();
-    }, []);
+    useEffect(() => {  
+      handleGetMorePosts((new Date()).toISOString(), true)
+     }, []);
 
    return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Spinner
-          visible={isStarting}
-          textStyle={{ color: '#FFF' }}
-        />
-      </View>
       <FlatList
         data={posts}
         renderItem={({ item }) => {
@@ -129,13 +82,13 @@ export default function Home({}) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={() => handleGetMorePosts((new Date()).toISOString(), true)}
             colors={['#947EB0']}
           />
         }
-        onEndReached={handleGetMorePosts}
+        onEndReached={() => handleGetMorePosts(latestDate, false)}
         onEndReachedThreshold={0.1}
-      />
+        />
       {loadingMore && <LoadingMoreIndicator />}
       <Pressable style={styles.floatingButton} onPress={handlePressPlus}>
         <Entypo
