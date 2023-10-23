@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import RepostPost from '../../handlers/posts/repostPost';
+import RepostPost from '../../handlers/posts/repost';
 
 
 const RepostButton = ({ icon, 
@@ -10,6 +10,8 @@ const RepostButton = ({ icon,
                         post_id, 
                         setMessageRepost,
                         setMessageRepostColor}) => {
+
+  //console.log("is reposted",isReposted)
   const [reposted, setReposted] = useState(isReposted);
   const [reposts, setReposts] = useState(initialReposts);
 
@@ -27,13 +29,16 @@ const RepostButton = ({ icon,
       if (reposted) {
         setAlert("no se puede", SOFT_RED, TIMEOUT_ALERT)
       } else {
-        console.log("entra a repostear:", post_id);
-        setReposts(reposts + 1);
-        await RepostPost(post_id);
-        setReposted(true);
+        response = await RepostPost(post_id);
+        if (response) {
+          setReposts(reposts + 1);
+          setReposted(true);
+        } else {
+          setAlert("The user is private", SOFT_RED, TIMEOUT_ALERT);
+        }
       }
     } catch (error) {
-      console.error('Error while reposting:', error);
+      console.error(error);
     }
   };
 

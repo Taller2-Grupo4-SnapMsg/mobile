@@ -6,7 +6,7 @@ const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const getPosts = async (oldest_date, n, user_visited) => {
+const getPosts = async (oldest_date, n) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -16,7 +16,8 @@ const getPosts = async (oldest_date, n, user_visited) => {
                 'token': token,
               };
               date_str = oldest_date.replace(' ', '_');
-              //console.log("date_str:", date_str)
+              console.log("ENTRA A FETCHEAR POST EN EL FEED")
+              console.log("date_str:", date_str)
               const response = await fetch(`${URL_POST_BACK}/posts/feed/oldest_date/${date_str}/amount/${n}`, {
                 method: 'GET',
                 headers: headers,

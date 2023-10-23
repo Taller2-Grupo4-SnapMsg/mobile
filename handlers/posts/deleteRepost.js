@@ -5,7 +5,7 @@ const USER_NOT_FOUND = 404;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const RepostPost = async (post_id) => {
+const DeleteRepost = async (post_id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -14,20 +14,18 @@ const RepostPost = async (post_id) => {
         'accept': 'application/json',
         'token': token,
       };
-      console.log("entra a repostear con:", post_id)
+
       const response = await fetch(`${URL_POST_BACK}/reposts/${post_id}`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: headers,
       });
 
-      console.log("response:", response)
       if (response.status === 200) {
         return;
       } else if (response.status === 422) {
-        const errorData = await response.json();
         console.error('Validation Error:', errorData);
       } else {
-        console.error('Error when reposting', response.status);
+        console.error('Error when disliking', response.status);
       }
     } catch (error) {
       const message =
@@ -40,4 +38,4 @@ const RepostPost = async (post_id) => {
   } 
 };
 
-  export default RepostPost;
+export default DeleteRepost;

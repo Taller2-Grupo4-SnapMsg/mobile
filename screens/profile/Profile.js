@@ -20,6 +20,7 @@ import Post from '../../components/posts/Post';
 import Repost from '../../components/posts/Repost';
 import { useUser } from '../../contexts/UserContext';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
+import DeleteRepost from '../../handlers/posts/deleteRepost';
 import {
   View,
   FlatList,
@@ -36,7 +37,6 @@ TIMEOUT_ALERT = 2000
 function formatDate(date) {
   return date.replace("T", "_").split(".")[0];
 }
-
 
 export default function Profile() {
   const { loggedInUser } = useUser();
@@ -153,8 +153,11 @@ function ProfileUser({ user }) {
   }
   const handlePressDelete = async (post) => {
     try {
-      await DeletePost(post.post_id);
-      
+      if (post.user_poster.email == post.user_creator.email) {
+        await DeletePost(post.post_id);
+      } else {
+        await DeleteRepost(post.post_id);
+      }
       // Remove the deleted post from the posts array
       const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
 

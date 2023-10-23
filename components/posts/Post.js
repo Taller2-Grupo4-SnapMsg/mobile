@@ -31,7 +31,6 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
       did_i_repost} = post;
   
   const colorScheme = useColorScheme();
-  const [isReposted, setIsReposted] = useState(did_i_repost);
   const [imageURI, setImageURI] = useState(null);
   
 
@@ -51,6 +50,7 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
       fetchImageURL();
     }
   }, [post.image]);
+
 
   function formatDate(dateString) {
     // Split the date and time parts
@@ -107,7 +107,7 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
         )}
 
         <View style={styles.footer}>
-          <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={isReposted} post_id={post_id} 
+          <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={did_i_repost} post_id={post_id} 
           setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>
           <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id}/>
         </View>
