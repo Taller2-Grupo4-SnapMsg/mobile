@@ -22,14 +22,15 @@ import { useUser } from '../../contexts/UserContext';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
 import DeleteRepost from '../../handlers/posts/deleteRepost';
 import { fetchSnaps } from '../../functions/Fetchings/fetchSnaps';
-
+import { Text } from 'react-native';
 import {
   View,
   FlatList,
   RefreshControl,
   Pressable,
 } from 'react-native';
-
+import { set } from 'react-native-reanimated';
+import { StyleSheet } from 'react-native';
 AMOUNT_POST = 10
 SOFT_GREEN = "#B4D3B2"
 SOFT_RED = "#FF5733"
@@ -191,6 +192,7 @@ function ProfileUser({ user }) {
         setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
       } else {
         setReachedEnd(true);
+        setRefreshing(false);
       }
     } catch (error) {
       console.error('Error while loading more posts:', error);
@@ -225,6 +227,11 @@ function ProfileUser({ user }) {
         }
         style={{ flex: 1, maginTop: 0}}
         data={posts} 
+        ListEmptyComponent={() => (
+          <View style={styles.noUsersContainer}>
+          <Text>No snaps found.</Text>
+        </View>
+        )}
         renderItem={({ item }) => {
           if (!item) {
             return null;
@@ -282,3 +289,12 @@ function ProfileUser({ user }) {
       </View>
   );
 }
+
+const styles = StyleSheet.create({
+  noUsersContainer: {
+    paddingTop: 150,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
