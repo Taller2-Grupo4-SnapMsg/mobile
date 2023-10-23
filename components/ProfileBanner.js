@@ -18,6 +18,7 @@ export default function ProfileBanner({
   isFetching,
   followers,
   following,
+  snaps,
   isFollower,
   toggleModal,
   isModalVisible,
@@ -78,7 +79,7 @@ export default function ProfileBanner({
               <ProfileStats
                 followers={followers}
                 following={following}
-                snaps={user.snaps}
+                snaps={snaps}
                 onFollowingPress={handleFollowingButton}
                 onFollowersPress={handleFollowersButton}
               />

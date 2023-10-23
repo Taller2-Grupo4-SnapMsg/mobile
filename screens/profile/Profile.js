@@ -21,6 +21,8 @@ import Repost from '../../components/posts/Repost';
 import { useUser } from '../../contexts/UserContext';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
 import DeleteRepost from '../../handlers/posts/deleteRepost';
+import { fetchSnaps } from '../../functions/Fetchings/fetchSnaps';
+
 import {
   View,
   FlatList,
@@ -95,6 +97,7 @@ function ProfileUser({ user }) {
   const [postDeleted, setPostDeleted] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
+  const [userSnaps, setUserSnaps] = useState(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -104,6 +107,7 @@ function ProfileUser({ user }) {
     React.useCallback(() => {
       fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
       fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
+      fetchSnaps({ user, setSnaps: setUserSnaps })
     }, [user])
   );
 
@@ -214,6 +218,7 @@ function ProfileUser({ user }) {
           handleFollowButton={handleFollowButton} followers={followers} following={following} isModalVisible={isModalVisible}
           loggedInUser={loggedInUser} 
           onlyReposts={onlyReposts} 
+          snaps = {userSnaps}
           setOnlyReposts={setOnlyReposts}
           style={{ flex: 1}}
           />
