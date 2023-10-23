@@ -68,8 +68,8 @@ const handleSelectImage = async () => {
       await uploadBytes(storageRef, blob);
 
       await editPostHandler(post.post_id, file_route, newText, newHashtags);
-      setAlert("Post edited successfully", SOFT_GREEN, TIMEOUT_ALERT_EDIT);
 
+      navigation.navigate('Profile');
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
