@@ -47,6 +47,8 @@ export default function Profile() {
   const { user_param } = route.params || {};
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [alertMessageRepost, setAlertMessage] = useState('');
+  const [alerMessageRepostColor, setAlertMessageColor] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {

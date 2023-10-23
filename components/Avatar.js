@@ -7,7 +7,7 @@ export default function Avatar({user}){
   const navigation = useNavigation();
 
   const handlePressAvatar = () => {
-    navigation.navigate('Profile', { user_param: user });
+    navigation.push('Profile', { user_param: user })
   };
 
   return (

@@ -2,39 +2,53 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import RepostPost from '../../handlers/posts/repost';
-
+import DeleteRepostByPostId from '../../handlers/posts/deleteRepostByPostId';
 
 const RepostButton = ({ icon, 
                         initialReposts, 
                         isReposted, 
                         post_id, 
-                        setMessageRepost,
-                        setMessageRepostColor}) => {
+                        setAlertMessage,
+                        setAlertMessageColor}) => {
 
-  //console.log("is reposted",isReposted)
   const [reposted, setReposted] = useState(isReposted);
   const [reposts, setReposts] = useState(initialReposts);
 
   const setAlert = (message, color, timeout) => {
-    setMessageRepostColor(color);
-    setMessageRepost(message);
+    setAlertMessageColor(color);
+    setAlertMessage(message);
     setTimeout(() => {
-      setMessageRepost(null);
-      setMessageRepostColor(null);
+      setAlertMessage(null);
+      setAlertMessageColor(null);
     }, timeout);
   }
 
   const handlePressRepost = async () => {
     try {
-      if (reposted) {
-        setAlert("no se puede", SOFT_RED, TIMEOUT_ALERT)
+      if (reposted){
+        response = await DeleteRepostByPostId(post_id);
+        if (response == 200) {
+          setReposts(reposts - 1);
+          setReposted(false);
+          Alert.alert('Success', 'Repost deleted successfully');
+        } else if (response === 403) {
+          setAlert("You can't delete a post with this button", SOFT_RED, TIMEOUT_ALERT);
+        } else if (response === 404) {
+          Alert.alert('Alert', 'The post you are trying to delete your repost from doesnt exist');
+        } else {
+          Alert.alert('Alert', 'Unknown error');
+        }
       } else {
         response = await RepostPost(post_id);
-        if (response) {
-          setReposts(reposts + 1);
-          setReposted(true);
-        } else {
-          setAlert("The user is private", SOFT_RED, TIMEOUT_ALERT);
+        if (response){
+          if (response === 200) {
+            setReposts(reposts + 1);
+            setReposted(true);
+          } else if (response === 403) {
+            setAlert("you can't repost a private post", SOFT_RED, TIMEOUT_ALERT);
+          } else if (response === 409) {
+            Alert.alert('Alert', 'You cannot repost your own posts');
+          }
         }
       }
     } catch (error) {

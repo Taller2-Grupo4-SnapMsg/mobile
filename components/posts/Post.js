@@ -14,7 +14,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
+const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   if (!post)
     return null;
 
@@ -31,6 +31,7 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
       did_i_repost} = post;
   
   const colorScheme = useColorScheme();
+
   const [imageURI, setImageURI] = useState(null);
   
 
@@ -108,7 +109,7 @@ const Post = ({ post, setMessageRepost, setMessageRepostColor}) => {
 
         <View style={styles.footer}>
           <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={did_i_repost} post_id={post_id} 
-          setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>
+          setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>
           <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id}/>
         </View>
         </View>
