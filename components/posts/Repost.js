@@ -9,7 +9,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const Repost = ({ post }) => {
+const Repost = ({ post, setMessageRepost, setMessageRepostColor }) => {
   if (!post)
     return null;
 
@@ -39,7 +39,7 @@ const Repost = ({ post }) => {
               <Text style={styles.reposted_text}>Reposted</Text>
             </View>
         </View>
-          <Post post={post}/>
+          <Post post={post} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>
         </View>
       </ThemeProvider>
     );

@@ -1,11 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const OK = 200;
-const USER_NOT_FOUND = 404;
-
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const RepostPost = async (post_id) => {
+const DeletePost = async (post_id) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -14,21 +11,21 @@ const RepostPost = async (post_id) => {
         'accept': 'application/json',
         'token': token,
       };
-      console.log("entra a repostear con:", post_id)
-      const response = await fetch(`${URL_POST_BACK}/reposts/${post_id}`, {
-        method: 'POST',
+
+      const response = await fetch(`${URL_POST_BACK}/posts/${post_id}/`, {
+        method: 'DELETE',
         headers: headers,
       });
 
-      console.log("response:", response)
+      
       if (response.status === 200) {
         return;
-      } else if (response.status === 422) {
-        const errorData = await response.json();
-        console.error('Validation Error:', errorData);
-      } else {
-        console.error('Error when reposting', response.status);
       }
+
+      // Handle errors using catch block
+      const errorData = await response.json();
+      throw new Error('Server Error: ' + JSON.stringify(errorData));
+      
     } catch (error) {
       const message =
         error.response?.data?.error ||
@@ -40,4 +37,4 @@ const RepostPost = async (post_id) => {
   } 
 };
 
-  export default RepostPost;
+  export default DeletePost;

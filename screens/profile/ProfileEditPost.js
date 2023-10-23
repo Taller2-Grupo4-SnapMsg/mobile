@@ -5,7 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner"
 
+TIMEOUT_ALERT_EDIT = 1500
 DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"
 
 const ProfileEditPost = ({ route }) => {
@@ -17,8 +19,15 @@ const ProfileEditPost = ({ route }) => {
   const [newHashtags, setNewHashtags] = useState(post.hashtags);
   const [isSaving, setIsSaving] = useState(false);
   const [tagInput, setTagInput] = useState('');
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alerMessageColor, setAlertMessageColor] = useState(true);
 
   const handleSelectImage = async () => {
+
+    // const imageRef = storage.ref().child('images/image.jpg');
+    // // Delete the image
+    // imageRef.delete()
+
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -34,15 +43,32 @@ const ProfileEditPost = ({ route }) => {
       console.error('Error seleccionando la imagen:', error);
     }
   };
+  
+  const setAlert = (message, color, timeout) => {
+    setAlertMessageColor(color);
+    setAlertMessage(message);
+    setTimeout(() => {
+      setAlertMessage(null);
+      setAlertMessageColor(null);
+    }, timeout);
+  }
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      console.log("imagen original: ", decodeURIComponent(post.image))
-      console.log("imagen nueva: ", newImage)
+
+      //crear nueva imagen
+      //borrar link a imagen vieja en firebase
+
+
       await editPostHandler(post.post_id, newImage, newText, newHashtags);
       updatePost({ ...post, text: newText, image: newImage, hashtags: newHashtags });
-      navigation.navigate('Profile');
+      setAlert("Post edited successfully", SOFT_GREEN, TIMEOUT_ALERT_EDIT);
+      // navigation.navigate('Profile');
+
+      setTimeout(() => {
+        navigation.navigate('Profile');
+      }, TIMEOUT_ALERT_EDIT);
     } catch (error) {
       console.error('Error al guardar el post:', error);
     } finally {
@@ -120,6 +146,13 @@ const ProfileEditPost = ({ route }) => {
       <View style={styles.saveButtonContainer}>
         <Button title={isSaving ? 'Save...' : 'Save'} onPress={handleSave} disabled={isSaving} color="#6B5A8E"/>
       </View>
+      {alertMessage && (
+          <AlertBottomBanner
+            message={alertMessage}
+            backgroundColor={alerMessageColor}
+            timeout={TIMEOUT_ALERT_EDIT}
+          />
+        )}
     </View>
   );
 };

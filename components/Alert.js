@@ -15,7 +15,7 @@ const CustomAlert = ({ isVisible, message, onClose }) => {
       }}
     >
       <DialogContent style={{ padding: 20 }}>
-        <Text style={{ color: '#333', fontSize: 16 }}>{message}</Text>
+        <Text style={{ color: '#333', fontSize: 16, margin: 10 }}>{message}</Text>
         <TouchableOpacity onPress={onClose} style={{ marginTop: 20 }}>
           <Text style={{ color: '#6B5A8E', fontSize: 18, marginLeft: '75%' }}>OK</Text>
         </TouchableOpacity>

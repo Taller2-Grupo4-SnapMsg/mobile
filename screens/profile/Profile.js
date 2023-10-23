@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import getFollowersByUsername from '../../handlers/getFollowersByUsername';
 import getFollowingByUsername from '../../handlers/getFollowingByUsername';
+import DeletePost from '../../handlers/posts/deletePost';
+import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner"
 import { useNavigation } from '@react-navigation/native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useFocusEffect } from '@react-navigation/native';
@@ -26,6 +28,10 @@ import {
 } from 'react-native';
 
 AMOUNT_POST = 10
+SOFT_GREEN = "#B4D3B2"
+SOFT_RED = "#FF5733"
+TIMEOUT_ALERT = 2000
+
 
 function formatDate(date) {
   return date.replace("T", "_").split(".")[0];
@@ -93,6 +99,9 @@ function ProfileUser({ user }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
   const [onlyReposts, setOnlyReposts] = useState(false);
+  const [postDeleted, setPostDeleted] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alerMessageColor, setAlertMessageColor] = useState(true);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -166,8 +175,37 @@ function ProfileUser({ user }) {
     navigation.navigate('ProfileEditPost', { post: post, updatePost: updatePost });
   };
 
-  const handlePressDelete = async () => {
-    return;
+  const setAlert = (message, color, timeout) => {
+    setAlertMessageColor(color);
+    setAlertMessage(message);
+    setTimeout(() => {
+      setAlertMessage(null);
+      setAlertMessageColor(null);
+    }, timeout);
+  }
+  const handlePressDelete = async (post) => {
+    try {
+      // if (!postDeleted) {
+      //   await DeletePost(post.post_id);
+      //   setAlert("Post deleted successfully. Please reload to see changes.", SOFT_GREEN, TIMEOUT_ALERT); 
+      //   setPostDeleted(true);
+      // }
+      // else {
+      //   setAlert("Post already deleted. Please reload to see changes.", SOFT_RED, TIMEOUT_ALERT);
+      // }
+
+      await DeletePost(post.post_id);
+      
+      // Remove the deleted post from the posts array
+      const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
+
+      // Update the state with the modified posts array
+      setPosts(updatedPosts);
+
+      setAlert("Post deleted successfully. Please reload to see changes.", SOFT_GREEN, TIMEOUT_ALERT);
+    } catch (error) {
+      return;
+    }
   }
 
   const handleGetMorePosts = async (date, refresh) => {
@@ -266,6 +304,13 @@ function ProfileUser({ user }) {
         onEndReached={() => handleGetMorePosts(latestDate, false)}
         onEndReachedThreshold={0.1}
         />
+        {alertMessage && (
+          <AlertBottomBanner
+            message={alertMessage}
+            backgroundColor={alerMessageColor}
+            timeout={TIMEOUT_ALERT}
+          />
+        )}
       {loadingMore && <LoadingMoreIndicator />}
       </View>
   );

@@ -10,9 +10,11 @@ import PostHandler from '../../../handlers/posts/newPost';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
-import Dialog from '../../../components/Alert';
+import AlertBottomBanner from "../../../components/communicating_info/AlertBottomBanner"
 //import uuid from 'uuid';
 //import { v4 as uuidv4 } from 'uuid';
+
+TIMEOUT_ALERT_POST = 1500
 
 export default function NewPost() {
   const navigation = useNavigation();
@@ -22,35 +24,51 @@ export default function NewPost() {
   const [isLoading, setIsLoading] = useState(false);
   const [postPreview, setPostPreview] = useState('');
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
-  const [isSuccessAlertVisible, setSuccessAlertVisible] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState([]);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alerMessageColor, setAlertMessageColor] = useState(true);
+
+  const setAlert = (message, color, timeout) => {
+    setAlertMessageColor(color);
+    setAlertMessage(message);
+    setTimeout(() => {
+      setAlertMessage(null);
+      setAlertMessageColor(null);
+    }, timeout);
+  }
 
   const onPostPress = async () => {
     setIsLoading(true);
 
     if (selectedImage) {
       const { nanoid } = require('nanoid');
-      const fileName = 'post_image.jpg';
+      //const fileName = 'post_image.jpg';
       //const postId = nanoid();
-      const postId = Math.floor(Math.random() * (10000000 - 0 + 1)) + 0;
-      const storageRef = ref(storage, `post_images/${postId}/${fileName}`);
+      //const postId = Math.floor(Math.random() * 10000000);
+      const timestamp = new Date().getTime();
+      const uniqueFileName = `image_${timestamp}.jpg`;
+      const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
+      //const storageRef = ref(storage, `post_images/${postId}/${uniqueFileName}`);
+      const storageRef = ref(storage, file_route);
 
       const response = await fetch(selectedImage);
       const blob = await response.blob();
       await uploadBytes(storageRef, blob);
 
-      const downloadURL = await getDownloadURL(storageRef);
+      //const downloadURL = await getDownloadURL(storageRef);
 
       setSelectedImage('');
-      console.log("llega a new post con: ", text, downloadURL, tags)
-      PostHandler(text, downloadURL, tags);
-      setSuccessAlertVisible(true);
+      //PostHandler(text, downloadURL, tags);
+      PostHandler(text, file_route, tags);
     } else {
       setSelectedImage('');
       PostHandler(text, '', tags);
-      setSuccessAlertVisible(true);
     }
+    setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
+    setTimeout(() => {
+      navigation.navigate('Home');
+    }, TIMEOUT_ALERT_POST);
     setText('');
     setIsLoading(false);
     setTags([]);
@@ -166,11 +184,13 @@ export default function NewPost() {
           </Pressable>
         </View>
 
-        <Dialog
-          isVisible={isSuccessAlertVisible}
-          message="Post generated successfully"
-          onClose={() => setSuccessAlertVisible(false)}
-        />
+        {alertMessage && (
+          <AlertBottomBanner
+            message={alertMessage}
+            backgroundColor={alerMessageColor}
+            timeout={3000}
+          />
+        )}
       </View>
     </SafeAreaView>
   );

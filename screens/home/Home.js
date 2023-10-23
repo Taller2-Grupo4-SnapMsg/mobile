@@ -7,6 +7,7 @@ import { useColorScheme } from 'react-native';
 import React, {useState, useEffect} from 'react'; 
 import Spinner from 'react-native-loading-spinner-overlay';
 import LoadingMoreIndicator from "../../components/LoadingMoreIndicator";
+import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner";
 import { useUser } from '../../contexts/UserContext';
 import {
   DarkTheme,
@@ -46,6 +47,8 @@ export default function Home({}) {
     const [latestDate, setLatestDate] = useState(new Date());
     const [loadingMore, setLoadingMore] = useState(false);
     const [reachedEnd, setReachedEnd] = useState(false);
+    const [alertMessageRepost, setMessageRepost] = useState('');
+    const [alerMessageRepostColor, setMessageRepostColor] = useState(true);
 
     const handlePressPlus = () => {
       navigation.navigate('NewPost');
@@ -118,9 +121,9 @@ export default function Home({}) {
         data={posts}
         renderItem={({ item }) => {
           if (item.user_poster.email == item.user_creator.email) {
-            return <Post post={item} />;
+            return <Post post={item} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>;
           } else {
-            return <Repost post={item} />;
+            return <Repost post={item} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>;
           }
         }}
         refreshControl={
@@ -141,6 +144,13 @@ export default function Home({}) {
           color="white"
         />
       </Pressable>
+      {alertMessageRepost && (
+          <AlertBottomBanner
+            message={alertMessageRepost}
+            backgroundColor={alerMessageRepostColor}
+            timeout={TIMEOUT_ALERT}
+          />
+        )}
     </View>
     </ThemeProvider>
    );
