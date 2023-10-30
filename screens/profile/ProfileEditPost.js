@@ -16,7 +16,7 @@ DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfup
 const ProfileEditPost = ({ route }) => {
   navigation = useNavigation();
   const { loggedInUser } = useUser();
-  const { post } = route.params;
+  const { post, setRefreshing } = route.params;
 
   const [newText, setNewText] = useState(post.text);
   const [newImage, setNewImage] = useState(null);
@@ -48,14 +48,27 @@ const handleSelectImage = async () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      if (changeImage) {
+      if (changeImage && post.image) {
         const storageRef = ref(storage, post.image);
         const response = await fetch(newImage);
         const blob = await response.blob();
         await uploadBytes(storageRef, blob);
-      }
-      await editPostHandler(post.post_id, post.image, newText, newHashtags);
+        await editPostHandler(post.post_id, post.image, newText, newHashtags);
+      } else if (changeImage && !post.image){
+        console.log("No habia imagen")
 
+        const timestamp = new Date().getTime();
+        const uniqueFileName = `image_${timestamp}.jpg`;
+        const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
+        const storageRef = ref(storage, file_route);
+    
+        const response = await fetch(newImage);
+        const blob = await response.blob();
+        await uploadBytes(storageRef, blob);
+
+        await editPostHandler(post.post_id, file_route, newText, newHashtags);
+      }
+      setRefreshing(true);
       navigation.navigate('Profile');
       Alert.alert('Alert', 'Post edited successfully');
     } catch (error) {
@@ -79,6 +92,9 @@ const handleSelectImage = async () => {
 
 const fetchImageURL = async () => {
   try {
+    if (!post.image) {
+      return;
+    }
     const decoded_file_route = decodeURIComponent(post.image);
     const storageRef = ref(storage, decoded_file_route);
     const url = await getDownloadURL(storageRef);
