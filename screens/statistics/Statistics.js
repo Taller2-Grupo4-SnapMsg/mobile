@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Modal } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Modal } from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list'
 import { useUser } from '../../contexts/UserContext';
 import getStatistics from '../../handlers/statistics/getStatistics';
 import DatePicker from 'react-native-modern-datepicker';
@@ -9,6 +10,18 @@ function formatDate(date) {
   return date.replace("T", "_").split(".")[0];
 }
 
+DEFAULT_OP1 = 'Last 3 days'
+DEFAULT_OP2 = 'Last 7 days'
+DEFAULT_OP3 = 'Last 2 weeks'
+DEFAULT_OP4 = 'Last month'
+DEFAULT_OP5 = 'Last 6 months'
+
+DAYS_FROM_OP1 = 3
+DAYS_FROM_OP2 = 7
+DAYS_FROM_OP3 = 14
+DAYS_FROM_OP4 = 30
+DAYS_FROM_OP5 = 180
+
 const Statistics = () => {
   const { loggedInUser } = useUser();
   const [isFromDatePickerVisible, setFromDatePickerVisible] = useState(false);
@@ -17,12 +30,68 @@ const Statistics = () => {
   const [toDate, setToDate] = useState(new Date().toISOString());
   const [isChoosingDate, setIsChoosingDate] = useState(false);
   const [isGettingStatistics, setIsGettingStatistics] = useState(false);
+  const [defaultOptionSelected, setDefaultOptionSelected] = useState("");
   const [data, setData] = useState([
     { category: 'My Posts', value: 1000 },
     { category: 'My Likes', value: 500 },
     { category: 'My Reposts', value: 2000 },
     { category: 'Reposts of My Content', value: 1000 },
   ])
+  const defaultOptions = [
+    {key:'1', value: DEFAULT_OP1},
+    {key:'2', value: DEFAULT_OP2},
+    {key:'3', value: DEFAULT_OP3},
+    {key:'4', value: DEFAULT_OP4},
+    {key:'5', value: DEFAULT_OP5},
+  ]
+
+  const setDefaultOption = (defaultSelected) => {
+
+    console.log("defaultSelected: ", defaultSelected);
+
+    setDefaultOptionSelected(defaultSelected);
+    const today = new Date(); 
+
+    if (defaultSelected == DEFAULT_OP1) {
+      const daysAgo = new Date(today);
+      daysAgo.setDate(today.getDate() - DAYS_FROM_OP1); // Subtract 3 days
+    
+      setFromDate(daysAgo.toISOString());
+    } else if (defaultSelected == DEFAULT_OP2) {
+      const daysAgo = new Date(today);
+      daysAgo.setDate(today.getDate() - DAYS_FROM_OP2); 
+    
+      setFromDate(daysAgo.toISOString());
+    } else if (defaultSelected == DEFAULT_OP3) {
+      const daysAgo = new Date(today);
+      daysAgo.setDate(today.getDate() - DAYS_FROM_OP3); 
+    
+      setFromDate(daysAgo.toISOString());
+
+    } else if (defaultSelected == DEFAULT_OP4) {
+      const daysAgo = new Date(today);
+      daysAgo.setDate(today.getDate() - DAYS_FROM_OP4); 
+    
+      setFromDate(daysAgo.toISOString());
+    } else if (defaultSelected == DEFAULT_OP5) {
+      const daysAgo = new Date(today);
+      daysAgo.setDate(today.getDate() - DAYS_FROM_OP5); 
+    
+      setFromDate(daysAgo.toISOString());
+    } else {
+      return;
+    }
+
+    setToDate(today.toISOString());
+  }
+
+  const showFormatedDate = (date) => {
+    if (!date) {
+      return "";
+    }
+
+    return new Date(date).toLocaleDateString('en-GB')
+  }
 
   const openToDatePicker = () => {
     setToDatePickerVisible(true);
@@ -46,6 +115,7 @@ const Statistics = () => {
       
       setToDate(formattedDate);
       setToDatePickerVisible(false);
+      setDefaultOptionSelected("");
     } else {
       // Handle an invalid date string
       console.error('Invalid date format:', date);
@@ -62,6 +132,7 @@ const Statistics = () => {
       
       setFromDate(formattedDate);
       setFromDatePickerVisible(false);
+      setDefaultOptionSelected("");
     } else {
       // Handle an invalid date string
       console.error('Invalid date format:', date);
@@ -86,13 +157,22 @@ const Statistics = () => {
 
   const handlePress = async () => {
     if (!isGettingStatistics) {
-      stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
-      transformedStats = setStats(0, 0, 0, 0);
-      if (stats) {
-        transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);
-      } 
-      setData(transformedStats);
+
+      if (toDate && fromDate) {  
+        stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
+        transformedStats = setStats(0, 0, 0, 0);
+        if (stats) {
+          transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);
+        } 
+        setData(transformedStats);
+      }
+      else {
+        console.log("Dates where not selected!");
+      }
+    } else {
+      console.log("Loading!");
     }
+    
   };
 
   useEffect(() => {
@@ -111,29 +191,36 @@ const Statistics = () => {
       </View>
 
       <View style={styles.chooseDates}>
-  <View style={styles.row}>
-    <View style={styles.wide}>
-      <PurpleButton onPress={openFromDatePicker} text="Select From Date" loading={isChoosingDate} width='85%' />
-    </View>
-    
-    <View style={styles.right}>
-      <View style={styles.dateContainer}>
-        <Text style={styles.dateText}>{new Date(fromDate).toLocaleDateString('en-GB')}</Text>
+      <View style={styles.row}>
+        <View style={styles.wide}>
+          <PurpleButton onPress={openFromDatePicker} text="Select From Date" loading={isChoosingDate} width='85%' />
+        </View>
+        
+        <View style={styles.right}>
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateText}>{showFormatedDate(fromDate)}</Text>
+          </View>
+        </View>
       </View>
-    </View>
-  </View>
 
-  <View style={styles.row}>
-    <View style={styles.wide}>
-      <PurpleButton onPress={openToDatePicker} text="Select To Date" loading={isChoosingDate} width='85%' />
-    </View>
-    
-    <View style={styles.right}>
-      <View style={styles.dateContainer}>
-        <Text style={styles.dateText}>{new Date(toDate).toLocaleDateString('en-GB')}</Text> 
+      <View style={styles.row}>
+        <View style={styles.wide}>
+          <PurpleButton onPress={openToDatePicker} text="Select To Date" loading={isChoosingDate} width='85%' />
+        </View>
+        
+        <View style={styles.right}>
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateText}>{showFormatedDate(toDate)}</Text> 
+          </View>
+        </View>
       </View>
-    </View>
-  </View>
+
+  <SelectList 
+    setSelected={(val) => setDefaultOption(val)} 
+    data={defaultOptions} 
+    searchPlaceholder="Select a premade option"
+    save="value"
+    />
 
   <View style={styles.centeredRow}>
     <PurpleButton
