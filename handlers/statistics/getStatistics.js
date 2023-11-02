@@ -23,7 +23,7 @@ const getStatistics = async (from_date_str, to_date_str) => {
                 const statistics = await response.json();
                 return statistics;
             } else {
-                console.error('Fallo el request al back de statistics:', response.status);
+                return null;
             }
         } catch (error) {
             const message =

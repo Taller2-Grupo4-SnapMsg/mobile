@@ -1,9 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
-const PurpleButton = ({ onPress, loading , text}) => {
+const PurpleButton = ({ onPress, loading , text, width = '40%' }) => {
   return (
-    <TouchableOpacity style={styles.signInButton} onPress={onPress} disabled={loading}>
+    <TouchableOpacity style={[styles.signInButton, { width: width }]} onPress={onPress} disabled={loading}>
       {loading ? (
         <ActivityIndicator size="small" color="white" />
       ) : (
