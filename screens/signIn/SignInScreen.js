@@ -42,10 +42,10 @@ const SignInScreen = ({ navigation }) => {
       const response = await LogInHandler(email, password);
       if (response) {
         await fetchLoggedInUser({ setLoggedInUser }); 
-        navigation.navigate('Home');
+        navigation.navigate("MainNavigator");
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: "MainNavigator" }],
         });
       } else {
         setLoading(false); 
@@ -78,10 +78,10 @@ const SignInScreen = ({ navigation }) => {
           if (response) {
             await fetchLoggedInUser({setLoggedInUser});
             setShowSpinner(false);
-            navigation.navigate('Home');
+            navigation.navigate("MainNavigator");
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Home' }],
+              routes: [{ name: "MainNavigator" }],
             });
           } else {
             setShowSpinner(false); 

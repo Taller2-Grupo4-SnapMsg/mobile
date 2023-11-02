@@ -7,6 +7,7 @@ import { useColorScheme } from 'react-native';
 import Avatar from '../Avatar';
 import RepostButton from './RepostButton';
 import LikeButton from './LikeButton';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 import {
@@ -34,24 +35,26 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
 
   const [imageURI, setImageURI] = useState(null);
   
-
-  useEffect(() => {
-    if (post.image) {
-      const fetchImageURL = async () => {
-        try {
-          setImageURI(null);
-          const decoded_file_route = decodeURIComponent(post.image);
-          const storageRef = ref(storage, decoded_file_route);
-          setImageURI(await getDownloadURL(storageRef));
-        } catch (error) {
-          console.error('Error fetching image URL:', error);
-        }
-      };
-
-      fetchImageURL();
+  const fetchImageURL = async () => {
+    try {
+      if (!post.image) {
+        return;
+      }
+      const decoded_file_route = decodeURIComponent(post.image);
+      const storageRef = ref(storage, decoded_file_route);
+      const url = await getDownloadURL(storageRef);
+      setImageURI(url);
+    } catch (error) {
+      console.error('Error fetching image URL:', error);
     }
-  }, [post.image]);
-
+  };
+  
+  // Call the function when the component mounts
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchImageURL();
+    }, [])
+  );
 
   function formatDate(dateString) {
     // Split the date and time parts
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tag: {
-    backgroundColor: 'rgba(107, 90, 142, 0.5)', 
+    backgroundColor: '#6B5A8E', 
     borderRadius: 5, 
     color: '#fff',
     paddingHorizontal: 8,

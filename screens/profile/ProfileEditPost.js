@@ -7,7 +7,6 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner"
 import { useUser } from '../../contexts/UserContext';
 
 TIMEOUT_ALERT_EDIT = 1500
@@ -38,7 +37,7 @@ const handleSelectImage = async () => {
     if (!result.canceled) {
       setNewImage(result.assets[0].uri);
       setChangeImage(true);
-    }
+    } 
   } catch (error) {
     console.error('Error seleccionando la imagen:', error);
   }
@@ -48,14 +47,29 @@ const handleSelectImage = async () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      if (changeImage) {
-        const storageRef = ref(storage, post.image);
-        const response = await fetch(newImage);
-        const blob = await response.blob();
-        await uploadBytes(storageRef, blob);
-      }
-      await editPostHandler(post.post_id, post.image, newText, newHashtags);
-
+      if (post.image) {
+        if (changeImage) {
+          console.log("post.image original: ", post.image);
+          const storageRef = ref(storage, decodeURIComponent(post.image));
+          const response = await fetch(newImage);
+          const blob = await response.blob();
+          await uploadBytes(storageRef, blob);
+        }
+        await editPostHandler(post.post_id, decodeURIComponent(post.image), newText, newHashtags);
+      } else {
+        file_route = '';
+        if (changeImage) {
+          const timestamp = new Date().getTime();
+          const uniqueFileName = `image_${timestamp}.jpg`;
+          const storageRef = ref(storage, file_route);
+          file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
+          
+          const response = await fetch(newImage);
+          const blob = await response.blob();
+          await uploadBytes(storageRef, blob);
+        }
+        await editPostHandler(post.post_id, file_route, newText, newHashtags);
+      } 
       navigation.navigate('Profile');
       Alert.alert('Alert', 'Post edited successfully');
     } catch (error) {
@@ -66,6 +80,7 @@ const handleSelectImage = async () => {
   };
 
   const addTag = () => {
+    console.log("Entra a addTag: ",tagInput.trim());
     if (tagInput.trim() !== '') {
       setNewHashtags([...newHashtags, tagInput.trim()]);
       setTagInput('');
@@ -79,6 +94,9 @@ const handleSelectImage = async () => {
 
 const fetchImageURL = async () => {
   try {
+    if (!post.image) {
+      return;
+    }
     const decoded_file_route = decodeURIComponent(post.image);
     const storageRef = ref(storage, decoded_file_route);
     const url = await getDownloadURL(storageRef);

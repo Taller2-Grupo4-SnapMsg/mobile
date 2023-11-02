@@ -147,7 +147,7 @@ function ProfileUser({ user }) {
   };
 
   const handlePressEdit = (post) => {
-    navigation.navigate('ProfileEditPost', { post: post });
+    navigation.navigate('ProfileEditPost', { post: post});
   };
 
   const setAlert = (message, color, timeout) => {
@@ -165,6 +165,7 @@ function ProfileUser({ user }) {
       } else {
         await DeleteRepost(post.post_id);
       }
+      //setRefreshing(true);
       // Remove the deleted post from the posts array
       const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
 
@@ -210,8 +211,14 @@ function ProfileUser({ user }) {
 
   useEffect(() => {  
     handleGetMorePosts((new Date()).toISOString(), true)
-   }, [onlyReposts]);
+   }, [onlyReposts, refreshing]);
   
+   useFocusEffect(
+    React.useCallback(() => {
+      setRefreshing(true);
+    }, [])
+  );
+
   return  (
     <View style={{ flex: 1 , flexDirection: 'column'}}>
       <FlatList
@@ -231,7 +238,7 @@ function ProfileUser({ user }) {
         data={posts} 
         ListEmptyComponent={() => (
           <View style={styles.noUsersContainer}>
-          <Text>No snaps found.</Text>
+          <Text></Text>
         </View>
         )}
         renderItem={({ item }) => {
@@ -260,14 +267,14 @@ function ProfileUser({ user }) {
           return (
             <View>
               <Repost post={item} style={{ flex: 1}}/>
-              {user.email == loggedInUser.email && (
+              {/*{user.email == loggedInUser.email && (
               <View style={{ position: 'absolute', right: 0, top: 0, marginRight: 10}}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
                       <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
                 </View>
-              </View>)}
+              </View>)}*/}
             </View>);
         }}}
         refreshControl={
