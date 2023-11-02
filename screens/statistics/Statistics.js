@@ -1,20 +1,21 @@
-/* This file has been downloaded from rnexamples.com */
-/* If You want to help us please go here https://www.rnexamples.com/help-us */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
+import { useUser } from '../../contexts/UserContext';
+import getStatistics from '../../handlers/statistics/getStatistics';
 
+function formatDate(date) {
+  return date.replace("T", "_").split(".")[0];
+}
 
 const Statistics = () => {
-
+  const { loggedInUser } = useUser();
+  const [fromDate, setFromDate] = useState((new Date(1999, 0, 1)).toISOString());
+  const [toDate, setToDate] = useState((new Date()).toISOString());
   const [data, setData] = useState([
-    { category: 'Followers', value: 1000 },
-    { category: 'Likes', value: 500 },
-    { category: 'Reach', value: 2000 },
-    { category: 'Followers', value: 1000 },
-  
-    { category: 'Category', value: 7500 },
-    { category: 'Other', value: 66000 },
-    { category: 'One category', value: 3300 },
+    { category: 'My Posts', value: 1000 },
+    { category: 'My Likes', value: 500 },
+    { category: 'My Reposts', value: 2000 },
+    { category: 'Reposts of My Content', value: 1000 },
   ])
   
   const renderStatItem = ({ item }) => (
@@ -24,22 +25,41 @@ const Statistics = () => {
     </View>
   );
 
+  const handlePress = async () => {
+    stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
+    console.log("stats: ", stats);
+
+    const transformedStats = [
+      { category: 'My Posts', value: stats.my_posts_count },
+      { category: 'My Likes', value: stats.likes_count },
+      { category: 'My Reposts', value: stats.my_reposts_count },
+      { category: 'Reposts of My Content', value: stats.others_reposts_count },
+    ];
+    setData(transformedStats);
+  };
+
+  useEffect(() => {
+    handlePress();
+  }, []);
+
+
   return (
     <View style={styles.container}>
       <View style={styles.userCard}>
         <View>
-          <Image source={{ uri: 'https://www.bootdey.com/img/Content/avatar/avatar1.png' }} style={styles.userPhoto} />
+          <Image source={{ uri: loggedInUser.avatar }} style={styles.userPhoto} />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>John Doe</Text>
-          <Text style={styles.userFollowers}>1000 followers</Text>
-        </View>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.editButtonText}>Edit</Text>
+          <Text style={styles.userName}>{loggedInUser.username} ~ {loggedInUser.name} {loggedInUser.last_name} </Text>
+          <TouchableOpacity onPress={handlePress}>
+          <View style={{ backgroundColor: 'blue', padding: 10 }}>
+            <Text style={{ color: 'white' }}>Get statistics</Text>
+          </View>
         </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.statsCard}>
-        <Text style={styles.statsTitle}>Weekly Stats</Text>
+        <Text style={styles.statsTitle}>My Stats</Text>
         <FlatList
           data={data}
           renderItem={renderStatItem}
@@ -47,9 +67,6 @@ const Statistics = () => {
           numColumns={2}
         />
       </View>
-      <TouchableOpacity style={styles.addButton}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
     </View>
   );
 };
