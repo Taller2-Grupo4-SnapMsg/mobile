@@ -38,7 +38,7 @@ const handleSelectImage = async () => {
     if (!result.canceled) {
       setNewImage(result.assets[0].uri);
       setChangeImage(true);
-    }
+    } 
   } catch (error) {
     console.error('Error seleccionando la imagen:', error);
   }
@@ -48,26 +48,21 @@ const handleSelectImage = async () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      if (changeImage && post.image) {
-        const storageRef = ref(storage, post.image);
-        const response = await fetch(newImage);
-        const blob = await response.blob();
-        await uploadBytes(storageRef, blob);
-        await editPostHandler(post.post_id, post.image, newText, newHashtags);
-      } else if (changeImage && !post.image){
-        console.log("No habia imagen")
+      file_route = decodeURIComponent(post.image);
+      if (changeImage) {
+        //si habia imagen deberia eliminar el link de firebase
 
+        console.log("Entra a handleSave: ",newImage);
         const timestamp = new Date().getTime();
         const uniqueFileName = `image_${timestamp}.jpg`;
         const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
         const storageRef = ref(storage, file_route);
-    
+  
         const response = await fetch(newImage);
         const blob = await response.blob();
         await uploadBytes(storageRef, blob);
-
-        await editPostHandler(post.post_id, file_route, newText, newHashtags);
       }
+      await editPostHandler(post.post_id, file_route, newText, newHashtags);
       setRefreshing(true);
       navigation.navigate('Profile');
       Alert.alert('Alert', 'Post edited successfully');
@@ -79,6 +74,7 @@ const handleSelectImage = async () => {
   };
 
   const addTag = () => {
+    console.log("Entra a addTag: ",tagInput.trim());
     if (tagInput.trim() !== '') {
       setNewHashtags([...newHashtags, tagInput.trim()]);
       setTagInput('');

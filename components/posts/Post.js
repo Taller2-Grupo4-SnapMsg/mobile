@@ -42,7 +42,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
           setImageURI(null);
           const decoded_file_route = decodeURIComponent(post.image);
           const storageRef = ref(storage, decoded_file_route);
-          setImageURI(await getDownloadURL(storageRef));
+          setImageURI(await getDownloadURL(ref(storage, decodeURIComponent(post.image))));
         } catch (error) {
           console.error('Error fetching image URL:', error);
         }
