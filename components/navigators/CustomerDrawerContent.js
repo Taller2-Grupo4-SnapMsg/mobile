@@ -17,17 +17,6 @@ function CustomDrawerContent({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.menuItemsContainer}>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            navigation.navigate('ProfileDetail');
-          }}
-        >
-          <View style={styles.itemContainer}>
-            {/*<Icon name="user" size={20} color="black" />*/}
-            <Text style={styles.drawerItemText}>Profile</Text>
-          </View>
-        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.drawerItem}
@@ -38,6 +27,18 @@ function CustomDrawerContent({ navigation }) {
           <View style={styles.itemContainer}>
             {/*<Icon name="user" size={20} color="black" />*/}
             <Text style={styles.drawerItemText}>Home</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('ProfileDetail');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            {/*<Icon name="user" size={20} color="black" />*/}
+            <Text style={styles.drawerItemText}>Profile</Text>
           </View>
         </TouchableOpacity>
 

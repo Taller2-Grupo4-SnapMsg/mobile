@@ -179,7 +179,6 @@ function ProfileUser({ user }) {
   }
 
   const handleGetMorePosts = async (date, refresh) => {
-    console.log("handleGetMorePosts")
     if (loadingMore || (reachedEnd && !refresh)) return;
 
     try {
@@ -219,7 +218,7 @@ function ProfileUser({ user }) {
       setRefreshing(true);
     }, [])
   );
-  
+
   return  (
     <View style={{ flex: 1 , flexDirection: 'column'}}>
       <FlatList
