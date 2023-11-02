@@ -7,7 +7,6 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner"
 import { useUser } from '../../contexts/UserContext';
 
 TIMEOUT_ALERT_EDIT = 1500
@@ -16,7 +15,7 @@ DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfup
 const ProfileEditPost = ({ route }) => {
   navigation = useNavigation();
   const { loggedInUser } = useUser();
-  const { post, setRefreshing } = route.params;
+  const { post } = route.params;
 
   const [newText, setNewText] = useState(post.text);
   const [newImage, setNewImage] = useState(null);
@@ -48,22 +47,29 @@ const handleSelectImage = async () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      file_route = decodeURIComponent(post.image);
-      if (changeImage) {
-        //si habia imagen deberia eliminar el link de firebase
-
-        console.log("Entra a handleSave: ",newImage);
-        const timestamp = new Date().getTime();
-        const uniqueFileName = `image_${timestamp}.jpg`;
-        const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
-        const storageRef = ref(storage, file_route);
-  
-        const response = await fetch(newImage);
-        const blob = await response.blob();
-        await uploadBytes(storageRef, blob);
-      }
-      await editPostHandler(post.post_id, file_route, newText, newHashtags);
-      setRefreshing(true);
+      if (post.image) {
+        if (changeImage) {
+          console.log("post.image original: ", post.image);
+          const storageRef = ref(storage, decodeURIComponent(post.image));
+          const response = await fetch(newImage);
+          const blob = await response.blob();
+          await uploadBytes(storageRef, blob);
+        }
+        await editPostHandler(post.post_id, decodeURIComponent(post.image), newText, newHashtags);
+      } else {
+        file_route = '';
+        if (changeImage) {
+          const timestamp = new Date().getTime();
+          const uniqueFileName = `image_${timestamp}.jpg`;
+          const storageRef = ref(storage, file_route);
+          file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
+          
+          const response = await fetch(newImage);
+          const blob = await response.blob();
+          await uploadBytes(storageRef, blob);
+        }
+        await editPostHandler(post.post_id, file_route, newText, newHashtags);
+      } 
       navigation.navigate('Profile');
       Alert.alert('Alert', 'Post edited successfully');
     } catch (error) {
