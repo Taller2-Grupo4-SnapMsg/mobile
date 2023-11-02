@@ -147,7 +147,7 @@ function ProfileUser({ user }) {
   };
 
   const handlePressEdit = (post) => {
-    navigation.navigate('ProfileEditPost', { post: post, setRefreshing: setRefreshing});
+    navigation.navigate('ProfileEditPost', { post: post});
   };
 
   const setAlert = (message, color, timeout) => {
@@ -213,6 +213,12 @@ function ProfileUser({ user }) {
   useEffect(() => {  
     handleGetMorePosts((new Date()).toISOString(), true)
    }, [onlyReposts, refreshing]);
+  
+   useFocusEffect(
+    React.useCallback(() => {
+      setRefreshing(true);
+    }, [])
+  );
   
   return  (
     <View style={{ flex: 1 , flexDirection: 'column'}}>

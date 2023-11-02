@@ -5,8 +5,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import getPostsProfile from  
 
-const PostContext = createContext();
-
 AMOUNT_POST = 10
 
 function formatDate(date) {
@@ -31,7 +29,6 @@ export function PostProvider({ children }) {
 
   useEffect(() => {
     const handleGetMorePosts = async (date, refresh) => {
-      console.log("handleGetMorePosts")
       if (loadingMore || (reachedEnd && !refresh)) return;
   
       try {

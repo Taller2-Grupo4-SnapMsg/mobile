@@ -13,9 +13,7 @@ const PostHandler = async (content, image, tags) => {
                 'Accept': 'application/json',
                 'token': token,
               };
-            console.log("Image create post: ", image);
             const encodedImage = encodeURIComponent(image);
-            console.log("Image create post encodeada: ", encodedImage);
             const requestBody = {
                 content: content,
                 image: encodedImage,
