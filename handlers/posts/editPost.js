@@ -13,8 +13,6 @@ const editPostHandler = async (post_id, image, content, hashtags) => {
                 'Accept': 'application/json',
                 'token': token,
               };
-            
-            
             const encodedImage = encodeURIComponent(image);
             const requestBody = {
                 content: content,

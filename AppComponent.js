@@ -15,7 +15,7 @@ import Interests from './screens/signUp/Interests';
 import SearchUser from './screens/search/SearchUser';
 import ProfileEditPost from './screens/profile/ProfileEditPost';
 import Statistics from './screens/statistics/Statistics';
-
+import CustomDrawerContent from './components/navigators/CustomerDrawerContent';
 
 import { useColorScheme } from 'react-native';
 
@@ -25,6 +25,7 @@ import { useUser } from './contexts/UserContext';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+const AuthStack = createStackNavigator();
 
 const StackNavigatorHome = () => {
   return (
@@ -61,35 +62,46 @@ const StackNavigatorSearch = () => {
   );
 }
 
-export default function AppComponent() {
-  const colorScheme = useColorScheme();
-  const {loggedInUser} = useUser(); 
+const AuthNavigator = () => {
   return (
-    <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {loggedInUser ? (
-        <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen name="InHome" component={StackNavigatorHome} options={{ title: 'Home' }} />
-          <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile} options={{ title: 'Profile' }} />
-          <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
-          <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
-        </Drawer.Navigator>
-      ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Interests" component={Interests} />
-          <Stack.Screen name="Home" options={{ title: 'Home' }}>
-            {() => (
-              <Drawer.Navigator initialRouteName="Home">
-                <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
-                <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
-                <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
-                <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
-              </Drawer.Navigator>
-            )}
-          </Stack.Screen>
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
-  )
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="SignIn" component={SignInScreen} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+    </AuthStack.Navigator>
+  );
+};
+
+const MainNavigator = () => {
+  return (
+    <Drawer.Navigator
+      initialRouteName="Home"
+      drawerContent={props => <CustomDrawerContent {...props} navigation={props.navigation} />}
+    >
+      <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
+      <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
+      <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
+      <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
+    </Drawer.Navigator>
+  );
+};
+
+
+export default function AppComponent() {
+  const {loggedInUser} = useUser(); 
+  const colorScheme = useColorScheme();
+
+  return (
+      <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        {loggedInUser ? (
+            <AuthStack.Navigator screenOptions={{ headerShown: false }} initialRouteName="MainNavigator">
+              <AuthStack.Screen name="MainNavigator" component={MainNavigator} />
+              <AuthStack.Screen name="SignIn" component={SignInScreen} />
+              <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+              <AuthStack.Screen name="Interests" component={Interests} />
+            </AuthStack.Navigator>
+        ) : (
+          <AuthNavigator />
+        )}
+      </NavigationContainer>
+  );
 };

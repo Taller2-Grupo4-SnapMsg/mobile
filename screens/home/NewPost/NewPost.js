@@ -49,10 +49,10 @@ export default function NewPost() {
       await uploadBytes(storageRef, blob);
 
       setSelectedImage('');
-      PostHandler(text, file_route, tags);
+      await PostHandler(text, file_route, tags);
     } else {
       setSelectedImage('');
-      PostHandler(text, '', tags);
+      await PostHandler(text, '', tags);
     }
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {

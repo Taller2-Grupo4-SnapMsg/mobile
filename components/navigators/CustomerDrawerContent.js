@@ -1,44 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { Avatar } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Reemplaza con el ícono que desees utilizar
-import { useUser } from '../contexts/UserContext';
-import { useRoute } from '@react-navigation/native';
-import Spinner from 'react-native-loading-spinner-overlay';
-import { useNavigation } from '@react-navigation/native';
-import getUserByToken from '../handlers/getUserByToken';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useUser } from '../../contexts/UserContext';
 
 function CustomDrawerContent({ navigation }) {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getUserByToken();
-        if (user) {
-          setUser(user);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error fetching logged-in user:', error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Spinner
-          visible={isLoading}
-          textStyle={{ color: '#FFF' }}
-        />
-      </View>
-    );
-  }
+  const {loggedInUser} = useUser(); 
 
   const handleSignOut = async () => {
     navigation.reset({
@@ -50,29 +17,55 @@ function CustomDrawerContent({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.menuItemsContainer}>
+
         <TouchableOpacity
           style={styles.drawerItem}
           onPress={() => {
-            navigation.navigate('Profile');
+            navigation.navigate('InHome');
           }}
         >
           <View style={styles.itemContainer}>
-            <Icon name="user" size={20} color="black" />
+            {/*<Icon name="user" size={20} color="black" />*/}
+            <Text style={styles.drawerItemText}>Home</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('ProfileDetail');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            {/*<Icon name="user" size={20} color="black" />*/}
             <Text style={styles.drawerItemText}>Profile</Text>
           </View>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('SearchUserScreen');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            {/*<Icon name="user" size={20} color="black" />*/}
+            <Text style={styles.drawerItemText}>Search</Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
         <View style={styles.avatarSignoutContainer}>
           <View style={styles.cont}>
             <Avatar
               rounded
-              source={{ uri: user.avatar }}
+              source={{ uri: loggedInUser.avatar }}
               size="large"
               style={styles.avatar}
             />
             <View style={styles.userInfo}>
-              {user && <Text style={styles.userName}> {user.name} </Text>}
-              {user && <Text style={styles.userHandle}> @{user.username} </Text>}
+              {loggedInUser && <Text style={styles.userName}> {loggedInUser.name} </Text>}
+              {loggedInUser && <Text style={styles.userHandle}> @{loggedInUser.username} </Text>}
             </View>
           </View>
         <TouchableOpacity
