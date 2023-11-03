@@ -67,7 +67,7 @@ export default function AppComponent() {
   return (
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {loggedInUser ? (
-        <Drawer.Navigator initialRouteName="Statistics">
+        <Drawer.Navigator initialRouteName="Home">
           <Drawer.Screen name="InHome" component={StackNavigatorHome} options={{ title: 'Home' }} />
           <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile} options={{ title: 'Profile' }} />
           <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />

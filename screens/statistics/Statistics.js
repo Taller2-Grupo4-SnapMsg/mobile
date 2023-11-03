@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Modal } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Modal, Alert } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import { useUser } from '../../contexts/UserContext';
 import getStatistics from '../../handlers/statistics/getStatistics';
@@ -157,20 +157,27 @@ const Statistics = () => {
 
   const handlePress = async () => {
     if (!isGettingStatistics) {
-
-      if (toDate && fromDate) {  
-        stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
-        transformedStats = setStats(0, 0, 0, 0);
-        if (stats) {
-          transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);
-        } 
-        setData(transformedStats);
+      if (toDate && fromDate) {
+        const toDate_date = new Date(toDate);
+        const fromDate_date = new Date(fromDate);
+  
+        if (toDate_date.getTime() > fromDate_date.getTime()) {
+          stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
+          transformedStats = setStats(0, 0, 0, 0);
+          if (stats) {
+            transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);
+          } 
+          setData(transformedStats);
+        }
+        else {
+          Alert.alert('Error', 'Date range not valid!');
+        }
       }
       else {
-        console.log("Dates where not selected!");
+        Alert.alert('Error', 'Dates not chosen!');
       }
     } else {
-      console.log("Loading!");
+      Alert.alert('Success', 'Loading!');
     }
     
   };
@@ -215,12 +222,14 @@ const Statistics = () => {
         </View>
       </View>
 
-  <SelectList 
-    setSelected={(val) => setDefaultOption(val)} 
-    data={defaultOptions} 
-    searchPlaceholder="Select a premade option"
-    save="value"
-    />
+  <View style={{ paddingTop: 20 }}>
+    <SelectList 
+      setSelected={(val) => setDefaultOption(val)} 
+      data={defaultOptions} 
+      searchPlaceholder="Select a premade option"
+      save="value"
+      />
+    </View>
 
   <View style={styles.centeredRow}>
     <PurpleButton
@@ -301,6 +310,7 @@ userCard: {
 chooseDates: {
   paddingHorizontal: 20,
   paddingVertical: 10,
+  paddingBottom: 20,
 },
 row: {
   flexDirection: 'row',
@@ -309,6 +319,7 @@ row: {
   marginVertical: 10,
 },
 centeredRow: {
+  paddingTop: 20,
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
