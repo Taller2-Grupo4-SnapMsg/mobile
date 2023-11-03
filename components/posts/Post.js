@@ -8,8 +8,8 @@ import Avatar from '../Avatar';
 import RepostButton from './RepostButton';
 import LikeButton from './LikeButton';
 import { useFocusEffect } from '@react-navigation/native';
-
-
+import { useUser } from '../../contexts/UserContext';
+import PostPictureModal from '../PostPictureModal';
 import {
   DarkTheme,
   ThemeProvider,
@@ -19,15 +19,16 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   if (!post)
     return null;
 
+  const {loggedInUser} = useUser();
   var {post_id, 
       user_poster, 
       user_creator,
       created_at, 
       text, 
-      image, 
       number_likes, 
       number_reposts, 
       hashtags, 
+      mentions,
       did_i_like, 
       did_i_repost} = post;
   
@@ -78,6 +79,11 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   days = Math.floor(all_hours / 24);
   hours = all_hours - days * 24;
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  }
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <Pressable
@@ -100,20 +106,44 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
         <View style={styles.tagsContainer}>
           {hashtags && hashtags.map((tag) => (
             <View style={styles.tag} key={tag}>
-              <Text style={styles.tagName}>{tag}</Text>
+              <Text style={styles.tagName}>#{tag}</Text>
             </View>
           ))}
         </View>
 
         <Text style={styles.content}>{text}</Text>
         {post.image && (
-          <Image source={{ uri: imageURI}} style={styles.image} />
+            <TouchableOpacity onPress={toggleModal}>
+            <Image
+              style={styles.image}
+              source={{
+                uri: imageURI,
+              }}
+            />
+            </TouchableOpacity>
         )}
 
+          <PostPictureModal
+                isVisible={isModalVisible}
+                imageUrl={imageURI}
+                onClose={toggleModal}
+              />
+
         <View style={styles.footer}>
-          <RepostButton icon="retweet" initialReposts={number_reposts} isReposted={did_i_repost} post_id={post_id} 
-          setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>
-          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id}/>
+        {user_creator.email !== loggedInUser.email && (
+            <RepostButton
+              icon="retweet"
+              initialReposts={number_reposts}
+              isReposted={did_i_repost}
+              post_id={post_id}
+              setAlertMessage={setAlertMessage}
+              setAlertMessageColor={setAlertMessageColor}
+            />
+            )}
+
+          
+            <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
+          
         </View>
         </View>
         </Pressable>

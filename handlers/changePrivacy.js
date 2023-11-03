@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-URL_POST_BACK = "https://postsback.onrender.com"
+const OK = 200;
+const USER_NOT_FOUND = 404;
 
-const DeletePost = async (post_id) => {
-  console.log("ENTRO A DELETE POST");
+const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
+
+const changePrivacy = async (privacy) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -12,22 +14,19 @@ const DeletePost = async (post_id) => {
         'accept': 'application/json',
         'token': token,
       };
-
-      const response = await fetch(`${URL_POST_BACK}/posts/${post_id}/`, {
-        method: 'DELETE',
+      const response = await fetch(`${API_BASE_URL}/users/privacy?is_public=${privacy}`, {
+        method: 'PUT',
         headers: headers,
       });
 
-      console.log(response.status);
       if (response.status === 200) {
-        console.log('Post deleted successfully');
         return;
+      } else if (response.status === 422) {
+        const errorData = await response.json();
+        console.error('Validation Error:', errorData);
+      } else {
+        console.error('Error al actualizar bio:', response.status);
       }
-
-      // Handle errors using catch block
-      const errorData = await response.json();
-      throw new Error('Server Error: ' + JSON.stringify(errorData));
-      
     } catch (error) {
       const message =
         error.response?.data?.error ||
@@ -39,4 +38,7 @@ const DeletePost = async (post_id) => {
   } 
 };
 
-  export default DeletePost;
+  
+  export default changePrivacy;
+
+  

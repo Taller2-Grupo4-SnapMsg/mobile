@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
+import ToggleSwitch from 'toggle-switch-react-native'
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
 import changeName from "../../handlers/changeName";
 import changeBio from "../../handlers/changeBio";
@@ -21,10 +22,9 @@ import AvatarPicker from "../../components/AvatarPicker";
 import EditProfileTextInputField from "../../components/EditProfileTextInputField";
 import CountryPickerModalEdit from "../../components/CountryPickerModalEdit";
 import { useUser } from '../../contexts/UserContext';
-import { ActivityIndicator } from 'react-native'; 
 import getUserByToken from "../../handlers/getUserByToken";
-import SaveButton from "../../components/PurpleButton";
 import PurpleButton from "../../components/PurpleButton";
+import changePrivacy from "../../handlers/changePrivacy";
 
 export default function EditProfileById() {
   const route = useRoute();
@@ -62,6 +62,9 @@ const EditProfile = ({  user  }) => {
   
   const [selectedCountryName, setSelectedCountryName] = useState(user.location);
   const [CountryNameHasChanged, setCountryNameHasChanged] = useState(false);
+
+  const [accountIsPublic, setAccountIsPublic] = useState(user.is_public);
+  const [privacyHasChanged, setPrivacyHasChanged] = useState(false);
   
   const handleCountryChange = (country) => {
     setSelectedCountryName(country.name); // Set the selected country name
@@ -72,6 +75,7 @@ const EditProfile = ({  user  }) => {
     today.setDate(today.getDate() + 1),
     "YYYY/MM/DD"
     );
+
 
   const [selectedStartDate, setSelectedStartDate] = useState(user.date_of_birth.split(' ')[0] || startDate);
   
@@ -130,6 +134,9 @@ const EditProfile = ({  user  }) => {
     }
     if (CountryNameHasChanged) {
       await changeLocation(selectedCountryName);
+    } 
+    if (privacyHasChanged) {
+      await changePrivacy(accountIsPublic);
     }
   
     const fetchLoggedInUser = async () => {
@@ -149,6 +156,12 @@ const EditProfile = ({  user  }) => {
   
     navigation.navigate('Profile');
   };
+
+  handleSwitchingAccountStatus = async () => {
+    setAccountIsPublic(!accountIsPublic);
+    setPrivacyHasChanged(true);
+  }
+
   
   function renderDatePicker() {
     return (
@@ -261,7 +274,18 @@ const EditProfile = ({  user  }) => {
               handleCountryChange={handleCountryChange}
               selectedCountryName={selectedCountryName}/>
           </View>
+
         </View>
+          <View style={styles.publicSwitch}>
+            <ToggleSwitch
+              isOn={!accountIsPublic}
+              label="Private Account"
+              onColor="#6B5A8E"
+              offColor="#ccc"
+              size="medium"
+              onToggle={() => {handleSwitchingAccountStatus()}}
+            />
+            </View>
         <PurpleButton onPress={handleSaveButton} text="Save" loading={isSaving} />
         {renderDatePicker()}
       </ScrollView>
@@ -294,7 +318,7 @@ const styles = StyleSheet.create({
     inputContainer: {
       flexDirection: "column",
       marginBottom: 6,
-      height: 80,
+      height: 70,
     },
     inputLabel: {
       fontSize: 16,
@@ -310,7 +334,6 @@ const styles = StyleSheet.create({
       paddingLeft: 8,
     },    
     saveButton: {
-      marginTop: 0,
       backgroundColor: "#6B5A8E",
       height: 44,
       borderRadius: 50,
@@ -318,6 +341,7 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       width: "40%",
       alignSelf: "center",
+      marginTop: 200,
     },
     saveButtonText: {
       fontSize: 20,
@@ -325,5 +349,9 @@ const styles = StyleSheet.create({
     },
     bioText: {
       numberOfLines: 4,
-    }
+    },
+    publicSwitch: {
+      alignItems: 'center',
+      marginBottom: 40,
+    },
 });

@@ -12,7 +12,7 @@ import EditProfile from './screens/profile/EditProfile';
 import FollowingsList from './screens/profile/FollowingsList';
 import FollowersList from './screens/profile/FollowersList';
 import Interests from './screens/signUp/Interests';
-import SearchUser from './screens/search/SearchUser';
+import Search from './screens/search/Search';
 import ProfileEditPost from './screens/profile/ProfileEditPost';
 import Statistics from './screens/statistics/Statistics';
 import CustomDrawerContent from './components/navigators/CustomerDrawerContent';
@@ -53,7 +53,7 @@ const StackNavigatorProfile = () => {
 const StackNavigatorSearch = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="SearchUser" component={SearchUser} />
+      <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
