@@ -4,9 +4,8 @@ import {
   View,
   ActivityIndicator,
   Alert,
-  Text, 
   FlatList,
-  Pressable,
+  Text
 } from 'react-native';
 import { useUser } from '../../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
@@ -16,10 +15,8 @@ import { handleShowMore } from '../../functions/Buttons/handleShowMore';
 import UserSearchFlatList from '../../components/UserSearchFlatList';
 import SearchBar from '../../components/SearchBar';
 import RoundedCheckboxButton from '../../components/RoundedCheckBox';
-import { set } from 'react-native-reanimated';
 import searchPostsByHashtag from '../../handlers/posts/searchPostsByHashtag';
 import Post from '../../components/posts/Post';
-import { AntDesign } from '@expo/vector-icons';
 import searchPostsByText from '../../handlers/posts/searchPostsByText';
 
 export default function SearchUser() {
@@ -60,19 +57,23 @@ export default function SearchUser() {
       }
     } else if (searchByHashtag) {
       if (searchText !== '') {
+        setIsFetching(true); 
         posts_fetched = await searchPostsByHashtag(searchText, offset, ammount);
         setPostsByHashtags(posts_fetched);
         setSearched(true); 
+        setIsFetching(false);
       } else {
         Alert.alert('Please enter a text to search');
       }
     } else if (searchByText) {
       if (searchText !== '') {
+        setIsFetching(true); 
         console.log('searching text');
         posts_fetched = await searchPostsByText(searchText, offset, ammount);
         console.log('posts_fetched: ', posts_fetched);
         setPostsByText(posts_fetched);
-        setSearched(true); 
+        setSearched(true);
+        setIsFetching(false); 
       } else {
         Alert.alert('Please enter a text to search');
       }
@@ -159,17 +160,28 @@ export default function SearchUser() {
         </View>
       ) : (
         searchByUsername ? (
-          <UserSearchFlatList
-            users={users}
-            loggedInUser={loggedInUser}
-            handleFollowButton={handleFollowButton}
-            showMoreVisible={showMoreVisible}
-            handleShowMoreButton={handleShowMoreButton}
-            followingStatus={followingStatus}
-            isFetchingMap={isFetchingMap}
-            navigation={navigation}
-          />
+          users.length === 0 ? (
+            <View style={styles.noUsersContainer}>
+              <Text>No users found.</Text>
+            </View>
+          ) : (
+            <UserSearchFlatList
+              users={users}
+              loggedInUser={loggedInUser}
+              handleFollowButton={handleFollowButton}
+              showMoreVisible={showMoreVisible}
+              handleShowMoreButton={handleShowMoreButton}
+              followingStatus={followingStatus}
+              isFetchingMap={isFetchingMap}
+              navigation={navigation}
+            />
+          )
         ) : searchByHashtag ? (
+          postsByHashtags.length === 0 ? (
+            <View style={styles.noUsersContainer}>
+              <Text>No posts found.</Text>
+            </View>
+          ) : (
           <FlatList
           data={postsByHashtags}
           renderItem={({ item }) => {
@@ -178,7 +190,13 @@ export default function SearchUser() {
             } 
           }}
           />
+          )
         ) :  (
+          postsByText.length === 0 ? (
+            <View style={styles.noUsersContainer}>
+              <Text>No posts found.</Text>
+            </View>
+          ) : (
           <FlatList
           data={postsByText}
           renderItem={({ item }) => {
@@ -187,6 +205,7 @@ export default function SearchUser() {
             } 
           }}
           />
+          )
         )
       )}
     </View>
