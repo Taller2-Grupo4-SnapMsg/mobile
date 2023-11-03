@@ -23,6 +23,7 @@ import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
 import DeleteRepost from '../../handlers/posts/deleteRepost';
 import { fetchSnaps } from '../../functions/Fetchings/fetchSnaps';
 import { Text } from 'react-native';
+import DeleteModal from '../../components/DeleteModal';
 import {
   View,
   FlatList,
@@ -101,6 +102,7 @@ function ProfileUser({ user }) {
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [userSnaps, setUserSnaps] = useState(null);
+  const [deleteButtonsSpinners, setDeleteButtonsSpinners] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -158,9 +160,14 @@ function ProfileUser({ user }) {
       setAlertMessageColor(null);
     }, timeout);
   }
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
+
   const handlePressDelete = async (post) => {
     try {
       if (post.user_poster.email == post.user_creator.email) {
+        setDeleteButtonsSpinners(true);
         await DeletePost(post.post_id);
       } else {
         await DeleteRepost(post.post_id);
@@ -171,8 +178,8 @@ function ProfileUser({ user }) {
 
       // Update the state with the modified posts array
       setPosts(updatedPosts);
-
-      setAlert("Post deleted successfully. Please reload to see changes.", SOFT_GREEN, TIMEOUT_ALERT);
+      setDeleteButtonsSpinners(false);
+      setDeleteModalVisible(!deleteModalVisible);
     } catch (error) {
       return;
     }
@@ -219,6 +226,13 @@ function ProfileUser({ user }) {
     }, [])
   );
 
+  const handleSetDeleteModalVisible = () => {
+    if (deleteButtonsSpinners) {
+      setDeleteButtonsSpinners(true);
+    }
+    setDeleteModalVisible(!deleteModalVisible);
+  }
+
   return  (
     <View style={{ flex: 1 , flexDirection: 'column'}}>
       <FlatList
@@ -257,9 +271,16 @@ function ProfileUser({ user }) {
                       <AntDesign name="edit" size={20} color="gray" />
                     </Pressable>
 
-                    <Pressable onPress={() => handlePressDelete(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
+                    <Pressable onPress={handleSetDeleteModalVisible} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
                       <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
+
+                      <DeleteModal
+                        isVisible={deleteModalVisible}
+                        onClose={handleSetDeleteModalVisible}
+                        onDelete={() => handlePressDelete(item)}
+                        loading={deleteButtonsSpinners}
+                      />
                   </View>
                 </View>)}
               </View>);

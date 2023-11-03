@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 URL_POST_BACK = "https://postsback.onrender.com"
 
 const DeletePost = async (post_id) => {
+  console.log("ENTRO A DELETE POST");
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -17,8 +18,9 @@ const DeletePost = async (post_id) => {
         headers: headers,
       });
 
-      
+      console.log(response.status);
       if (response.status === 200) {
+        console.log('Post deleted successfully');
         return;
       }
 
