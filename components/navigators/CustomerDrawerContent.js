@@ -25,7 +25,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            {/*<Icon name="user" size={20} color="black" />*/}
+            <Icon name="home" size={25} color="#000" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Home</Text>
           </View>
         </TouchableOpacity>
@@ -37,7 +37,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            {/*<Icon name="user" size={20} color="black" />*/}
+            <Icon name="user" size={25} color="#000" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Profile</Text>
           </View>
         </TouchableOpacity>
@@ -49,7 +49,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            {/*<Icon name="user" size={20} color="black" />*/}
+            <Icon name="search" size={25} color="#000" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Search</Text>
           </View>
         </TouchableOpacity>
@@ -61,7 +61,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            {/*<Icon name="user" size={20} color="black" />*/}
+            <Icon name="bar-chart" size={22} color="#000" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Statistics</Text>
           </View>
         </TouchableOpacity>
@@ -112,6 +112,10 @@ const styles = StyleSheet.create({
     borderTop: '#ecf0f1',
     borderTopWidth: 0.4,
     backgroundColor: '#ecf0f1',
+  },
+  icon:{
+    margin: 10,
+    marginLeft: 5,
   },
   cont: {
     flexDirection: 'row',
