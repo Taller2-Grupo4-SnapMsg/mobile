@@ -4,7 +4,7 @@ import DatePicker from 'react-native-modern-datepicker';
 import { Feather } from '@expo/vector-icons'; // Assuming you are using Expo for icons
 import { getFormatedDate } from 'react-native-modern-datepicker';
 
-function DatePickerModal({ visible, onDateChange, onContinue }) {
+function DatePickerModal({ visible, onDateChange, onContinue, text }) {
     const today = new Date();
     const startDate = getFormatedDate(
       today.setDate(today.getDate() + 1),
@@ -30,7 +30,7 @@ function DatePickerModal({ visible, onDateChange, onContinue }) {
             }}
           >
              <View>
-        <Text style={{color: '#fff'}}>Please, select your date of birth</Text>
+        <Text style={{color: '#fff'}}>{text}</Text>
         </View>
             <View
               style={{

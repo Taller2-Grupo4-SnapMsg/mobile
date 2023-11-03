@@ -14,6 +14,7 @@ import FollowersList from './screens/profile/FollowersList';
 import Interests from './screens/signUp/Interests';
 import SearchUser from './screens/search/SearchUser';
 import ProfileEditPost from './screens/profile/ProfileEditPost';
+import Statistics from './screens/statistics/Statistics';
 import CustomDrawerContent from './components/navigators/CustomerDrawerContent';
 
 import { useColorScheme } from 'react-native';
@@ -79,6 +80,7 @@ const MainNavigator = () => {
       <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
       <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
       <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
+      <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
     </Drawer.Navigator>
   );
 };

@@ -54,13 +54,13 @@ export default function NewPost() {
       setSelectedImage('');
       await PostHandler(text, '', tags);
     }
-    setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
+    //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');
     }, TIMEOUT_ALERT_POST);
-    setText('');
-    setIsLoading(false);
-    setTags([]);
+    // setText('');
+    // setIsLoading(false);
+    // setTags([]);
   };
 
   const handlePressCancel = () => {
