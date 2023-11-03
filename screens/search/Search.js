@@ -68,9 +68,7 @@ export default function SearchUser() {
     } else if (searchByText) {
       if (searchText !== '') {
         setIsFetching(true); 
-        console.log('searching text');
         posts_fetched = await searchPostsByText(searchText, offset, ammount);
-        console.log('posts_fetched: ', posts_fetched);
         setPostsByText(posts_fetched);
         setSearched(true);
         setIsFetching(false); 

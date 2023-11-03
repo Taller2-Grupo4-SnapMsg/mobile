@@ -20,11 +20,8 @@ const searchPostsByText = async (text, offset, ammount) => {
         method: 'GET',
         headers: headers
       });
-      console.log('text', text);
-      console.log('response', response.status);
       if (response.status === OK) {
         const data = await response.json();
-        console.log('data', data);
         return data;
       } else {
         console.error('Error al buscar posts by hashtags:', response.status);
