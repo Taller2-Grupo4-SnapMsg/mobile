@@ -54,6 +54,18 @@ function CustomDrawerContent({ navigation }) {
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('StatisticsScreen');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            {/*<Icon name="user" size={20} color="black" />*/}
+            <Text style={styles.drawerItemText}>Statistics</Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
         <View style={styles.avatarSignoutContainer}>
           <View style={styles.cont}>
