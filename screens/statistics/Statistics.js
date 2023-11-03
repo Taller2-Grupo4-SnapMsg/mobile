@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Modal, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Modal, Alert, ActivityIndicator } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list'
 import { useUser } from '../../contexts/UserContext';
 import getStatistics from '../../handlers/statistics/getStatistics';
@@ -158,6 +158,7 @@ const Statistics = () => {
   const handlePress = async () => {
     if (!isGettingStatistics) {
       if (toDate && fromDate) {
+        setIsGettingStatistics(true);
         const toDate_date = new Date(toDate);
         const fromDate_date = new Date(fromDate);
   
@@ -168,6 +169,7 @@ const Statistics = () => {
             transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);
           } 
           setData(transformedStats);
+          setIsGettingStatistics(false);
         }
         else {
           Alert.alert('Error', 'Date range not valid!');
@@ -222,34 +224,40 @@ const Statistics = () => {
         </View>
       </View>
 
-  <View style={{ paddingTop: 20 }}>
-    <SelectList 
-      setSelected={(val) => setDefaultOption(val)} 
-      data={defaultOptions} 
-      searchPlaceholder="Select a premade option"
-      save="value"
-      />
-    </View>
+      <View style={{ paddingTop: 20 }}>
+        <SelectList 
+          setSelected={(val) => setDefaultOption(val)} 
+          data={defaultOptions} 
+          searchPlaceholder="Select a premade option"
+          save="value"
+          />
+        </View>
 
-  <View style={styles.centeredRow}>
-    <PurpleButton
-      onPress={handlePress}
-      text="Get My Statistics"
-      loading={isGettingStatistics}
-      width='85%'
-    />
-  </View>
-</View>
+      <View style={styles.centeredRow}>
+        {isGettingStatistics ? (
+            <ActivityIndicator size="large" color="#947EB0" />
+          ) : (
+            <PurpleButton
+              onPress={handlePress}
+              text="Get My Statistics"
+              loading={isGettingStatistics}
+              width="85%"
+            />
+        )}
+      </View>
+    </View>
 
       
       <View style={styles.statsCard}>
         <Text style={styles.statsTitle}>My Stats</Text>
-        <FlatList
-          data={data}
-          renderItem={renderStatItem}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={2}
-        />
+        <View>
+          <FlatList
+            data={data}
+            renderItem={renderStatItem}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+          />
+          </View>
       </View>
 
       <Modal
@@ -295,22 +303,17 @@ const Statistics = () => {
 };
 
 const styles = StyleSheet.create({
-container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    marginTop:60,
-},
 userCard: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    paddingTop: 50,
+    paddingTop: 25,
 },
 chooseDates: {
   paddingHorizontal: 20,
   paddingVertical: 10,
-  paddingBottom: 20,
+  paddingBottom: 10,
 },
 row: {
   flexDirection: 'row',
@@ -327,7 +330,6 @@ centeredRow: {
 },
 wide: {
   flex: 1, // Use flex to ensure buttons occupy equal space
-  width: 2000, // Set a specific width for the button
 },
 right: {
   flex: 1,
@@ -347,8 +349,8 @@ dateText: {
   marginLeft: 50,
 },
 userPhoto: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
 },
 modalContainer: {
@@ -372,22 +374,10 @@ userName: {
     fontSize: 18,
     marginBottom: 5,
 },
-userFollowers: {
-    color: '#999',
-},
-editButton: {
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#008B8B',
-},
-editButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-},
 statsCard: {
     marginHorizontal: 20,
     marginVertical: 10,
-    padding: 20,
+    padding: 0,
     borderRadius: 10,
     backgroundColor: '#f4f4f4',
 },
@@ -397,7 +387,7 @@ statsTitle: {
     marginBottom: 10,
 },
 statItem: {
-    marginTop:20,
+    marginTop: 10,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -422,30 +412,6 @@ statValue: {
 },
 statsCategory: {
     color: '#999',
-},
-addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#6495ED',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-        width: 0,
-        height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-},
-addButtonText: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#fff',
 },
 container: {
     flex: 1,
