@@ -11,12 +11,21 @@ import {
 } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import { useUser } from '../../contexts/UserContext';
-
+import { db } from '../../firebase';
+import { query, orderByChild, limitToLast, get, ref, on, serverTimestamp } from 'firebase/database';
 const { width, height } = Dimensions.get('window')
 
 
-export default SpecificChat = () => {
+export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
+  const initialMessages = route.params.messages; //la variable que me llega con los mensajes que ya de una tengo que mostrar -- puede estar vacía
+  const conversationID = route.params.conversationID;
+
+  console.log("initial messages: ", initialMessages);
+  console.log("conversationID: ", conversationID);
+  const messagesRef = ref(db, `conversations/${conversationID}/messages`); // Navigate to the 'messages' node
+
+  
   const messagesData = [
     {
       id: 1,
@@ -75,7 +84,7 @@ export default SpecificChat = () => {
       image: 'https://www.bootdey.com/img/Content/avatar/avatar6.png',
     },
   ]
-  const [messages, setMessages] = useState(messagesData);
+  const [messages, setMessages] = useState(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef(null);
 
@@ -97,6 +106,22 @@ export default SpecificChat = () => {
     }, 100);
   }
 
+  
+  //en el nuevo codigo no necesito un reply, necesito un listener que esté constantemente levantando data nueva de los msjs
+  // useEffect(() => {
+  //   // Set up a listener for child added events
+  //   const unsubscribe = on(messagesRef, 'child_added', (snapshot) => {
+  //     // A new message has been added to the conversation
+  //     const newMessage = snapshot.val();
+
+  //     // Update your component's state to display the new message
+  //     setMessages((prevMessages) => [...prevMessages, newMessage]);
+  //   });
+
+  //   // Return a cleanup function to remove the listener when the component unmounts
+  //   return () => unsubscribe();
+  // }, []);
+
   const send = () => {
     if (newMessage.length > 0) {
       let messagesList = messages
@@ -117,11 +142,39 @@ export default SpecificChat = () => {
     }
   }
 
+  // const send2 = () => {
+  //   if (newMessage.length > 0) {
+
+        //Keyboard.dismiss();
+  //     const newDBMessage = {
+  //       text: newMessage,
+  //       sender: loggedInUser.email, //aca va siempre mi userId, porque soy el único que puede enviar en esta pantalla
+  //       timestamp: firebase.database.ServerValue.TIMESTAMP, // You can use the server timestamp
+  //       avatar: loggedInUser.avatar,
+  //     };
+
+  //     // Push the new message to the messages array
+  //     push(messagesRef, newDBMessage)
+  //     .then(() => {
+  //       // Message successfully added to the conversation
+  //     })
+  //     .catch((error) => {
+  //       // Handle the error, e.g., display an error message
+  //     });
+
+    // setNewMessage('')
+      
+  //     if (flatListRef.current) {
+  //       flatListRef.current.scrollToEnd();
+  //     }
+  //   }
+  // }
+
   const renderItem = ({ item }) => {
     if (item.sent === false) {
       return (
         <View style={styles.eachMsg}>
-          <Image source={{ uri: item.image }} style={styles.userPic} />
+          <Image source={{ uri: item.avatar }} style={styles.userPic} />
           <View style={styles.msgBlock}>
             <Text style={styles.msgTxt}>{item.msg}</Text>
           </View>
@@ -146,7 +199,7 @@ export default SpecificChat = () => {
         style={styles.list}
         extraData={messages}
         data={messages}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.email}
         renderItem={renderItem}
         keyboardShouldPersistTaps="handled"
       />

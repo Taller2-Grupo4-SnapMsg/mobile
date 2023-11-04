@@ -3,67 +3,115 @@
 // el tema es que este segundo endpoint no está, ver ese tema
 
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, 
   Keyboard } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import SearchBar from '../../components/SearchBar';
 import searchUserByUsername from '../../handlers/searchUserByUsername';
+import getFollowings from '../../handlers/getFollowings';
+import { useUser } from '../../contexts/UserContext';
+import { db } from '../../firebase';
+import { ref } from 'firebase/database';
+import { query, orderByChild, limitToLast, get, set, serverTimestamp } from 'firebase/database';
+
 
 export default NewChat = () => { 
     const navigation = useNavigation();
+    const { loggedInUser } = useUser();
     const [usernameSearched, setUsernameSearched] = useState("");
-    const [users, setUsers] = useState([
-      {
-        id: 1,
-        name: 'Mark Doe',
-        status: 'active',
-        avatar: 'https://bootdey.com/img/Content/avatar/avatar7.png',
-      },
-      {
-        id: 2,
-        name: 'Clark Man',
-        status: 'active',
-        avatar: 'https://bootdey.com/img/Content/avatar/avatar6.png',
-      },
-      {
-        id: 3,
-        name: 'Jaden Boor',
-        status: 'active',
-        avatar: 'https://bootdey.com/img/Content/avatar/avatar5.png',
-      },
-      {
-        id: 4,
-        name: 'Srick Tree',
-        status: 'active',
-        avatar: 'https://bootdey.com/img/Content/avatar/avatar4.png',
-      },
-      // ... other initial users ...
-    ]);
+    const [users, setUsers] = useState([]);
 
     // Para levantar los users que inicialmente se van a mostrar.
     // Me gustaría que fuesen aquellos a los que sigo, pero la Historia de Usuario no dice nada al respecto
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     try {
-    //       if (route.params && Object.keys(user_param).length !== 0) {
-    //         setUser(user_param);
-    //       } else {
-    //         setUser(loggedInUser);
-    //       }
-    //       setIsLoading(false);
-    //     } catch (error) {
-    //       console.error('Error al obtener usuario:', error);
-    //       setIsLoading(false);
-    //     }
-    //   };
-    
-    //   fetchData();
-    // }, []);
+    useEffect(() => {
+      const fetchInitialUsers = async () => {
+        try {
+          const followingsData = await getFollowings(loggedInUser.email);
+  
+          const simplifiedData = followingsData.map(following => ({
+            email: following.email,
+            username: following.username,
+            avatar: following.avatar,
+          }));
+  
+          setUsers(simplifiedData);
+        } catch (error) {
+          // Handle any errors here
+          console.error('Error fetching data:', error);
+        }
+      };
+  
+      fetchInitialUsers(); // Call the async function immediately
+  
+    }, []);
+  
+
+    function generateConversationID(user1, user2) {
+      // Sort user IDs alphabetically to ensure consistency
+      const sortedUserIDs = [user1, user2].sort();
+      return `${sortedUserIDs[0].replace(/[\.\#\$\/\[\]]/g, '_')}_${sortedUserIDs[1].replace(/[\.\#\$\/\[\]]/g, '_')}`;
+    }
 
   const renderItem = ({ item }) => {
     const handleChatPress = () => {
-      navigation.push('SpecificChat');
+      const conversationID = generateConversationID(loggedInUser.email, item.email);
+      const conversation = ref(db, `conversations/${conversationID}`);
+
+      get(conversation)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            // The conversation exists, you can proceed with the query
+            const conversationRef = ref(db, `conversations/${conversationID}/messages`); // Navigate to the 'messages' node
+            const messageQuery = query(
+              conversationRef,
+              orderByChild('timestamp'),
+              limitToLast(20)
+            );
+            // The conversation already exists; handle it as needed
+            get(messageQuery)
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                const messages = Object.values(snapshot.val());
+                navigation.push('SpecificChat', { messages: messages, conversationID: conversationID });
+              } else {
+                // No messages found
+                navigation.push('SpecificChat', { messages: [], conversationID: conversationID });
+              }
+            })
+            .catch((error) => {
+              console.error("hubo un error al crear la conver3!! ", error);
+              // Handle the error
+            });
+            
+          } else {
+            console.log("no encontró la conver!");
+            // The conversation doesn't exist; create it
+            const currentTimestamp = serverTimestamp();
+
+            console.log("currentTimestamp ", currentTimestamp);
+            set(conversation, {
+              conversationID: conversationID,
+              user1Email: loggedInUser.email,
+              user2Email: item.email,
+              timestamp: currentTimestamp,
+              messages: [],
+              // Add other data, such as initial message, if needed
+            }).then(() => {
+              console.log("creo la nueva conver con éxito!");
+              // Conversation created successfully
+            //me tengo que mover a SpecificChat pero como es un nuevo chat, va a estar vacío
+              navigation.push('SpecificChat', { messages: [], conversationID: conversationID });
+            }).catch((error) => {
+              console.log("hubo un error al crear la conver!!");
+              // Handle the error
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("hubo un error al crear la conver2!! ", error);
+          // Handle the error
+        });
     };
 
     return (
@@ -73,7 +121,7 @@ export default NewChat = () => {
           <View>
             <View style={styles.nameContainer}>
               <Text style={styles.nameTxt} numberOfLines={1} ellipsizeMode="tail">
-                {item.name}
+                {item.username}
               </Text>
               <Text style={styles.mblTxt}>Mobile</Text>
             </View>
@@ -84,10 +132,8 @@ export default NewChat = () => {
   };
 
   const handleSearchButtonFunction = async () => {
-    console.log("Apretaron el botón de búsqueda");
     Keyboard.dismiss();
     user_data = await searchUserByUsername(usernameSearched, 0, 10);
-    console.log(user_data)
     // Create a copy of the current users array
     const updatedUsers = [...users];
 
@@ -97,8 +143,8 @@ export default NewChat = () => {
     user_data.forEach((userData) => {
       // Create a new user with the correct format
       const newUser = {
-        id: userData.email,
-        name: userData.username,
+        email: userData.email,
+        username: userData.username,
         avatar: userData.avatar,
       };
 
@@ -121,7 +167,7 @@ export default NewChat = () => {
       <FlatList
         data={users}
         keyExtractor={item => {
-          return item.id.toString(); // Make sure to convert the ID to a string
+          return item.email; // Make sure to convert the ID to a string
         }}
         renderItem={renderItem} // Use the renderItem function directly
       />

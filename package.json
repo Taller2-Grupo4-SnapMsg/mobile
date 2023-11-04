@@ -29,7 +29,7 @@
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "expo-web-browser": "~12.1.1",
-    "firebase": "^10.4.0",
+    "firebase": "^10.5.2",
     "lottie-react-native": "5.1.4",
     "nanoid": "^5.0.2",
     "react": "18.2.0",

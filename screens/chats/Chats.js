@@ -2,6 +2,9 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
+import { conversationsRef } from '../../firebase';
+import { query, orderByChild, equalTo, get, ref } from 'firebase/database';
+
 
 export default Chats = () => { 
     const navigation = useNavigation();
@@ -72,9 +75,59 @@ export default Chats = () => {
     navigation.push('NewChat');
   };
 
+  //codigo para apenas entro, así veo mis convos
+  // const yourUserID = 'your_user_id'; // Replace with your actual user ID
+
+  // // Query the conversations where your user ID is involved (either in user1 or user2)
+  // const conversationsQuery = query(conversationsRef, (orderByChild('user1').equalTo(yourUserID)).or(orderByChild('user2').equalTo(yourUserID));
+
+  // // Retrieve the conversations
+  // get(conversationsQuery)
+  //   .then((snapshot) => {
+  //     if (snapshot.exists()) {
+  //       // The 'snapshot' contains conversations where your user ID is involved
+  //       const conversations = Object.values(snapshot.val());
+  //       // 'conversations' is an array containing the conversations
+          //aca estan todas las conversaciones que puedo mostrar. Me las tengo que guardar para mostrar info de ellas!
+
+  //     } else {
+  //       // No conversations found
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     // Handle the error
+  //   });
+
   const renderItem = ({ item }) => {
     const handleChatPress = () => {
-        navigation.navigate('SpecificChat');
+
+    //   // Retrieve the 20 most recent messages for the selected conversation
+    // const conversationID = item.conversationID;
+
+    // // Query the messages for the selected conversation
+    // const messageQuery = query(
+    //   conversationsRef.child(conversationID).child('messages'),
+    //   orderByChild('timestamp'),
+    //   limitToLast(20)
+    // );
+
+    // get(messageQuery)
+    //   .then((snapshot) => {
+    //     if (snapshot.exists()) {
+    //       const messages = Object.values(snapshot.val());
+
+    //       // Navigate to 'SpecificChat' with the messages as a parameter
+    //       navigation.push('SpecificChat', { messages: messages, conversationID:  conversationID});
+    //     } else {
+    //       // No messages found
+    //       navigation.push('SpecificChat', { messages: [], conversationID: conversationID });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     // Handle the error
+    //   });
+
+    navigation.push('SpecificChat', { messages: [], conversationID: 12_34 });
     };
 
     return (
