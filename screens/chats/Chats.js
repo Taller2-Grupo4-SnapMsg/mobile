@@ -161,15 +161,15 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   floatingButton: {
-    backgroundColor: '#947EB0',
+    backgroundColor: '#B8ADCC',
     borderRadius: 50,
     width: 50,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    right: 15,
-    bottom: 15,
+    right: 25,
+    bottom: 55,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

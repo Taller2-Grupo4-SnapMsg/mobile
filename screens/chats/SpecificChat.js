@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useRef } from 'react'
 import {
   StyleSheet,
   Text,
@@ -11,10 +10,13 @@ import {
   Keyboard
 } from 'react-native'
 import { TextInput } from 'react-native-paper';
+import { useUser } from '../../contexts/UserContext';
+
 const { width, height } = Dimensions.get('window')
 
 
 export default SpecificChat = () => {
+  const { loggedInUser } = useUser();
   const messagesData = [
     {
       id: 1,
@@ -104,7 +106,7 @@ export default SpecificChat = () => {
         msg: newMessage,
         image: 'https://www.bootdey.com/img/Content/avatar/avatar1.png',
       })
-      setMessages(messagesList)
+      setMessages(messagesList);
       Keyboard.dismiss();
       setTimeout(() => {
         reply()
@@ -131,13 +133,11 @@ export default SpecificChat = () => {
           <View style={styles.rightBlock}>
             <Text style={styles.rightTxt}>{item.msg}</Text>
           </View>
-          <Image source={{ uri: item.image }} style={styles.userPic} />
+          <Image source={{ uri: loggedInUser.avatar }} style={styles.userPic} />
         </View>
       )
     }
   }
-
- 
 
   return (
     <KeyboardAvoidingView behavior="padding" enabled style={styles.container}> 
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 15, // Adjust the border radius to your preference
-    padding: 5, // Adjust the padding to your preference
+    borderRadius: 15,
+    padding: 5,
     margin: 20,
   },
   inputText: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   rightBlock: {
     width: 220,
     borderRadius: 5,
-    backgroundColor: '#97c163',
+    backgroundColor: '#B8ADCC',
     padding: 10,
     shadowColor: '#3d3d3d',
     shadowRadius: 2,
