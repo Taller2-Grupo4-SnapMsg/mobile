@@ -74,6 +74,10 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
     return;
   };
 
+  const handleMentionUserPressed = () => {
+    navigation.navigate('Profile', { user_param: user_creator });
+  };
+
   
   all_hours = Math.floor((new Date() - new Date(formatDate(created_at)))/ (1000 * 60 * 60));
   days = Math.floor(all_hours / 24);
@@ -112,6 +116,13 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
         </View>
 
         <Text style={styles.content}>{text}</Text>
+        <View style={styles.tagsContainer} >
+            {hashtags && hashtags.map((tag) => (
+              <TouchableOpacity key={tag} onPress={handleMentionUserPressed}>
+                <Text style={styles.mentions} >{" @"}{tag}{" "}</Text>
+              </TouchableOpacity>
+            ))}
+        </View>
         {post.image && (
             <TouchableOpacity onPress={toggleModal}>
             <Image
@@ -128,6 +139,8 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
                 imageUrl={imageURI}
                 onClose={toggleModal}
               />
+
+
 
         <View style={styles.footer}>
         {user_creator.email !== loggedInUser.email && (
@@ -217,6 +230,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingRight: 25,
   },
+  mentions: {
+    alignItems: 'baseline', // Add this line to align the "@" symbol with the hashtags
+    color: '#6B5A8E',
+    fontWeight: 'bold',
+  }
 });
 
 export default Post;
