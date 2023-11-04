@@ -16,6 +16,9 @@ import Search from './screens/search/Search';
 import ProfileEditPost from './screens/profile/ProfileEditPost';
 import Statistics from './screens/statistics/Statistics';
 import CustomDrawerContent from './components/navigators/CustomerDrawerContent';
+import Chats from './screens/chats/Chats';
+import SpecificChat from './screens/chats/SpecificChat';
+import NewChat from './screens/chats/NewChat';
 
 import { useColorScheme } from 'react-native';
 
@@ -62,6 +65,16 @@ const StackNavigatorSearch = () => {
   );
 }
 
+const StackNavigatorChats = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Chats" component={Chats} />
+      <Stack.Screen name="SpecificChat" component={SpecificChat} />
+      <Stack.Screen name="NewChat" component={NewChat} />
+    </Stack.Navigator>
+  );
+}
+
 const AuthNavigator = () => {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
@@ -81,6 +94,7 @@ const MainNavigator = () => {
       <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
       <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
       <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
+      <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
     </Drawer.Navigator>
   );
 };

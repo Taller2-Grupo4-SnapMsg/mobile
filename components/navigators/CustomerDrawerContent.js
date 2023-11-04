@@ -25,7 +25,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            <Icon name="home" size={25} color="#000" style={styles.icon}/>
+            <Icon name="home" size={25} color="#6B5A8E" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Home</Text>
           </View>
         </TouchableOpacity>
@@ -37,7 +37,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            <Icon name="user" size={25} color="#000" style={styles.icon}/>
+            <Icon name="user" size={25} color="#6B5A8E" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Profile</Text>
           </View>
         </TouchableOpacity>
@@ -49,7 +49,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            <Icon name="search" size={25} color="#000" style={styles.icon}/>
+            <Icon name="search" size={25} color="#6B5A8E" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Search</Text>
           </View>
         </TouchableOpacity>
@@ -61,8 +61,20 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            <Icon name="bar-chart" size={22} color="#000" style={styles.icon}/>
+            <Icon name="bar-chart" size={22} color="#6B5A8E" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Statistics</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('ChatsScreen');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            <Icon name="comments" size={25} color="#6B5A8E" style={styles.icon}/>
+            <Text style={styles.drawerItemText}>Chats</Text>
           </View>
         </TouchableOpacity>
 
@@ -85,7 +97,7 @@ function CustomDrawerContent({ navigation }) {
           onPress={handleSignOut}
         >
           <View style={styles.icon}>
-            <Icon name="sign-out" size={40} color="black" />
+            <Icon name="sign-out" size={40} color="#6B5A8E" />
             <Text style={[styles.drawerItemText, styles.signOutText]}></Text>
           </View>
         </TouchableOpacity>
