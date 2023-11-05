@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-
 const firebaseConfig = {
   apiKey: "AIzaSyARuKrnjKAJYpaeignDyU8q3Nkkw7T0kYc",
   authDomain: "snapmsg-a9735.firebaseapp.com",

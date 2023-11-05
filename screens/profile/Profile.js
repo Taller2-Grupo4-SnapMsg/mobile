@@ -24,12 +24,16 @@ import DeleteRepost from '../../handlers/posts/deleteRepost';
 import { fetchSnaps } from '../../functions/Fetchings/fetchSnaps';
 import { Text } from 'react-native';
 import DeleteModal from '../../components/DeleteModal';
+import Modal from 'react-native-modal';
+import { TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import {
   View,
   FlatList,
   RefreshControl,
   Pressable,
 } from 'react-native';
+import PurpleButton from '../../components/PurpleButton';
 import { set } from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
 AMOUNT_POST = 10
@@ -98,12 +102,11 @@ function ProfileUser({ user }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
   const [onlyReposts, setOnlyReposts] = useState(false);
-  const [postDeleted, setPostDeleted] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [userSnaps, setUserSnaps] = useState(null);
   const [deleteButtonsSpinners, setDeleteButtonsSpinners] = useState(false);
-  const [postToDelete, setPostToDelete] = useState(null);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -162,7 +165,6 @@ function ProfileUser({ user }) {
     }, timeout);
   }
 
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
 
   const handlePressDelete = (post) => {
@@ -184,8 +186,6 @@ function ProfileUser({ user }) {
         setPosts(updatedPosts);
         setDeleteButtonsSpinners(false);
         
-        // Set the post to delete in the state
-        setPostToDelete(post);
       } catch (error) {
         return;
       }
@@ -232,10 +232,12 @@ function ProfileUser({ user }) {
    useFocusEffect(
     React.useCallback(() => {
       setRefreshing(true);
+      setDeleteModalVisible(false);
     }, [])
   );
 
   const handleSetDeleteModalVisible = () => {
+    console.log("ENTRA A SET DELETE MODAL VISIBLE");
     if (deleteButtonsSpinners) {
       setDeleteButtonsSpinners(!deleteButtonsSpinners);
     }
@@ -284,12 +286,24 @@ function ProfileUser({ user }) {
                       <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
 
-                    <DeleteModal
-                      isVisible={deleteModalVisible}
-                      onClose={handleSetDeleteModalVisible}
-                      onDelete={() => handlePressDelete(postToDelete)}
-                      loading={deleteButtonsSpinners}
-                    />
+                    <Modal
+                      animationType="fade"
+                      transparent={true}
+                      visible={deleteModalVisible}
+                      onRequestClose={handleSetDeleteModalVisible}
+                    >
+                      <View style={styles.modalBackground}>
+                        <View style={styles.modalContainer}>
+                          <Text>Are you sure you want to delete this post?</Text>
+                          <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.closeButton} onPress={handleSetDeleteModalVisible}>
+                              <Feather name="x" size={24} color="white" />
+                            </TouchableOpacity>
+                            <PurpleButton text="Delete" onPress={handlePressDelete(item)} loading={deleteButtonsSpinners}/>
+                          </View>
+                        </View>
+                      </View>
+                    </Modal>
                   </View>
                 </View>)}
               </View>);
@@ -335,5 +349,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '40%',
+  },
+  modalContainer: {
+    width: '80%',
+    height: '20%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around', 
+    width: '100%', 
+    marginTop: 40,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: -110,
+    right: -35,
   },
 });
