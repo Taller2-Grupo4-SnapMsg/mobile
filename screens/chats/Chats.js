@@ -65,7 +65,6 @@ export default Chats = () => {
       // Retrieve the 20 most recent messages for the selected chat
     const chatID = item.chatID;
 
-
     const messagesRef = ref(db, `chats/${chatID}/messages`); // Navigate to the 'messages' node
     const messageQuery = query(
       messagesRef,

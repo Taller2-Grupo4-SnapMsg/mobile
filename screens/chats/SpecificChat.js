@@ -18,19 +18,16 @@ const { width, height } = Dimensions.get('window')
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
-  const initialMessages = route.params.messages;
   const chatID = route.params.chatID;
-  const [latestTimestamp, setLatestTimestamp] = useState(0); // Initialize with a timestamp (e.g., 0).
-
-  const messagesRef = ref(db, `chats/${chatID}/messages`); // Navigate to the 'messages' node
-  const [messages, setMessages] = useState([]);
+  const [latestTimestamp, setLatestTimestamp] = useState(new Date());
+  const messagesRef = ref(db, `chats/${chatID}/messages`); 
+  const [messages, setMessages] = useState(route.params.messages);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef(null);
 
   
   //en el nuevo codigo no necesito un reply, necesito un listener que esté constantemente levantando data nueva de los msjs
   useEffect(() => {
-    // Query for new messages with a timestamp greater than the latestTimestamp.
     const messagesQuery = query(
       messagesRef,
       orderByChild('timestamp'),
@@ -44,7 +41,6 @@ export default SpecificChat = ({ route }) => {
         if (newMessages) {
           const newMessageArray = Object.values(newMessages);
           setMessages((prevMessages) => [...prevMessages, ...newMessageArray]);
-          // Update the latest timestamp based on the newest message.
           const newestMessage = newMessageArray[newMessageArray.length - 1];
           setLatestTimestamp(newestMessage.timestamp);
         }

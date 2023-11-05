@@ -97,10 +97,8 @@ export default NewChat = () => {
               user2Avatar: item.avatar,
               timestamp: currentTimestamp,
               messages: [],
-              // Add other data, such as initial message, if needed
             }).then(() => {
               // chat created successfully
-            //me tengo que mover a SpecificChat pero como es un nuevo chat, va a estar vacío
               navigation.push('SpecificChat', { messages: [], chatID: chatID });
             }).catch((error) => {
               console.log("hubo un error al crear la conver!!");
