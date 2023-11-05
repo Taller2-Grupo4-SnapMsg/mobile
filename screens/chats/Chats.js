@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, Pressable, R
 import { useNavigation } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
 import { db } from '../../firebase';
-import { query, orderByChild, limitToLast, get, ref } from 'firebase/database';
+import { query, orderByChild, equalTo, or, limitToLast, get, ref } from 'firebase/database';
 import { useUser } from '../../contexts/UserContext';
 
 
@@ -25,41 +25,39 @@ export default Chats = () => {
   };
 
   const handleRefresh = async () => {
-    console.log("estoy en refresh")
     if (loading) return;
 
-    console.log("no esty cargando!")
-    
+
     setLoading(true);
-    const chatsRef = ref(db, 'chats'); // Adjust the path to your chats data.
+    const chatsRef = ref(db, 'chats');
+    const email = loggedInUser.email;
     
-    // Fetch the chats from the database.
-    get(chatsRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const chatData = snapshot.val();
-        const chatList = [];
-
-        for (const chatId in chatData) {
-          const chat = chatData[chatId];
-          chatList.push({
-            chatId,
-            ...chat,
-          });
-        }
-
-        setChats(chatList);
-        setLoading(false);
-      }
-      })
-      .catch((error) => {
-        console.error('Error fetching chats:', error);
-        setLoading(false);
-      });
+    try {
+      const user1Query = query(chatsRef, orderByChild('user1Email'), equalTo(email));
+      const user2Query = query(chatsRef, orderByChild('user2Email'), equalTo(email));
+  
+      const user1Chats = await get(user1Query);
+      const user2Chats = await get(user2Query);
+  
+      const user1ChatsData = user1Chats.exists() ? user1Chats.val() : {};
+      const user2ChatsData = user2Chats.exists() ? user2Chats.val() : {};
+  
+      const chatData = { ...user1ChatsData, ...user2ChatsData };
+  
+      const chatList = Object.keys(chatData).map((chatId) => ({
+        chatId,
+        ...chatData[chatId],
+      }));
+  
+      setChats(chatList);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+      setLoading(false);
+    }
   };
 
   const renderItem = ({ item }) => {
-    console.log("item: ", item)
     const handleChatPress = () => {
 
       // Retrieve the 20 most recent messages for the selected chat
