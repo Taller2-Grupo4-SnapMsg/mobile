@@ -25,19 +25,32 @@ export default Chats = () => {
   };
 
   const handleRefresh = async () => {
+    console.log("estoy en refresh")
     if (loading) return;
+
+    console.log("no esty cargando!")
     
     setLoading(true);
     const chatsRef = ref(db, 'chats'); // Adjust the path to your chats data.
     
     // Fetch the chats from the database.
     get(chatsRef)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const chatData = snapshot.val();
-          setChats(chatData);
-          setLoading(false);
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const chatData = snapshot.val();
+        const chatList = [];
+
+        for (const chatId in chatData) {
+          const chat = chatData[chatId];
+          chatList.push({
+            chatId,
+            ...chat,
+          });
         }
+
+        setChats(chatList);
+        setLoading(false);
+      }
       })
       .catch((error) => {
         console.error('Error fetching chats:', error);
@@ -46,6 +59,7 @@ export default Chats = () => {
   };
 
   const renderItem = ({ item }) => {
+    console.log("item: ", item)
     const handleChatPress = () => {
 
       // Retrieve the 20 most recent messages for the selected chat
