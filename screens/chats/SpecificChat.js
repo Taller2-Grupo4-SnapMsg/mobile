@@ -19,9 +19,17 @@ const { width, height } = Dimensions.get('window')
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const chatID = route.params.chatID;
-  const [latestTimestamp, setLatestTimestamp] = useState(new Date());
-  const messagesRef = ref(db, `chats/${chatID}/messages`); 
   const [messages, setMessages] = useState(route.params.messages);
+  
+  function setTimestamp(messages) {
+    if (!messages) {
+      return messages[messages.length - 1].timestamp;
+    } else {
+      return 0;
+    }
+  }
+  const [latestTimestamp, setLatestTimestamp] = useState(setTimestamp(messages));
+  const messagesRef = ref(db, `chats/${chatID}/messages`);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef(null);
 
