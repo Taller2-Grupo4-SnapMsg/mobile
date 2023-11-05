@@ -35,22 +35,7 @@ export default Chats = () => {
       .then((snapshot) => {
         if (snapshot.exists()) {
           const chatData = snapshot.val();
-          const chatList = [];
-
-          for (const chatId in chatData) {
-            const chat = chatData[chatId];
-            // Fetch additional information about the chat or users as needed.
-            // For example, fetch user data based on user IDs, avatars, and other details.
-
-            // Add the chat with additional information to the chatList.
-            chatList.push({
-              chatId,
-              ...chat,
-              // Add additional information here.
-            });
-          }
-
-          setChats(chatList);
+          setChats(chatData);
           setLoading(false);
         }
       })
