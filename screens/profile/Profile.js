@@ -103,6 +103,7 @@ function ProfileUser({ user }) {
   const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [userSnaps, setUserSnaps] = useState(null);
   const [deleteButtonsSpinners, setDeleteButtonsSpinners] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -164,26 +165,33 @@ function ProfileUser({ user }) {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
 
-  const handlePressDelete = async (post) => {
-    try {
-      if (post.user_poster.email == post.user_creator.email) {
-        setDeleteButtonsSpinners(true);
-        await DeletePost(post.post_id);
-      } else {
-        await DeleteRepost(post.post_id);
+  const handlePressDelete = (post) => {
+    return async () => {
+      try {
+        console.log("ENTRA A ELIMINAR POST");
+        console.log("id en handlePressDelete: ", post.post_id);
+        if (post.user_poster.email === post.user_creator.email) {
+          setDeleteButtonsSpinners(true);
+          await DeletePost(post.post_id);
+        } else {
+          await DeleteRepost(post.post_id);
+        }
+        setRefreshing(true);
+        // Remove the deleted post from the posts array
+        const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
+  
+        // Update the state with the modified posts array
+        setPosts(updatedPosts);
+        setDeleteButtonsSpinners(false);
+        
+        // Set the post to delete in the state
+        setPostToDelete(post);
+      } catch (error) {
+        return;
       }
-      //setRefreshing(true);
-      // Remove the deleted post from the posts array
-      const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
-
-      // Update the state with the modified posts array
-      setPosts(updatedPosts);
-      setDeleteButtonsSpinners(false);
-      setDeleteModalVisible(!deleteModalVisible);
-    } catch (error) {
-      return;
-    }
+    };
   }
+  
 
   const handleGetMorePosts = async (date, refresh) => {
     if (loadingMore || (reachedEnd && !refresh)) return;
@@ -194,6 +202,7 @@ function ProfileUser({ user }) {
       const fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts);
       if (fetchedPosts && fetchedPosts.length > 0) {
         if (refresh) {
+          console.log("Entro a handleGetMorePosts con refresh")
           setPosts(fetchedPosts);
           setRefreshing(false);
           setReachedEnd(false);
@@ -228,7 +237,7 @@ function ProfileUser({ user }) {
 
   const handleSetDeleteModalVisible = () => {
     if (deleteButtonsSpinners) {
-      setDeleteButtonsSpinners(true);
+      setDeleteButtonsSpinners(!deleteButtonsSpinners);
     }
     setDeleteModalVisible(!deleteModalVisible);
   }
@@ -275,12 +284,12 @@ function ProfileUser({ user }) {
                       <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
 
-                      <DeleteModal
-                        isVisible={deleteModalVisible}
-                        onClose={handleSetDeleteModalVisible}
-                        onDelete={() => handlePressDelete(item)}
-                        loading={deleteButtonsSpinners}
-                      />
+                    <DeleteModal
+                      isVisible={deleteModalVisible}
+                      onClose={handleSetDeleteModalVisible}
+                      onDelete={() => handlePressDelete(postToDelete)}
+                      loading={deleteButtonsSpinners}
+                    />
                   </View>
                 </View>)}
               </View>);

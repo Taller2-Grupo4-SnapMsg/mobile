@@ -55,10 +55,10 @@ export default function NewPost() {
       await uploadBytes(storageRef, blob);
 
       setSelectedImage('');
-      await PostHandler(text, file_route, tags);
+      await PostHandler(text, file_route, tags, selectedMentions);
     } else {
       setSelectedImage('');
-      await PostHandler(text, '', tags);
+      await PostHandler(text, '', tags, selectedMentions);
     }
     setTimeout(() => {
       navigation.navigate('Home');
@@ -126,7 +126,7 @@ export default function NewPost() {
           <View style={styles.mentionsContainer}>
                     {selectedMentions.map((mention) => (
                       <View style={styles.mentions} key={mention}>
-                        <Text style={styles.mentionsUsername}>@{mention.username}</Text>
+                        <Text style={styles.mentionsUsername}>@{mention}</Text>
                         <Pressable onPress={() => removeMention(mention)} style={styles.removeMentionButton}>
                           <Feather name="x" size={20} color="#6B5A8E" />
                         </Pressable>
@@ -163,6 +163,7 @@ export default function NewPost() {
             onClose={handleMentionModal}
             selectedMentions={selectedMentions}
             setSelectedMentions={setSelectedMentions}
+            in_followers={true}
           />
 
         <Modal

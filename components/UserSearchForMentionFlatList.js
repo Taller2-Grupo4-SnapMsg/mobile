@@ -23,13 +23,13 @@ export default function UserSearchForMentionFlatList({
       data={users}
       keyExtractor={(item) => item.email}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item.username)}>
           <Avatar user={item} />
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>{item.name}</Text>
             <Text style={styles.usernameText}>@{item.username}</Text>
           </View>
-          {selectedMentions.includes(item) && ( // Conditionally render the checkmark icon
+          {selectedMentions.includes(item.username) && ( // Conditionally render the checkmark icon
             <MaterialIcons name="check" size={24} color="#6B5A8E" />
           )}
         </TouchableOpacity>

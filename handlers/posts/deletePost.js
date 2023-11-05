@@ -4,6 +4,7 @@ URL_POST_BACK = "https://postsback.onrender.com"
 
 const DeletePost = async (post_id) => {
   console.log("ENTRO A DELETE POST");
+  console.log(post_id);
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {

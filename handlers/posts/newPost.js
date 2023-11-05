@@ -4,7 +4,8 @@ const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const PostHandler = async (content, image, tags) => {
+const PostHandler = async (content, image, tags, selectedMentions) => {
+    console.log("PostHandler", content, image, tags, selectedMentions)
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -18,6 +19,7 @@ const PostHandler = async (content, image, tags) => {
                 content: content,
                 image: encodedImage,
                 hashtags: tags,
+                mentions: selectedMentions,
             };
     
             const response = await fetch(`${URL_POST_BACK}/posts`, {

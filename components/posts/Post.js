@@ -117,9 +117,9 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
 
         <Text style={styles.content}>{text}</Text>
         <View style={styles.tagsContainer} >
-            {hashtags && hashtags.map((tag) => (
-              <TouchableOpacity key={tag} onPress={handleMentionUserPressed}>
-                <Text style={styles.mentions} >{" @"}{tag}{" "}</Text>
+            {mentions && mentions.map((mention) => (
+              <TouchableOpacity key={mention} onPress={handleMentionUserPressed} styles={styles.mentionsButton}>
+                <Text style={styles.mentions} >{" @"}{mention}{" "}</Text>
               </TouchableOpacity>
             ))}
         </View>
@@ -234,7 +234,16 @@ const styles = StyleSheet.create({
     alignItems: 'baseline', // Add this line to align the "@" symbol with the hashtags
     color: '#6B5A8E',
     fontWeight: 'bold',
-  }
+  },
+  mentionsButton: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 5,
+    backgroundColor: '#ecf0f1',
+  },
 });
 
 export default Post;
