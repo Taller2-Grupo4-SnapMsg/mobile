@@ -22,7 +22,7 @@ export default SpecificChat = ({ route }) => {
   const [messages, setMessages] = useState(route.params.messages);
   
   function setTimestamp(messages) {
-    if (messages) {
+    if (messages && messages.length > 0) {
       return messages[messages.length - 1].timestamp;
     } else {
       return 0;
