@@ -20,8 +20,4 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 const db = getDatabase(app);
-const conversationsRef = ref(db, 'conversations');
-
 export {storage, auth, db};
-
-

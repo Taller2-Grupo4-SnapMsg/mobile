@@ -47,7 +47,7 @@ export default NewChat = () => {
     }, []);
   
 
-    function generateConversationID(user1, user2) {
+    function generateChatID(user1, user2) {
       // Sort user IDs alphabetically to ensure consistency
       const sortedUserIDs = [user1, user2].sort();
       return `${sortedUserIDs[0].replace(/[\.\#\$\/\[\]]/g, '_')}_${sortedUserIDs[1].replace(/[\.\#\$\/\[\]]/g, '_')}`;
@@ -55,28 +55,28 @@ export default NewChat = () => {
 
   const renderItem = ({ item }) => {
     const handleChatPress = () => {
-      const conversationID = generateConversationID(loggedInUser.email, item.email);
-      const conversation = ref(db, `conversations/${conversationID}`);
+      const chatID = generateChatID(loggedInUser.email, item.email);
+      const chat = ref(db, `chats/${chatID}`);
 
-      get(conversation)
+      get(chat)
         .then((snapshot) => {
           if (snapshot.exists()) {
-            // The conversation exists, you can proceed with the query
-            const conversationRef = ref(db, `conversations/${conversationID}/messages`); // Navigate to the 'messages' node
+            // The chat exists, you can proceed with the query
+            const chatRef = ref(db, `chats/${chatID}/messages`); // Navigate to the 'messages' node
             const messageQuery = query(
-              conversationRef,
+              chatRef,
               orderByChild('timestamp'),
               limitToLast(20)
             );
-            // The conversation already exists; handle it as needed
+            // The chat already exists; handle it as needed
             get(messageQuery)
             .then((snapshot) => {
               if (snapshot.exists()) {
                 const messages = Object.values(snapshot.val());
-                navigation.push('SpecificChat', { messages: messages, conversationID: conversationID });
+                navigation.push('SpecificChat', { messages: messages, chatID: chatID });
               } else {
                 // No messages found
-                navigation.push('SpecificChat', { messages: [], conversationID: conversationID });
+                navigation.push('SpecificChat', { messages: [], chatID: chatID });
               }
             })
             .catch((error) => {
@@ -85,23 +85,23 @@ export default NewChat = () => {
             });
             
           } else {
-            console.log("no encontró la conver!");
-            // The conversation doesn't exist; create it
+            // The chat doesn't exist; create it
             const currentTimestamp = serverTimestamp();
-
-            console.log("currentTimestamp ", currentTimestamp);
-            set(conversation, {
-              conversationID: conversationID,
+            set(chat, {
+              chatID: chatID,
               user1Email: loggedInUser.email,
               user2Email: item.email,
+              user1Username: loggedInUser.username,
+              user2Username: item.username,
+              user1Avatar: loggedInUser.avatar,
+              user2Avatar: item.avatar,
               timestamp: currentTimestamp,
               messages: [],
               // Add other data, such as initial message, if needed
             }).then(() => {
-              console.log("creo la nueva conver con éxito!");
-              // Conversation created successfully
+              // chat created successfully
             //me tengo que mover a SpecificChat pero como es un nuevo chat, va a estar vacío
-              navigation.push('SpecificChat', { messages: [], conversationID: conversationID });
+              navigation.push('SpecificChat', { messages: [], chatID: chatID });
             }).catch((error) => {
               console.log("hubo un error al crear la conver!!");
               // Handle the error
