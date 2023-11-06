@@ -4,6 +4,7 @@ apply plugin: "com.facebook.react"
 import com.android.build.OutputFile
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
+
 def expoDebuggableVariants = ['debug']
 // Override `debuggableVariants` for expo-updates debugging
 if (System.getenv('EX_UPDATES_NATIVE_DEBUG') == "1") {
@@ -109,10 +110,9 @@ def reactNativeArchitectures() {
 }
 
 android {
+
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
-
     namespace 'com.nathencinoza.AwesomeProject'
     defaultConfig {
         manifestPlaceholders = [appAuthRedirectScheme: 'dev.expo.app']

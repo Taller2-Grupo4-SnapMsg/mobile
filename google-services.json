@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "992270592722",
+    "firebase_url": "https://snapmsg-a9735-default-rtdb.firebaseio.com",
+    "project_id": "snapmsg-a9735",
+    "storage_bucket": "snapmsg-a9735.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992270592722:android:0c7412aa28aecfd4515b0b",
+        "android_client_info": {
+          "package_name": "com.anonymous.AwesomeProject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992270592722-n16m30e7i313gn7pt78ceggjeihckuej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anonymous.AwesomeProject",
+            "certificate_hash": "fe4d9bdad953786fe33a687d7b94325e575c0e94"
+          }
+        },
+        {
+          "client_id": "992270592722-qdmu7q7hdi3elpbriecmphsu27gpjfg4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARuKrnjKAJYpaeignDyU8q3Nkkw7T0kYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992270592722-qdmu7q7hdi3elpbriecmphsu27gpjfg4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
