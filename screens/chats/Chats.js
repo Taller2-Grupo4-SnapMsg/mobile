@@ -7,6 +7,7 @@ import { db } from '../../firebase';
 import { query, orderByChild, equalTo, or, limitToLast, get, ref } from 'firebase/database';
 import { useUser } from '../../contexts/UserContext';
 
+AMOUNT_MSGS_BEGINNING = 10
 
 export default Chats = () => { 
   const navigation = useNavigation();
@@ -67,7 +68,7 @@ export default Chats = () => {
     const messageQuery = query(
       messagesRef,
       orderByChild('timestamp'),
-      limitToLast(20)
+      limitToLast(AMOUNT_MSGS_BEGINNING)
     );
 
     get(messageQuery)

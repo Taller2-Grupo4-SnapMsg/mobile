@@ -7,64 +7,58 @@ import {
   FlatList,
   Dimensions,
   KeyboardAvoidingView,
-  Keyboard
+  Keyboard,
+  RefreshControl
 } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import { useUser } from '../../contexts/UserContext';
 import { db } from '../../firebase';
-import {  ref, onValue, push, query, orderByChild, startAt, serverTimestamp, onChildAdded, off } from 'firebase/database';
+import { query, orderByChild, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off } from 'firebase/database';
 const { width, height } = Dimensions.get('window')
 
+AMOUNT_MSGS_BACK = 5
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const chatID = route.params.chatID;
   const [messages, setMessages] = useState(route.params.messages);
   
-  function setTimestamp(messages) {
+  function setInitialLatestTimestamp(messages) {
     if (messages && messages.length > 0) {
       return messages[messages.length - 1].timestamp;
     } else {
       return 0;
     }
   }
-  const [latestTimestamp, setLatestTimestamp] = useState(setTimestamp(messages));
+  const [latestTimestamp, setLatestTimestamp] = useState(setInitialLatestTimestamp(messages));
+
+  function setInitiaOldestTimestamp(messages) {
+    if (messages && messages.length > 0) {
+      return messages[0].timestamp;
+    } else {
+      return 0;
+    }
+  }
+  const [oldestTimestamp, setOldestTimestamp] = useState(setInitiaOldestTimestamp(messages));
   const messagesRef = ref(db, `chats/${chatID}/messages`);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  
-  // useEffect(() => {
-  //   const messagesQuery = query(
-  //     messagesRef,
-  //     orderByChild('timestamp'),
-  //     startAt(latestTimestamp + 1)
-  //   );
 
-  //   const unsubscribe = onValue(messagesQuery, (snapshot) => {
-  //     if (snapshot.exists()) {
-  //       const newMessages = snapshot.val();
+  const onFlatListLayout = () => {
+    setTimeout(() => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToEnd({ animated: true });
+      }
+    }, 100);
+  };
 
-  //       if (newMessages) {
-  //         const newMessageArray = Object.values(newMessages);
-  //         setMessages((prevMessages) => [...prevMessages, ...newMessageArray]);
-  //         const newestMessage = newMessageArray[newMessageArray.length - 1];
-  //         setLatestTimestamp(newestMessage.timestamp);
-  //       }
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [messagesRef, latestTimestamp]);
-
- 
   const onChildAddedCallback = (snapshot) => {
-    console.log("the callback was called!");
     if (snapshot) {
       const newMessage = snapshot.val();
       // Check if the new message has a higher timestamp than the latest one.
       if (newMessage.timestamp > latestTimestamp) {
-        console.log('A new node has been added', newMessage);
         setLatestTimestamp(newMessage.timestamp);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
@@ -72,14 +66,50 @@ export default SpecificChat = ({ route }) => {
   };
 
   useEffect(() => {
-    console.log("The useEffect was called!");
     const unsubscribe = onChildAdded(messagesRef, onChildAddedCallback);
 
     return () => {
       // Stop listening for child added events when the component unmounts.
       off(messagesRef, 'child_added', onChildAddedCallback);
     };
-  }, [latestTimestamp]);
+  }, [messages]);
+
+
+
+  const handleGetOlderMsgs = async () => {
+    if (refreshing) return;
+
+    setRefreshing(true);
+    const queryRef = query(
+      messagesRef,
+      orderByChild('timestamp'),
+      endAt(oldestTimestamp - 1), // Fetch messages with timestamps less than oldestTimestamp
+      limitToLast(AMOUNT_MSGS_BACK)
+    );
+
+    try {
+      const snapshot = await get(queryRef);
+      if (snapshot.exists()) {
+        const messageArray = [];
+        snapshot.forEach((childSnapshot) => {
+          const message = childSnapshot.val();
+          messageArray.push(message);
+        });
+        if (messageArray.length > 0) {
+  
+          const newMessages = [...messageArray, ...messages];
+          setMessages(newMessages);
+          const newOldestTimestamp = messageArray[0].timestamp;
+          setOldestTimestamp(newOldestTimestamp);
+        }
+      }
+
+      setRefreshing(false);
+    } catch (error) {
+      // Handle the error, e.g., display an error message
+      console.error('Error fetching earlier messages:', error);
+    }
+  };
 
   const send = () => {
     if (newMessage.length > 0) {
@@ -134,14 +164,22 @@ export default SpecificChat = ({ route }) => {
   return (
     <KeyboardAvoidingView behavior="padding" enabled style={styles.container}> 
       <FlatList
-        ref={flatListRef} // Add a ref to the FlatList
-        style={styles.list}
-        extraData={messages}
-        data={messages}
-        keyExtractor={(item) => item.timestamp}
-        renderItem={renderItem}
-        keyboardShouldPersistTaps="handled"
-      />
+      ref={flatListRef}
+      style={styles.list}
+      extraData={messages}
+      data={messages}
+      keyExtractor={(item) => item.timestamp}
+      renderItem={renderItem}
+      keyboardShouldPersistTaps="handled"
+      onLayout={onFlatListLayout}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleGetOlderMsgs}
+          colors={['#947EB0']}
+        />
+      }
+    />
 
       <View style={styles.input}>
         <TextInput
