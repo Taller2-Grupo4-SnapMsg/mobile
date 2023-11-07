@@ -23,12 +23,17 @@
       "bundleIdentifier": "com.nathencinoza.AwesomeProject"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/small_logo.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "CAMERA_ROLL"
+        "CAMERA_ROLL",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.nathencinoza.AwesomeProject"
     },
@@ -52,6 +57,7 @@
       "eas": {
         "projectId": "e0ebae00-8a3b-4632-8f56-d193330d6aa4"
       }
-    }
+    },
+    "owner": "larascazzola"
   }
 }

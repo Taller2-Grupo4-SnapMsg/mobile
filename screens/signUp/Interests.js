@@ -46,10 +46,10 @@ export default function InterestsList() {
       try {
         const response = await changeInterests(selectedInterests);
         if (response) {
-          navigation.navigate("Home");
+          navigation.navigate("MainNavigator");
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }],
+            routes: [{ name: "MainNavigator" }],
           });
         } else {
           Alert.alert("Error", "Error al actualizar intereses");
