@@ -12,7 +12,7 @@ import {
 import { TextInput } from 'react-native-paper';
 import { useUser } from '../../contexts/UserContext';
 import { db } from '../../firebase';
-import {  ref, onValue, push, query, orderByChild, startAt } from 'firebase/database';
+import {  ref, onValue, push, query, orderByChild, startAt, serverTimestamp, onChildAdded, off } from 'firebase/database';
 const { width, height } = Dimensions.get('window')
 
 
@@ -34,39 +34,61 @@ export default SpecificChat = ({ route }) => {
   const flatListRef = useRef(null);
 
   
-  //en el nuevo codigo no necesito un reply, necesito un listener que esté constantemente levantando data nueva de los msjs
-  useEffect(() => {
-    const messagesQuery = query(
-      messagesRef,
-      orderByChild('timestamp'),
-      startAt(latestTimestamp + 1)
-    );
+  // useEffect(() => {
+  //   const messagesQuery = query(
+  //     messagesRef,
+  //     orderByChild('timestamp'),
+  //     startAt(latestTimestamp + 1)
+  //   );
 
-    const unsubscribe = onValue(messagesQuery, (snapshot) => {
-      if (snapshot.exists()) {
-        const newMessages = snapshot.val();
+  //   const unsubscribe = onValue(messagesQuery, (snapshot) => {
+  //     if (snapshot.exists()) {
+  //       const newMessages = snapshot.val();
 
-        if (newMessages) {
-          const newMessageArray = Object.values(newMessages);
-          setMessages((prevMessages) => [...prevMessages, ...newMessageArray]);
-          const newestMessage = newMessageArray[newMessageArray.length - 1];
-          setLatestTimestamp(newestMessage.timestamp);
-        }
+  //       if (newMessages) {
+  //         const newMessageArray = Object.values(newMessages);
+  //         setMessages((prevMessages) => [...prevMessages, ...newMessageArray]);
+  //         const newestMessage = newMessageArray[newMessageArray.length - 1];
+  //         setLatestTimestamp(newestMessage.timestamp);
+  //       }
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [messagesRef, latestTimestamp]);
+
+ 
+  const onChildAddedCallback = (snapshot) => {
+    console.log("the callback was called!");
+    if (snapshot) {
+      const newMessage = snapshot.val();
+      // Check if the new message has a higher timestamp than the latest one.
+      if (newMessage.timestamp > latestTimestamp) {
+        console.log('A new node has been added', newMessage);
+        setLatestTimestamp(newMessage.timestamp);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
-    });
+    }
+  };
 
-    return () => unsubscribe();
-  }, [messagesRef, latestTimestamp]);
+  useEffect(() => {
+    console.log("The useEffect was called!");
+    const unsubscribe = onChildAdded(messagesRef, onChildAddedCallback);
 
-  
+    return () => {
+      // Stop listening for child added events when the component unmounts.
+      off(messagesRef, 'child_added', onChildAddedCallback);
+    };
+  }, [latestTimestamp]);
 
   const send = () => {
     if (newMessage.length > 0) {
       Keyboard.dismiss();
+      const currentTimestamp = serverTimestamp();
       const newDBMessage = {
         text: newMessage,
         sender: loggedInUser.email, //aca va siempre mi userId, porque soy el único que puede enviar en esta pantalla
-        timestamp: Date.now(),
+        timestamp: currentTimestamp,
         avatar: loggedInUser.avatar,
       };
 
