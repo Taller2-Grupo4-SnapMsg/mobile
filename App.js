@@ -9,7 +9,8 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 
 const appConfig = require('./app.json')
-const projectId = Constants.appConfig?.expo?.extra?.eas?.projectId;
+//const projectId = Constants.appConfig?.expo?.extra?.eas?.projectId;
+const projectId = appConfig?.expo?.extra?.eas?.projectId;
 //const projectId = 'snapmsg-a9735';
   
   export default function App() {
@@ -40,6 +41,8 @@ const projectId = Constants.appConfig?.expo?.extra?.eas?.projectId;
       if (Device.isDevice) {
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
+        console.log("EXISTING STATUS")
+        console.log(existingStatus)
         if (existingStatus !== 'granted') {
           const { status } = await Notifications.requestPermissionsAsync();
           finalStatus = status;
