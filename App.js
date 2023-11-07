@@ -17,6 +17,13 @@ Notifications.setNotificationHandler({
 //deberia hacer un fetch a la bdd ver si tiene token y si no tiene, 
 //generar uno y guardarlo
 async function registerForPushNotificationsAsync() {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
   let token;
 
   if (Platform.OS === 'android') {

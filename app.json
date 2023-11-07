@@ -23,9 +23,8 @@
       "bundleIdentifier": "com.nathencinoza.AwesomeProject"
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/small_logo.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
