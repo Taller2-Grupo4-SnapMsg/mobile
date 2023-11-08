@@ -5,7 +5,6 @@ import Post from "../../components/posts/Post";
 import Repost from "../../components/posts/Repost";
 import { useColorScheme } from 'react-native';
 import React, {useState, useEffect} from 'react'; 
-import Spinner from 'react-native-loading-spinner-overlay';
 import LoadingMoreIndicator from "../../components/LoadingMoreIndicator";
 import AlertBottomBanner from "../../components/communicating_info/AlertBottomBanner";
 import { useUser } from '../../contexts/UserContext';
