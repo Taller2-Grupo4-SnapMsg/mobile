@@ -49,10 +49,7 @@ export default function App() {
         alert('Failed to get push token for push notification!');
         return;
       }
-      console.log(projectId)
-      /*token = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.appConfig?.expo?.extra?.eas?.projectId,
-      });*/
+      //console.log(projectId)
       token = (await Notifications.getExpoPushTokenAsync({projectId})).data;
       console.log(token);
     } else {
