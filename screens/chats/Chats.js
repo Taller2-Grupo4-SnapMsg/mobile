@@ -63,28 +63,7 @@ export default Chats = () => {
 
       // Retrieve the 20 most recent messages for the selected chat
     const chatID = item.chatID;
-
-    const messagesRef = ref(db, `chats/${chatID}/messages`); // Navigate to the 'messages' node
-    const messageQuery = query(
-      messagesRef,
-      orderByChild('timestamp'),
-      limitToLast(AMOUNT_MSGS_BEGINNING)
-    );
-
-    get(messageQuery)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const messages = Object.values(snapshot.val());
-
-          navigation.push('SpecificChat', { messages: messages, chatID:  chatID});
-        } else {
-          // No messages found
-          navigation.push('SpecificChat', { messages: [], chatID: chatID });
-        }
-      })
-      .catch((error) => {
-        // Handle the error
-      });
+    navigation.push('SpecificChat', { chatID:  chatID, user1: item.user1Email, user2: item.user2Email});
     };
 
     if (item.user1Email === loggedInUser.email) {

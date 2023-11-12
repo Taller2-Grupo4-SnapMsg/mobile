@@ -4,8 +4,8 @@
     "slug": "AwesomeProject",
     "scheme": "AwesomeProject",
     "version": "1.0.0",
+    "icon": "./assets/icon_notification.png",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -24,7 +24,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon_notification.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -33,7 +33,31 @@
       "package": "com.nathencinoza.AwesomeProject"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon_notification.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e0ebae00-8a3b-4632-8f56-d193330d6aa4"
+      }
+    },
+    "plugins": [
+      [
+      "expo-notifications",
+      {
+        "icon": "./assets/icon_notification96px.png",
+        "color": "#311b92",
+        "androidMode": "default",
+        "androidCollapsedTitle": "Updates from Colab.notes",
+        "iosDisplayInForeground": true
+      }
+      ]
+    ],
+    "notification": {
+      "icon": "./assets/icon_notification96px.png",
+      "color": "#311b92",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Updates from Colab.notes",
+      "iosDisplayInForeground": true
     }
   }
 }

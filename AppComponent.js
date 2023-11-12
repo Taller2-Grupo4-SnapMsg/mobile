@@ -25,6 +25,11 @@ import { useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 
 import { useUser } from './contexts/UserContext';
+//import { useNavigationNotifications } from './contexts/NavigationContext'
+//import { NavigationProvider } from './contexts/NavigationContext'
+
+import * as Notifications from 'expo-notifications';
+import { useNavigation } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -85,9 +90,30 @@ const AuthNavigator = () => {
 };
 
 const MainNavigator = () => {
+  const [notificationReceived, setNotificationReceived] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      const route = response.notification.request.content.data.route;
+      //console.log(route)
+      if (route === 'SpecificChat') {
+        const chatID = response.notification.request.content.data.chatID;
+        const user1 = response.notification.request.content.data.user1;
+        const user2 = response.notification.request.content.data.user2;
+        setNotificationReceived(true);
+        //console.log(chatID)
+        navigation.navigate('SpecificChatNotif', { chatID, user1, user2 });
+      }
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(responseListener);
+    };
+  }), [];
+
   return (
     <Drawer.Navigator
-      initialRouteName="Home"
       drawerContent={props => <CustomDrawerContent {...props} navigation={props.navigation} />}
     >
       <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
@@ -95,6 +121,7 @@ const MainNavigator = () => {
       <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
       <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
       <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
+      <Drawer.Screen name="SpecificChatNotif" component={SpecificChat}/>
     </Drawer.Navigator>
   );
 };
@@ -103,7 +130,7 @@ const MainNavigator = () => {
 export default function AppComponent() {
   const {loggedInUser} = useUser(); 
   const colorScheme = useColorScheme();
-
+  
   return (
       <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         {loggedInUser ? (

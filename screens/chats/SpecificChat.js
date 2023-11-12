@@ -15,13 +15,19 @@ import { useUser } from '../../contexts/UserContext';
 import { db } from '../../firebase';
 import { query, orderByChild, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off } from 'firebase/database';
 const { width, height } = Dimensions.get('window')
+import SendNotification from '../../handlers/notifications/sendNotification';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 AMOUNT_MSGS_BACK = 5
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const chatID = route.params.chatID;
-  const [messages, setMessages] = useState(route.params.messages);
+  const email_user1 = route.params.user1;
+  const email_user2 = route.params.user2;
+
+  const [messages, setMessages] = useState([]);
   
   function setInitialLatestTimestamp(messages) {
     if (messages && messages.length > 0) {
@@ -111,7 +117,7 @@ export default SpecificChat = ({ route }) => {
     }
   };
 
-  const send = () => {
+  const send = async () => {
     if (newMessage.length > 0) {
       Keyboard.dismiss();
       const currentTimestamp = serverTimestamp();
@@ -121,6 +127,28 @@ export default SpecificChat = ({ route }) => {
         timestamp: currentTimestamp,
         avatar: loggedInUser.avatar,
       };
+
+      try{
+        if (loggedInUser.email === email_user1){
+          data= {
+            "route": 'SpecificChat',
+            "chatID": chatID,
+            "user1": email_user1,
+            "user2": email_user2
+          }
+          await SendNotification([email_user2], "SnapMsg", newMessage, data)
+        } else {
+          data= {
+            "route": 'SpecificChat',
+            "chatID": chatID,
+            "user1": email_user2,
+            "user2": email_user1
+          }
+          await SendNotification([email_user1], "SnapMsg", newMessage, data)
+        }
+      }catch(error){
+        console.log(error)
+      }
 
       // Push the new message to the messages array
       push(messagesRef, newDBMessage)
