@@ -12,6 +12,8 @@ import { useUser } from '../../../contexts/UserContext';
 import AlertBottomBanner from "../../../components/communicating_info/AlertBottomBanner"
 import MentionModal from '../../../components/MentionModal';
 import { Feather } from '@expo/vector-icons';
+import SendNotification from "../../../handlers/notifications/sendNotification"
+
 TIMEOUT_ALERT_POST = 1500
 
 export default function NewPost() {
@@ -60,6 +62,13 @@ export default function NewPost() {
       setSelectedImage('');
       await PostHandler(text, '', tags, selectedMentions);
     }
+    
+    data= {
+      "route": 'PostDetailed',
+      "post_id": 84,
+    }
+    await SendNotification([], "Mention", newMessage, data)
+    //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');
     }, TIMEOUT_ALERT_POST);

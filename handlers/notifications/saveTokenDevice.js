@@ -1,11 +1,10 @@
-// Aun no esta implementado en el otro front
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const getPostById = async (post_id) => {
+const SaveTokenDevice = async (device_token) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -15,16 +14,19 @@ const getPostById = async (post_id) => {
                 'token': token,
               };
     
-              const response = await fetch(`${URL_POST_BACK}/posts/${post_id}`, {
-                method: 'GET',
+            const response = await fetch(`${URL_POST_BACK}/notifications/save/${device_token}`, {
+                method: 'POST',
                 headers: headers,
-              });
+            });
     
             if (response.status === OK) {
                 const post = await response.json();
                 return post;
+            } if (response.status === 400) {
+                console.log(response)
+                console.log(response.detail)
             } else {
-                console.error('Fallo el request al back de post by id:', response.status);
+                console.error('Fallo el request al back de post:', response.status);
             }
         } catch (error) {
             const message =
@@ -37,4 +39,4 @@ const getPostById = async (post_id) => {
     }
 };
 
-export default getPostById;
+export default SaveTokenDevice;

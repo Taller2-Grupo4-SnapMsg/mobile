@@ -66,6 +66,18 @@ function CustomDrawerContent({ navigation }) {
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('ChatsScreen');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            <Icon name="comments" size={25} color="#6B5A8E" style={styles.icon}/>
+            <Text style={styles.drawerItemText}>Chats</Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
         <View style={styles.avatarSignoutContainer}>
           <View style={styles.cont}>
