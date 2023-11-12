@@ -105,6 +105,12 @@ const MainNavigator = () => {
         //console.log(chatID)
         navigation.navigate('SpecificChatNotif', { chatID, user1, user2 });
       }
+      if (route === 'PostDetailed') {
+        const post_id = response.notification.request.content.data.post_id;
+        setNotificationReceived(true);
+        //console.log(chatID)
+        navigation.navigate('PostDetailed', { post_id }); 
+      }
     });
 
     return () => {

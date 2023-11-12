@@ -10,6 +10,7 @@ import PostHandler from '../../../handlers/posts/newPost';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
 import AlertBottomBanner from "../../../components/communicating_info/AlertBottomBanner"
+import SendNotification from "../../../handlers/notifications/sendNotification"
 
 TIMEOUT_ALERT_POST = 1500
 
@@ -54,6 +55,11 @@ export default function NewPost() {
       setSelectedImage('');
       await PostHandler(text, '', tags);
     }
+    data= {
+      "route": 'PostDetailed',
+      "post_id": 84,
+    }
+    await SendNotification([], "Mention", newMessage, data)
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');

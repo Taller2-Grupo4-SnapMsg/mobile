@@ -5,7 +5,7 @@ const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const getPostById = async (id) => {
+const getPostById = async (post_id) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -15,7 +15,7 @@ const getPostById = async (id) => {
                 'token': token,
               };
     
-              const response = await fetch(`${URL_POST_BACK}/posts/${id}`, {
+              const response = await fetch(`${URL_POST_BACK}/posts/${post_id}`, {
                 method: 'GET',
                 headers: headers,
               });
