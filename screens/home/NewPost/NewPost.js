@@ -10,6 +10,8 @@ import PostHandler from '../../../handlers/posts/newPost';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
 import AlertBottomBanner from "../../../components/communicating_info/AlertBottomBanner"
+import MentionModal from '../../../components/MentionModal';
+import { Feather } from '@expo/vector-icons';
 import SendNotification from "../../../handlers/notifications/sendNotification"
 
 TIMEOUT_ALERT_POST = 1500
@@ -20,12 +22,17 @@ export default function NewPost() {
   const [text, setText] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [postPreview, setPostPreview] = useState('');
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
   const [alerMessageColor, setAlertMessageColor] = useState(true);
+  const [mentionsModalVisible, setMentionsModalVisible] = useState(false);
+  const [selectedMentions, setSelectedMentions] = useState([]);
+
+  const handleMentionModal = () => {
+    setMentionsModalVisible(!mentionsModalVisible);
+  }
 
   const setAlert = (message, color, timeout) => {
     setAlertMessageColor(color);
@@ -50,11 +57,12 @@ export default function NewPost() {
       await uploadBytes(storageRef, blob);
 
       setSelectedImage('');
-      await PostHandler(text, file_route, tags);
+      await PostHandler(text, file_route, tags, selectedMentions);
     } else {
       setSelectedImage('');
-      await PostHandler(text, '', tags);
+      await PostHandler(text, '', tags, selectedMentions);
     }
+    
     data= {
       "route": 'PostDetailed',
       "post_id": 84,
@@ -64,9 +72,6 @@ export default function NewPost() {
     setTimeout(() => {
       navigation.navigate('Home');
     }, TIMEOUT_ALERT_POST);
-    // setText('');
-    // setIsLoading(false);
-    // setTags([]);
   };
 
   const handlePressCancel = () => {
@@ -82,8 +87,8 @@ export default function NewPost() {
         quality: 1,
       });
 
-      if (!result.cancelled) {
-        setSelectedImage(result.uri);
+      if (!result.canceled) {
+        setSelectedImage(result.assets[0].uri);
         setImagePickerVisible(false);
       }
     } catch (error) {
@@ -101,6 +106,11 @@ export default function NewPost() {
     setTags(updatedTags);
   };
 
+  const removeMention = (mention) => {
+    const updatedMentions = selectedMentions.filter((existingMention) => existingMention !== mention);
+    setSelectedMentions(updatedMentions);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.container}>
@@ -112,7 +122,7 @@ export default function NewPost() {
             placeholder="What's happening?"
             multiline
             numberOfLines={5}
-            style={{ flex: 1 , marginLeft: 50, paddingLeft: 10, fontSize: 18}}
+            style={{ flex: 1 , marginLeft: 20, fontSize: 18}}
           />
         </View>
 
@@ -122,6 +132,27 @@ export default function NewPost() {
             style={styles.imagePreview}
           />
         }
+          <View style={styles.mentionsContainer}>
+                    {selectedMentions.map((mention) => (
+                      <View style={styles.mentions} key={mention}>
+                        <Text style={styles.mentionsUsername}>@{mention}</Text>
+                        <Pressable onPress={() => removeMention(mention)} style={styles.removeMentionButton}>
+                          <Feather name="x" size={20} color="#6B5A8E" />
+                        </Pressable>
+                      </View>
+                    ))}
+          </View>
+        <View style={styles.addingContainer}>
+            <Pressable onPress={() => setImagePickerVisible(true)} style={styles.imagePicker}>
+              <MaterialIcons name="add-a-photo" size={24} color="#6B5A8E" />
+              <Text style={{ marginLeft: 10, color: '#6B5A8E', }}>Add Image</Text>
+            </Pressable>
+
+            <Pressable onPress={handleMentionModal} style={styles.imagePicker}>
+            <MaterialIcons name="alternate-email" size={24} color="#6B5A8E" />
+              <Text style={{ marginLeft: 5, marginRight: 15,color: '#6B5A8E', }}>Add mention</Text>
+            </Pressable>
+          </View>
 
         <View style={styles.tagsContainer}>
           {tags.map((tag) => (
@@ -134,10 +165,15 @@ export default function NewPost() {
           ))}
         </View>
 
-        <Pressable onPress={() => setImagePickerVisible(true)} style={styles.imagePicker}>
-          <MaterialIcons name="add-a-photo" size={24} color="#6B5A8E" />
-          <Text style={{ marginLeft: 10, color: '#6B5A8E', }}>Add Image</Text>
-        </Pressable>
+    
+
+          <MentionModal
+            isVisible={mentionsModalVisible}
+            onClose={handleMentionModal}
+            selectedMentions={selectedMentions}
+            setSelectedMentions={setSelectedMentions}
+            in_followers={true}
+          />
 
         <Modal
           isVisible={isImagePickerVisible}
@@ -258,17 +294,17 @@ const styles = {
     color: '#6B5A8E',
   },
   tagsContainer: {
-    marginTop: 20,
+    marginTop: 5,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   tag: {
     backgroundColor: '#6B5A8E',
     borderRadius: 20,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 3,
     flexDirection: 'row',
     alignItems: 'center',
     margin: 5,
@@ -286,7 +322,7 @@ const styles = {
     color: 'white',
   },
   tagInputContainer: {
-    marginTop: 30,
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
@@ -310,6 +346,39 @@ const styles = {
   },
   addTagButtonText: {
     color: 'white',
+  },
+  addingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mentionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginBottom: 5,
+  },  
+  mentions: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 5,
+    backgroundColor: '#ecf0f1',
+  },
+  mentionsUsername: {
+    color: '#6B5A8E',
+    marginRight: 5,
+    fontWeight: 'bold',
+  },
+  removeMentionButton: {
+    color: "#6B5A8E",
+    borderRadius: 100,
+  },
+  removeMentionButtonText: {
+    color: '#6B5A8E',
+    fontWeight: 'bold',
   },
 };
 

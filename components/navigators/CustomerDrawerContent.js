@@ -97,7 +97,7 @@ function CustomDrawerContent({ navigation }) {
           onPress={handleSignOut}
         >
           <View style={styles.icon}>
-            <Icon name="sign-out" size={40} color="#6B5A8E" />
+            <Icon name="sign-out" size={30} color="#6B5A8E" />
             <Text style={[styles.drawerItemText, styles.signOutText]}></Text>
           </View>
         </TouchableOpacity>
