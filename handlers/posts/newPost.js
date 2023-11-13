@@ -5,8 +5,8 @@ const OK = 200
 URL_POST_BACK = "https://postsback.onrender.com"
     
 const PostHandler = async (content, image, tags, selectedMentions) => {
-    console.log("PostHandler", content, image, tags, selectedMentions)
     const token = await AsyncStorage.getItem('token');
+    console.log(selectedMentions)
     if (token){
         try {
             headers = {
@@ -30,7 +30,8 @@ const PostHandler = async (content, image, tags, selectedMentions) => {
     
             if (response.status === OK) {
                 const post = await response.json();
-                return post;
+                const { post_id, message } = post;
+                return post_id;
             } else {
                 console.error('Fallo el request al back de post:', response.status);
             }

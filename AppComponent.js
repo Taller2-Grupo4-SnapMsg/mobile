@@ -96,19 +96,16 @@ const MainNavigator = () => {
   useEffect(() => {
     const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
       const route = response.notification.request.content.data.route;
-      //console.log(route)
       if (route === 'SpecificChat') {
         const chatID = response.notification.request.content.data.chatID;
         const user1 = response.notification.request.content.data.user1;
         const user2 = response.notification.request.content.data.user2;
         setNotificationReceived(true);
-        //console.log(chatID)
         navigation.navigate('SpecificChatNotif', { chatID, user1, user2 });
       }
       if (route === 'PostDetailed') {
-        const post_id = response.notification.request.content.data.post_id;
+        const post_id = parseInt(response.notification.request.content.data.post_id, 10);
         setNotificationReceived(true);
-        //console.log(chatID)
         navigation.navigate('PostDetailed', { post_id }); 
       }
     });

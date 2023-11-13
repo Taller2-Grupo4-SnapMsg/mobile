@@ -170,8 +170,6 @@ function ProfileUser({ user }) {
   const handlePressDelete = (post) => {
     return async () => {
       try {
-        console.log("ENTRA A ELIMINAR POST");
-        console.log("id en handlePressDelete: ", post.post_id);
         if (post.user_poster.email === post.user_creator.email) {
           setDeleteButtonsSpinners(true);
           await DeletePost(post.post_id);
@@ -237,7 +235,6 @@ function ProfileUser({ user }) {
   );
 
   const handleSetDeleteModalVisible = () => {
-    console.log("ENTRA A SET DELETE MODAL VISIBLE");
     if (deleteButtonsSpinners) {
       setDeleteButtonsSpinners(!deleteButtonsSpinners);
     }

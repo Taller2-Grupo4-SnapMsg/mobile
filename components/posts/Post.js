@@ -18,7 +18,7 @@ import {
 const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   if (!post)
     return null;
-
+    
   const {loggedInUser} = useUser();
   var {post_id, 
       user_poster, 

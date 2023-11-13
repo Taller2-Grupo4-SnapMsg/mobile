@@ -54,7 +54,6 @@ export function UserProvider({ children }) {
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync({projectId})).data;
-      console.log(token);
       await SaveTokenDevice(token);
     } else {
       alert('Must use physical device for Push Notifications');
@@ -62,7 +61,6 @@ export function UserProvider({ children }) {
   }
 
   useEffect(() => {
-    //esto no lo deberia hacer siempre
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {

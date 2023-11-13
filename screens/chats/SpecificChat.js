@@ -26,7 +26,6 @@ export default SpecificChat = ({ route }) => {
   const chatID = route.params.chatID;
   const email_user1 = route.params.user1;
   const email_user2 = route.params.user2;
-
   const [messages, setMessages] = useState([]);
   
   function setInitialLatestTimestamp(messages) {

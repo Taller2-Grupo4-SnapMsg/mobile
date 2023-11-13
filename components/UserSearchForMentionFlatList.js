@@ -23,7 +23,7 @@ export default function UserSearchForMentionFlatList({
       data={users}
       keyExtractor={(item) => item.email}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item.username)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item)}>
           <Avatar user={item} />
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>{item.name}</Text>

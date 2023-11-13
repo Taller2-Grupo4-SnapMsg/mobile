@@ -8,7 +8,6 @@ const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
 const searchUserByUsername = async (username, offset, ammount, in_followers) => {
   const token = await AsyncStorage.getItem('token');
-  console.log(in_followers)
   if (token) {
     try {
         const headers = {

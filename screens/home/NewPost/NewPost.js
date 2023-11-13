@@ -57,17 +57,22 @@ export default function NewPost() {
       await uploadBytes(storageRef, blob);
 
       setSelectedImage('');
-      await PostHandler(text, file_route, tags, selectedMentions);
+      const usernames = selectedMentions.map(mention => mention.username);
+      post_id = await PostHandler(text, file_route, tags, usernames);
     } else {
       setSelectedImage('');
-      await PostHandler(text, '', tags, selectedMentions);
+      const usernames = selectedMentions.map(mention => mention.username);
+      post_id = await PostHandler(text, '', tags, usernames);
     }
     
-    data= {
+    data = {
       "route": 'PostDetailed',
-      "post_id": 84,
+      "post_id": post_id.toString(),
     }
-    await SendNotification([], "Mention", newMessage, data)
+    console.log(data)
+    const emails = selectedMentions.map(mention => mention.email);
+    console.log(emails)
+    await SendNotification(emails, "te mencionaron en un post", "hi", data)
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');
@@ -134,8 +139,8 @@ export default function NewPost() {
         }
           <View style={styles.mentionsContainer}>
                     {selectedMentions.map((mention) => (
-                      <View style={styles.mentions} key={mention}>
-                        <Text style={styles.mentionsUsername}>@{mention}</Text>
+                      <View style={styles.mentions} key={mention.username}>
+                        <Text style={styles.mentionsUsername}>@{mention.username}</Text>
                         <Pressable onPress={() => removeMention(mention)} style={styles.removeMentionButton}>
                           <Feather name="x" size={20} color="#6B5A8E" />
                         </Pressable>
