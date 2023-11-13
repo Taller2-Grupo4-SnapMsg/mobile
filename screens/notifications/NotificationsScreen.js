@@ -39,6 +39,7 @@ const NotificationsScreen = () => {
         snapshot.forEach((childSnapshot) => {
           const message = childSnapshot.val();
           notificationsArray.push(message);
+          notificationsArray.sort((a, b) => b.timestamp - a.timestamp);
         });
         if (notificationsArray.length > 0) {
           setNotifications(notificationsArray);

@@ -99,11 +99,7 @@ export default NewChat = () => {
               messages: [],
             }).then(() => {
               // chat created successfully
-              /**************************************************/
-              //chequear aca si tenes que sacar messages (creo que si)
-              navigation.push('SpecificChat', { chatID: chatID, 
-                                                user1: loggedInUser.email, 
-                                                user2: item.email });
+              navigation.push('SpecificChat', { messages: [], chatID: chatID });
             }).catch((error) => {
               console.log("hubo un error al crear la conver!!");
               // Handle the error
