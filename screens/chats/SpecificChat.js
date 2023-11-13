@@ -133,17 +133,19 @@ export default SpecificChat = ({ route }) => {
             "route": 'message',
             "chatID": chatID,
             "user1": email_user1,
-            "user2": email_user2
+            "user2": email_user2,
+            "avatar_sender": loggedInUser.avatar
           }
-          await SendNotification([email_user2], "SnapMsg", newMessage, data)
+          await SendNotification([email_user2], `You have a new message from ${loggedInUser.username}`, newMessage, data)
         } else {
           data= {
             "route": 'message',
             "chatID": chatID,
             "user1": email_user2,
-            "user2": email_user1
+            "user2": email_user1,
+            "avatar_sender": loggedInUser.avatar
           }
-          await SendNotification([email_user1], "SnapMsg", newMessage, data)
+          await SendNotification([email_user1], `You have a new message from ${loggedInUser.username}`, newMessage, data)
         }
       }catch(error){
         console.log(error)

@@ -9,7 +9,8 @@ const RepostButton = ({ icon,
                         isReposted, 
                         post_id, 
                         setAlertMessage,
-                        setAlertMessageColor}) => {
+                        setAlertMessageColor, 
+                        disabled }) => {
 
   const [reposted, setReposted] = useState(isReposted);
   const [reposts, setReposts] = useState(initialReposts);
@@ -58,11 +59,11 @@ const RepostButton = ({ icon,
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 90 }}>
-      <TouchableOpacity onPress={handlePressRepost}>
+     <TouchableOpacity onPress={handlePressRepost} disabled={disabled}>
         {reposted ? (
-          <AntDesign name={icon} size={20} color="#6B5A8E" />
+          <AntDesign name={icon} size={20} color={disabled ? "dimgray" : "#6B5A8E"} />
         ) : (
-          <AntDesign name={icon} size={20} color="gray" />
+          <AntDesign name={icon} size={20} color={disabled ? "dimgray" : "gray"} />
         )}
       </TouchableOpacity>
       <Text style={{ fontSize: 15, color: 'gray', marginLeft: 5 }}>{reposts}</Text>

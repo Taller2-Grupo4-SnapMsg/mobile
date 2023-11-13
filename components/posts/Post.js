@@ -10,6 +10,7 @@ import LikeButton from './LikeButton';
 import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../../contexts/UserContext';
 import PostPictureModal from '../PostPictureModal';
+import { useNavigation } from '@react-navigation/native';
 import {
   DarkTheme,
   ThemeProvider,
@@ -33,7 +34,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
       did_i_repost} = post;
   
   const colorScheme = useColorScheme();
-
+  const navigation = useNavigation();
   const [imageURI, setImageURI] = useState(null);
   
   const fetchImageURL = async () => {
@@ -141,22 +142,18 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
               />
 
 
-
         <View style={styles.footer}>
-        {user_creator.email !== loggedInUser.email && (
-            <RepostButton
-              icon="retweet"
-              initialReposts={number_reposts}
-              isReposted={did_i_repost}
-              post_id={post_id}
-              setAlertMessage={setAlertMessage}
-              setAlertMessageColor={setAlertMessageColor}
-            />
-            )}
-
+          <RepostButton
+            icon="retweet"
+            initialReposts={number_reposts}
+            isReposted={did_i_repost}
+            post_id={post_id}
+            setAlertMessage={setAlertMessage}
+            setAlertMessageColor={setAlertMessageColor}
+            disabled={user_creator.email === loggedInUser.email}
+          />
           
-            <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
-          
+          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
         </View>
         </View>
         </Pressable>
