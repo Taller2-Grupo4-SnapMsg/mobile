@@ -200,7 +200,6 @@ function ProfileUser({ user }) {
       const fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts);
       if (fetchedPosts && fetchedPosts.length > 0) {
         if (refresh) {
-          console.log("Entro a handleGetMorePosts con refresh")
           setPosts(fetchedPosts);
           setRefreshing(false);
           setReachedEnd(false);

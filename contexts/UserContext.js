@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import getUserByToken from '../handlers/getUserByToken';
 const UserContext = createContext();
+import { db } from '../firebase';
+import { ref, set, get } from 'firebase/database';
 
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
@@ -21,6 +23,7 @@ export function UserProvider({ children }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
+  const [notificationReceived, setNotificationReceived] = useState(false);
 
   async function registerForPushNotificationsAsync() {
     Notifications.setNotificationHandler({
@@ -60,10 +63,79 @@ export function UserProvider({ children }) {
     }
   }
 
+  function generateNotificationID(chatID, time) {
+    const sanitizedChatID = chatID.replace(/[\.\#\$\/\[\]]/g, '_');
+    return `${sanitizedChatID}_${time.toString()}`;
+  }
+  
+
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      const identifier = notification.request.identifier;
+
+      console.log("ENTRA A VER LA NOTIFICACION DE MENSAJE")
+      const route = notification.request.content.data.route;
+      if (route === "message") {
+        //const chatID = notification.request.content.data.chatID;
+        const user1 = notification.request.content.data.user1;
+        const imageUrl = notification.request.content.data.imagenUrl;
+        //const user2 = notification.request.content.data.user2;
+        const newNotif = {
+          type: 'message',
+          title: notification.request.content.title,
+          body: notification.request.content.body,
+          data: notification.request.content.data,
+          timestamp: Date.now(),
+          read: false,
+        };
+        //const notificationId = generateNotificationID(user1, Date.now());
+        const notificationId = identifier;
+        const notifRef = ref(db, `notifications/${notificationId}`);
+
+        get(notifRef)
+          .then(() => {
+              set(notifRef, {
+                notificationId,
+                ...newNotif,
+              }).catch((error) => {
+                console.log("hubo un error al crear la notificacion!!");
+              });
+            }
+          );
+  
+        setNotificationReceived(true);
+      }
+  
+      if (route === 'mention') {
+        const post_id = notification.request.content.data.post_id;
+        const newNotif = {
+          type: 'mention',
+          title: notification.request.content.title,
+          body: notification.request.content.body,
+          data: notification.request.content.data,
+          timestamp: Date.now(),
+          read: false,
+        };
+  
+        //const notificationId = generateNotificationID(post_id, Date.now());
+        const notificationId = identifier;
+        const notifRef = ref(db, `notifications/${notificationId}`);
+
+        get(notifRef)
+          .then(() => {
+              set(notifRef, {
+                notificationId,
+                ...newNotif,
+              }).catch((error) => {
+                console.log("hubo un error al crear la notificacion!!");
+              });
+            }
+          );
+  
+        setNotificationReceived(true);
+      }
       setNotification(notification);
     });
 

@@ -130,7 +130,7 @@ export default SpecificChat = ({ route }) => {
       try{
         if (loggedInUser.email === email_user1){
           data= {
-            "route": 'SpecificChat',
+            "route": 'message',
             "chatID": chatID,
             "user1": email_user1,
             "user2": email_user2
@@ -138,7 +138,7 @@ export default SpecificChat = ({ route }) => {
           await SendNotification([email_user2], "SnapMsg", newMessage, data)
         } else {
           data= {
-            "route": 'SpecificChat',
+            "route": 'message',
             "chatID": chatID,
             "user1": email_user2,
             "user2": email_user1

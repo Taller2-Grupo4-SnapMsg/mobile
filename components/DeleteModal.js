@@ -21,7 +21,6 @@ export default function DeleteModal({ isVisible, onDelete, onClose, loading }) {
             <TouchableOpacity style={styles.closeButton} onPress={onDelete}>
               <Feather name="x" size={24} color="white" />
             </TouchableOpacity>
-            {console.log("DeleteModal loading: ", loading)}
             {/*<PurpleButton text="Delete" onPress={onDelete} loading={loading}/>*/}
           </View>
         </View>

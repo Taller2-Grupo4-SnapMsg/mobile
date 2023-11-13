@@ -66,13 +66,13 @@ export default function NewPost() {
     }
     
     data = {
-      "route": 'PostDetailed',
+      "route": 'mention',
       "post_id": post_id.toString(),
+      "imageUrl": selectedImage,
     }
     console.log(data)
     const emails = selectedMentions.map(mention => mention.email);
-    console.log(emails)
-    await SendNotification(emails, "te mencionaron en un post", "hi", data)
+    await SendNotification(emails, `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');

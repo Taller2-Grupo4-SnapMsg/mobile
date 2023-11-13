@@ -6,7 +6,6 @@ URL_POST_BACK = "https://postsback.onrender.com"
     
 const PostHandler = async (content, image, tags, selectedMentions) => {
     const token = await AsyncStorage.getItem('token');
-    console.log(selectedMentions)
     if (token){
         try {
             headers = {

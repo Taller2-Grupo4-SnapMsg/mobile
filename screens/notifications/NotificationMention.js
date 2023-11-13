@@ -1,57 +1,75 @@
-import React from 'react';
 import { View, Text, StyleSheet} from 'react-native';
 import { useColorScheme } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
-import Avatar from '../Avatar';
-import Post from './Post';
+import Post from '../../components/posts/Post';
+import React, { useState, useEffect } from 'react';
+import getPostById from '../../handlers/posts/getPostById';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   DarkTheme,
   ThemeProvider,
 } from '@react-navigation/native';
 
-const Repost = ({ post, setMessageRepost, setMessageRepostColor }) => {
-  if (!post)
-    return null;
+const NotificationMention = ({ message, data, read }) => {
+  const [post, setPost] = useState(null);
+  const [isFetchingPost, setIsFetchingPost] = useState(false);
+  
+  useEffect(() => {
+    const fetchPostById = async () => {
+      if (data && data.post_id) {
+        console.log("entra a fetchPostById")
+        setIsFetchingPost(true);
+        const postId = parseInt(data.post_id, 10);
+
+        try {
+          console.log(data.post_id)
+          const fetchedPost = await getPostById(postId);
+          console.log(fetchedPost)
+          setPost(fetchedPost);
+        } catch (error) {
+          console.error('Error while checking posts status:', error);
+        } finally {
+          setIsFetchingPost(false);
+        }
+      }
+    };
+
+    fetchPostById();
+  }, []);
 
   const colorScheme = useColorScheme();
 
-  function formatDate(dateString) {
-    // Split the date and time parts
-    const [datePart, timePart] = dateString.split(' ');
-  
-    // Extract milliseconds (if present) and convert to a three-digit string
-    const milliseconds = timePart.split('.')[1] || '000';
-    const millisecondsString = milliseconds.slice(0, 3);
-  
-    // Concatenate the date and time parts in ISO 8601 format
-    return `${datePart}T${timePart.split('.')[0]}.${millisecondsString}Z`;
-  }
-
-  all_hours = Math.floor((new Date() - new Date(formatDate(post.created_at)))/ (1000 * 60 * 60));
-  days = Math.floor(all_hours / 24);
-  hours = all_hours - days * 24;
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
-        <View style={styles.container}>
-            <View style={styles.container_reposted}>
-                <Text style={styles.name}>You have been mentioned</Text>
-            </View>
-        
-            <View>
-            <Post post={post} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>
-            </View>
-        </View>
-        
-      </ThemeProvider>
+  if (isFetchingPost) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Spinner
+          visible={isFetchingPost}
+          textStyle={{ color: '#FFF' }}
+        />
+      </View>
     );
+  } if (post){
+    return (
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
+          <View style={styles.container}>
+              <View style={styles.container_reposted}>
+                  <Text style={styles.name}>You have been mentioned</Text>
+              </View>
+          
+              <View>
+              <Post post={post[0]} />
+              </View>
+          </View>
+          
+        </ThemeProvider>
+      );
+  }
   };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     padding: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    //borderBottomWidth: StyleSheet.hairlineWidth,
   },
   container_reposted: {
     flexDirection: 'row',
@@ -100,4 +118,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Repost;
+export default NotificationMention;

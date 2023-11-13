@@ -78,6 +78,18 @@ function CustomDrawerContent({ navigation }) {
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('NotificationsScreen');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            <Icon name="bell" size={25} color="#6B5A8E" style={styles.icon}/>
+            <Text style={styles.drawerItemText}>Notifications</Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
         <View style={styles.avatarSignoutContainer}>
           <View style={styles.cont}>

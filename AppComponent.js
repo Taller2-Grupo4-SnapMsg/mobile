@@ -19,14 +19,15 @@ import CustomDrawerContent from './components/navigators/CustomerDrawerContent';
 import Chats from './screens/chats/Chats';
 import SpecificChat from './screens/chats/SpecificChat';
 import NewChat from './screens/chats/NewChat';
+import NotificationsScreen from './screens/notifications/NotificationsScreen';
+import { ref, set, get, update } from 'firebase/database';
+import { db } from './firebase';
 
 import { useColorScheme } from 'react-native';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 
 import { useUser } from './contexts/UserContext';
-//import { useNavigationNotifications } from './contexts/NavigationContext'
-//import { NavigationProvider } from './contexts/NavigationContext'
 
 import * as Notifications from 'expo-notifications';
 import { useNavigation } from '@react-navigation/native';
@@ -42,6 +43,14 @@ const StackNavigatorHome = () => {
       <Stack.Screen name="PostDetailed" component={PostDetailed} />
       <Stack.Screen name="NewPost" component={NewPost} />
       <Stack.Screen name="Profile" component={Profile} />
+    </Stack.Navigator>
+  );
+};
+
+const StackNavigatorNoifications = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="InNotificationsScreen" component={NotificationsScreen} />
     </Stack.Navigator>
   );
 };
@@ -90,30 +99,44 @@ const AuthNavigator = () => {
 };
 
 const MainNavigator = () => {
-  const [notificationReceived, setNotificationReceived] = useState(false);
-  const navigation = useNavigation();
+    const navigation = useNavigation();
 
-  useEffect(() => {
-    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-      const route = response.notification.request.content.data.route;
-      if (route === 'SpecificChat') {
-        const chatID = response.notification.request.content.data.chatID;
-        const user1 = response.notification.request.content.data.user1;
-        const user2 = response.notification.request.content.data.user2;
-        setNotificationReceived(true);
-        navigation.navigate('SpecificChatNotif', { chatID, user1, user2 });
-      }
-      if (route === 'PostDetailed') {
-        const post_id = parseInt(response.notification.request.content.data.post_id, 10);
-        setNotificationReceived(true);
-        navigation.navigate('PostDetailed', { post_id }); 
-      }
-    });
+    useEffect(() => {
+      const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+        const route = response.notification.request.content.data.route;
+        if (route === 'message') {
+          const chatID = response.notification.request.content.data.chatID;
+          const user1 = response.notification.request.content.data.user1;
+          const user2 = response.notification.request.content.data.user2;
+          markNotificationAsRead(response.notification.request.identifier);
+          navigation.navigate('SpecificChatNotif', { chatID, user1, user2 });
+        }
+        if (route === 'mention') {
+          const post_id = response.notification.request.content.data.post_id;
+          markNotificationAsRead(response.notification.request.identifier);
+          navigation.navigate('PostDetailed', { post_id }); 
+        }
+      });
 
-    return () => {
-      Notifications.removeNotificationSubscription(responseListener);
+      return () => {
+        Notifications.removeNotificationSubscription(responseListener);
+      };
+    }, [navigation]);
+
+    const markNotificationAsRead = (notificationId) => {
+      console.log("ENTRA A MARCAR COMO LEIDA")
+      //const notificationId = notificatio;
+      //console.log(notificationId)
+      const notifRef = ref(db,`notifications/${notificationId}`);
+      console.log(notifRef)
+      get(notifRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log("ENTRA A MARCAR COMO LEIDA2")
+          update(notifRef, { read: true })
+        }
+      });
     };
-  }), [];
 
   return (
     <Drawer.Navigator
@@ -124,6 +147,7 @@ const MainNavigator = () => {
       <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
       <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
       <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
+      <Drawer.Screen name="NotificationsScreen" component={StackNavigatorNoifications} options={{ title: 'Notifications' }} />
       <Drawer.Screen name="SpecificChatNotif" component={SpecificChat}/>
     </Drawer.Navigator>
   );
