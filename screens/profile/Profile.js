@@ -212,7 +212,7 @@ function ProfileUser({ user }) {
 
   useEffect(() => {  
     handleGetMorePosts((new Date()).toISOString(), true)
-   }, [onlyReposts, refreshing]);
+   }, [onlyReposts, refreshing, onlyLikes]);
   
    useFocusEffect(
     React.useCallback(() => {
