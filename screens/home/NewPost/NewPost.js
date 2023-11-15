@@ -10,7 +10,7 @@ import PostHandler from '../../../handlers/posts/newPost';
 import ProfilePicture from '../../../components/ProfilePicture';
 import { useUser } from '../../../contexts/UserContext';
 import AlertBottomBanner from "../../../components/communicating_info/AlertBottomBanner"
-
+import { Alert }from 'react-native'
 TIMEOUT_ALERT_POST = 1500
 
 export default function NewPost() {
@@ -36,6 +36,10 @@ export default function NewPost() {
   }
 
   const onPostPress = async () => {
+    if (!text && !selectedImage) {
+      Alert.alert('Please enter some text or select an image');
+      return;
+    }
     setIsLoading(true);
 
     if (selectedImage) {
@@ -86,6 +90,10 @@ export default function NewPost() {
   };
 
   const addTag = (tag) => {
+    if (!tag) {
+      Alert.alert('Please enter a tag to add');
+      return;
+    }
     setTags([...tags, tag]);
     setTagInput('');
   };
