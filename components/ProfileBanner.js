@@ -83,10 +83,11 @@ export default function ProfileBanner({
                 onFollowingPress={handleFollowingButton}
                 onFollowersPress={handleFollowersButton}
               />
+              { ((user && user.is_public) || (user.email !== loggedInUser.email && isFollower) || (user.email === loggedInUser.email)) && (
               <ProfileExtraInfo
                 dateOfBirth={user.date_of_birth}
                 location={user.location}
-              />
+              />)}
             </View>
           </View>
         </View>
