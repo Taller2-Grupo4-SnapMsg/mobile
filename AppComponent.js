@@ -106,10 +106,14 @@ const MainNavigator = () => {
         const route = response.notification.request.content.data.route;
         if (route === 'message') {
           const chatID = response.notification.request.content.data.chatID;
-          const user1 = response.notification.request.content.data.user1;
-          const user2 = response.notification.request.content.data.user2;
+          const user_sender = response.notification.request.content.data.user_sender;
+          const user_receiver = response.notification.request.content.data.user_receiver;
           markNotificationAsRead(response.notification.request.identifier);
-          navigation.navigate('SpecificChatNotif', { chatID, user1, user2 });
+          console.log("al apretar la notificacion de mensaje")
+          console.log(chatID)
+          console.log(user_sender)
+          console.log(user_receiver)
+          navigation.navigate('Chat', { chatID, user_sender, user_receiver });
         }
         if (route === 'mention') {
           const post_id = response.notification.request.content.data.post_id;
@@ -124,7 +128,6 @@ const MainNavigator = () => {
     }, [navigation]);
 
     const markNotificationAsRead = (notificationId) => {
-      console.log("ENTRA A MARCAR COMO LEIDA")
       //const notificationId = notificatio;
       //console.log(notificationId)
       const notifRef = ref(db,`notifications/${notificationId}`);
@@ -132,7 +135,6 @@ const MainNavigator = () => {
       get(notifRef)
       .then((snapshot) => {
         if (snapshot.exists()) {
-          console.log("ENTRA A MARCAR COMO LEIDA2")
           update(notifRef, { read: true })
         }
       });
@@ -148,7 +150,7 @@ const MainNavigator = () => {
       <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
       <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
       <Drawer.Screen name="NotificationsScreen" component={StackNavigatorNoifications} options={{ title: 'Notifications' }} />
-      <Drawer.Screen name="SpecificChatNotif" component={SpecificChat}/>
+      <Drawer.Screen name="Chat" component={SpecificChat}/>
     </Drawer.Navigator>
   );
 };

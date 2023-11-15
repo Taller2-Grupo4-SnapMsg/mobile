@@ -24,8 +24,12 @@ AMOUNT_MSGS_BACK = 5
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const chatID = route.params.chatID;
-  const email_user1 = route.params.user1;
-  const email_user2 = route.params.user2;
+  const email_user_sender = route.params.user_sender;
+  const email_user_receiver = route.params.user_receiver;
+  console.log("ENTRA A SPECIFIC CHAT CON")
+  console.log(chatID)
+  console.log(email_user_sender)
+  console.log(email_user_receiver)
   const [messages, setMessages] = useState([]);
   
   function setInitialLatestTimestamp(messages) {
@@ -128,25 +132,14 @@ export default SpecificChat = ({ route }) => {
       };
 
       try{
-        if (loggedInUser.email === email_user1){
-          data= {
-            "route": 'message',
-            "chatID": chatID,
-            "user1": email_user1,
-            "user2": email_user2,
-            "avatar_sender": loggedInUser.avatar
-          }
-          await SendNotification([email_user2], `You have a new message from ${loggedInUser.username}`, newMessage, data)
-        } else {
-          data= {
-            "route": 'message',
-            "chatID": chatID,
-            "user1": email_user2,
-            "user2": email_user1,
-            "avatar_sender": loggedInUser.avatar
-          }
-          await SendNotification([email_user1], `You have a new message from ${loggedInUser.username}`, newMessage, data)
+        data= {
+          "route": 'message',
+          "chatID": chatID,
+          "user_sender": email_user_sender,
+          "user_receiver": email_user_receiver,
+          "avatar_sender": loggedInUser.avatar
         }
+        await SendNotification([email_user_receiver], `You have a new message from ${loggedInUser.username}`, newMessage, data)
       }catch(error){
         console.log(error)
       }

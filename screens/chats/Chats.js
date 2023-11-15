@@ -68,9 +68,19 @@ export default Chats = () => {
       // Retrieve the 20 most recent messages for the selected chat
     const chatID = item.chatID;
     const isNofification = false;
+    user_sender = "";
+    user_receiver = "";
+    if (loggedInUser.email == item.user1Email){
+      user_sender = loggedInUser.email;
+      user_receiver = item.user2Email;
+    }
+    if (loggedInUser.email == item.user2Email){
+      user_sender = loggedInUser.email;
+      user_receiver = item.user1Email;
+    }
     navigation.push('SpecificChat', { chatID:  chatID, 
-                                      user1: item.user1Email, 
-                                      user2: item.user2Email});
+                                      user_sender: user_sender, 
+                                      user_receiver: user_receiver});
     };
     
     //setUnreadMessages({1: 3})

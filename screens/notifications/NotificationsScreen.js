@@ -71,8 +71,6 @@ const NotificationsScreen = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.notificationContainer}>
-          {console.log("FUE LEIDA?")}
-          {console.log(item.read)}
             {item.type === 'message' ? (
               <NotificationMessage message={item.body} data={item.data} read={item.read} />
             ) : item.type === 'mention' ? (

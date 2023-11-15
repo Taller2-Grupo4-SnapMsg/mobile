@@ -74,14 +74,9 @@ export function UserProvider({ children }) {
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       const identifier = notification.request.identifier;
-
-      console.log("ENTRA A VER LA NOTIFICACION DE MENSAJE")
       const route = notification.request.content.data.route;
       if (route === "message") {
-        //const chatID = notification.request.content.data.chatID;
-        const user1 = notification.request.content.data.user1;
         const imageUrl = notification.request.content.data.imagenUrl;
-        //const user2 = notification.request.content.data.user2;
         const newNotif = {
           type: 'message',
           title: notification.request.content.title,
@@ -90,10 +85,9 @@ export function UserProvider({ children }) {
           timestamp: Date.now(),
           read: false,
         };
-        //const notificationId = generateNotificationID(user1, Date.now());
         const notificationId = identifier;
         const notifRef = ref(db, `notifications/${notificationId}`);
-
+        
         get(notifRef)
           .then(() => {
               set(notifRef, {
