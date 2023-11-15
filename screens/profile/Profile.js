@@ -97,12 +97,15 @@ function ProfileUser({ user }) {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
-  const [onlyReposts, setOnlyReposts] = useState(false);
-  const [postDeleted, setPostDeleted] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [userSnaps, setUserSnaps] = useState(null);
   const [deleteButtonsSpinners, setDeleteButtonsSpinners] = useState(false);
+
+  const [allPosts, setAllPosts] = useState(true);
+  const [onlyLikes, setOnlyLikes] = useState(false);
+  const [onlyReposts, setOnlyReposts] = useState(false);
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -151,15 +154,6 @@ function ProfileUser({ user }) {
   const handlePressEdit = (post) => {
     navigation.navigate('ProfileEditPost', { post: post});
   };
-
-  const setAlert = (message, color, timeout) => {
-    setAlertMessageColor(color);
-    setAlertMessage(message);
-    setTimeout(() => {
-      setAlertMessage(null);
-      setAlertMessageColor(null);
-    }, timeout);
-  }
 
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
@@ -223,6 +217,9 @@ function ProfileUser({ user }) {
    useFocusEffect(
     React.useCallback(() => {
       setRefreshing(true);
+      setAllPosts(true);
+      setOnlyLikes(false);
+      setOnlyReposts(false);
     }, [])
   );
 
@@ -245,6 +242,10 @@ function ProfileUser({ user }) {
           onlyReposts={onlyReposts} 
           snaps = {userSnaps}
           setOnlyReposts={setOnlyReposts}
+          setOnlyLikes={setOnlyLikes}
+          setAllPosts={setAllPosts}
+          onlyLikes={onlyLikes}
+          allPosts={allPosts}
           style={{ flex: 1}}
           />
         }

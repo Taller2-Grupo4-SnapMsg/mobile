@@ -8,8 +8,9 @@ import ProfileStats from './ProfileStats';
 import ProfileExtraInfo from './ProfileExtraInfo';
 import EditProfileButton from './EditProfileButton';
 import FollowButton from './FollowButton';
-import { AntDesign } from '@expo/vector-icons';
-
+import RoundedCheckboxButton from './RoundedCheckBox';
+import { useState } from 'react';
+import { set } from 'firebase/database';
 
 export default function ProfileBanner({ 
   user,
@@ -28,8 +29,33 @@ export default function ProfileBanner({
   handleFollowersButton,
   colorScheme, 
   onlyReposts,
-  setOnlyReposts
+  setOnlyReposts,
+  setOnlyLikes,
+  setAllPosts,
+  onlyLikes,
+  allPosts,
  }) {
+    const handleSetOnlyReposts = () => {
+      if (onlyReposts) {
+        setOnlyReposts(!onlyReposts);
+        setAllPosts(true);
+      } else {
+        setOnlyReposts(!onlyReposts);
+        setAllPosts(false);
+      }
+    }
+
+    const handleSetOnlyLikes = () => {
+      setOnlyLikes(!onlyLikes);
+    }
+
+    const handleSetAllPosts = () => {
+      if (!onlyReposts && !onlyLikes) return; 
+      setAllPosts(!allPosts);
+      setOnlyReposts(false);
+      setOnlyLikes(false);
+    }
+
     return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
@@ -37,16 +63,6 @@ export default function ProfileBanner({
             {user && loggedInUser && user.email === loggedInUser.email && (
               <View style={styles.buttonContainer}>
                 <EditProfileButton onPress={handleEditButton} />
-                <View style={onlyReposts
-                  ? styles.iconContainerPress
-                  : styles.iconContainer
-                }>
-                <AntDesign name={"retweet"} size={25} color="white"
-                onPress={() => {
-                  setOnlyReposts(!onlyReposts);
-                }}
-                />
-                </View>
               </View>
                 
                 
@@ -91,6 +107,12 @@ export default function ProfileBanner({
             </View>
           </View>
         </View>
+        {user && loggedInUser && user.email === loggedInUser.email &&
+        <View style={styles.checkBoxesContainer}>
+          <RoundedCheckboxButton text="Posts" isChecked={allPosts} onToggle={handleSetAllPosts} />
+          <RoundedCheckboxButton text="Snapshares" isChecked={onlyReposts} onToggle={handleSetOnlyReposts} />
+          <RoundedCheckboxButton text="Likes" isChecked={onlyLikes} onToggle={handleSetOnlyLikes} />
+      </View> }
       </ThemeProvider>
     )
 }
@@ -98,7 +120,7 @@ export default function ProfileBanner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 15,
+    marginTop: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: 'column',
     //height: 'auto', 
@@ -188,4 +210,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
   },
+  checkBoxesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+
+  },
+
 });
