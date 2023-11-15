@@ -16,7 +16,6 @@ const NotificationMention = ({ message, data, read }) => {
   useEffect(() => {
     const fetchPostById = async () => {
       if (data && data.post_id) {
-        console.log("entra a fetchPostById")
         setIsFetchingPost(true);
         const postId = parseInt(data.post_id, 10);
 

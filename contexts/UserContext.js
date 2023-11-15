@@ -99,8 +99,6 @@ export function UserProvider({ children }) {
             }
           );
 
-
-        //showNotification(notification, avatarUrl);
         setNotificationReceived(true);
       }
   

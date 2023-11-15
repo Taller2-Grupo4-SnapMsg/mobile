@@ -109,10 +109,6 @@ const MainNavigator = () => {
           const user_receiver = response.notification.request.content.data.user_sender;
           const user_sender = response.notification.request.content.data.user_receiver;
           markNotificationAsRead(response.notification.request.identifier, user_receiver);
-          console.log("al apretar la notificacion de mensaje")
-          console.log(chatID)
-          console.log(user_sender)
-          console.log(user_receiver)
           navigation.navigate('Chat', { chatID, user_receiver, user_sender });
         }
         if (route === 'mention') {
@@ -134,10 +130,7 @@ const MainNavigator = () => {
     }
 
     const markNotificationAsRead = (notificationId, user_receiver) => {
-      //const notificationId = notificatio;
-      //console.log(notificationId)
       const notifRef = ref(db,`notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
-      console.log(notifRef)
       get(notifRef)
       .then((snapshot) => {
         if (snapshot.exists()) {

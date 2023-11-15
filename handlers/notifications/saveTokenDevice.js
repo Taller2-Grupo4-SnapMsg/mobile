@@ -24,7 +24,6 @@ const SaveTokenDevice = async (device_token) => {
                 return post;
             } if (response.status === 400) {
                 console.log(response)
-                console.log(response.detail)
             } else {
                 console.error('Fallo el request al back de post:', response.status);
             }

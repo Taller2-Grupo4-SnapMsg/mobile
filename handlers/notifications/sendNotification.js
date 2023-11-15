@@ -16,11 +16,6 @@ const SendNotification = async (user_emails_that_receive,
                 'Accept': 'application/json',
                 'token': token,
               };
-            console.log("SE ENTRA A MANDAR LA NOTIFICACION CON:")
-            console.log(user_emails_that_receive)
-            console.log(title)
-            console.log(body)
-            console.log(data)
             const requestBody = {
                 user_emails_that_receive: user_emails_that_receive,
                 title: title,
