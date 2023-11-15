@@ -7,10 +7,16 @@ import { useFocusEffect } from '@react-navigation/native';
 import NotificationMessage from './NotificationMessage';
 import { StyleSheet } from 'react-native';
 import NotificationMention from './NotificationMention';
+import { useUser } from '../../contexts/UserContext';
+
+function generateUserEmailID(user_receiver_email) {
+  return `${user_receiver_email.replace(/[\.\#\$\/\[\]]/g, '_')}`;
+}
 
 const NotificationsScreen = () => {
+  const { loggedInUser } = useUser();
   const [notifications, setNotifications] = useState([]);
-  const notificationsRef = ref(db, 'notifications');
+  const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
 
   function setInitiaOldestTimestamp(notifications) {
     if (notifications && notifications.length > 0) {

@@ -65,13 +65,17 @@ export default function NewPost() {
       post_id = await PostHandler(text, '', tags, usernames);
     }
     
-    data = {
-      "route": 'mention',
-      "post_id": post_id.toString(),
-      "imageUrl": selectedImage,
-    }
     const emails = selectedMentions.map(mention => mention.email);
-    await SendNotification(emails, `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
+    for (let i = 0; i < emails.length; i++) {
+      data = {
+        "route": 'mention',
+        "post_id": post_id.toString(),
+        "user_sender": loggedInUser.email,
+        "user_receiver": emails[i],
+      }
+      await SendNotification(emails[i], `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
+    }
+    
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');

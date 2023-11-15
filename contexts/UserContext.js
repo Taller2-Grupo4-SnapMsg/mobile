@@ -10,6 +10,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import SaveTokenDevice from '../handlers/notifications/saveTokenDevice';
 import SendNotification from '../handlers/notifications/sendNotification';
+import NotificationComponent from './NotificationComponent';
 
 import { useRef } from 'react';
 import { Text, View, Button, Platform } from 'react-native';
@@ -63,11 +64,9 @@ export function UserProvider({ children }) {
     }
   }
 
-  function generateNotificationID(chatID, time) {
-    const sanitizedChatID = chatID.replace(/[\.\#\$\/\[\]]/g, '_');
-    return `${sanitizedChatID}_${time.toString()}`;
+  function generateUserEmailID(user_receiver_email) {
+    return `${user_receiver_email.replace(/[\.\#\$\/\[\]]/g, '_')}`;
   }
-  
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
@@ -75,8 +74,9 @@ export function UserProvider({ children }) {
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       const identifier = notification.request.identifier;
       const route = notification.request.content.data.route;
+      const avatarUrl = notification.request.content.data.avatarUrl;
       if (route === "message") {
-        const imageUrl = notification.request.content.data.imagenUrl;
+        const user_receiver = notification.request.content.data.user_receiver;
         const newNotif = {
           type: 'message',
           title: notification.request.content.title,
@@ -86,7 +86,7 @@ export function UserProvider({ children }) {
           read: false,
         };
         const notificationId = identifier;
-        const notifRef = ref(db, `notifications/${notificationId}`);
+        const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
         
         get(notifRef)
           .then(() => {
@@ -98,12 +98,15 @@ export function UserProvider({ children }) {
               });
             }
           );
-  
+
+
+        //showNotification(notification, avatarUrl);
         setNotificationReceived(true);
       }
   
       if (route === 'mention') {
         const post_id = notification.request.content.data.post_id;
+        const user_receiver = notification.request.content.data.user_receiver;
         const newNotif = {
           type: 'mention',
           title: notification.request.content.title,
@@ -115,7 +118,7 @@ export function UserProvider({ children }) {
   
         //const notificationId = generateNotificationID(post_id, Date.now());
         const notificationId = identifier;
-        const notifRef = ref(db, `notifications/${notificationId}`);
+        const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
 
         get(notifRef)
           .then(() => {

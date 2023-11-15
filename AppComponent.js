@@ -106,18 +106,19 @@ const MainNavigator = () => {
         const route = response.notification.request.content.data.route;
         if (route === 'message') {
           const chatID = response.notification.request.content.data.chatID;
-          const user_sender = response.notification.request.content.data.user_sender;
-          const user_receiver = response.notification.request.content.data.user_receiver;
-          markNotificationAsRead(response.notification.request.identifier);
+          const user_receiver = response.notification.request.content.data.user_sender;
+          const user_sender = response.notification.request.content.data.user_receiver;
+          markNotificationAsRead(response.notification.request.identifier, user_receiver);
           console.log("al apretar la notificacion de mensaje")
           console.log(chatID)
           console.log(user_sender)
           console.log(user_receiver)
-          navigation.navigate('Chat', { chatID, user_sender, user_receiver });
+          navigation.navigate('Chat', { chatID, user_receiver, user_sender });
         }
         if (route === 'mention') {
+          const user_receiver = response.notification.request.content.data.user_sender;
           const post_id = response.notification.request.content.data.post_id;
-          markNotificationAsRead(response.notification.request.identifier);
+          markNotificationAsRead(response.notification.request.identifier, user_receiver);
           navigation.navigate('PostDetailed', { post_id }); 
         }
       });
@@ -127,10 +128,15 @@ const MainNavigator = () => {
       };
     }, [navigation]);
 
-    const markNotificationAsRead = (notificationId) => {
+  
+    function generateUserEmailID(user_receiver_email) {
+      return `${user_receiver_email.replace(/[\.\#\$\/\[\]]/g, '_')}`;
+    }
+
+    const markNotificationAsRead = (notificationId, user_receiver) => {
       //const notificationId = notificatio;
       //console.log(notificationId)
-      const notifRef = ref(db,`notifications/${notificationId}`);
+      const notifRef = ref(db,`notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
       console.log(notifRef)
       get(notifRef)
       .then((snapshot) => {

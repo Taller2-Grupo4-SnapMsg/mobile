@@ -131,13 +131,24 @@ export default SpecificChat = ({ route }) => {
         avatar: loggedInUser.avatar,
       };
 
+      // email_user_sender = ""
+      // email_user_receiver = ""
+      // if (loggedInUser.email == email_user_sender){
+      //   email_user_sender = loggedInUser.email;
+      //   email_user_receiver = route.params.user_receiver;
+      // }
+      // if (loggedInUser.email != email_user_sender){
+      //   email_user_sender = loggedInUser.email;
+      //   email_user_receiver = route.params.user_sender;
+      // }
+
       try{
         data= {
           "route": 'message',
           "chatID": chatID,
           "user_sender": email_user_sender,
           "user_receiver": email_user_receiver,
-          "avatar_sender": loggedInUser.avatar
+          "avatarUrl": loggedInUser.avatar
         }
         await SendNotification([email_user_receiver], `You have a new message from ${loggedInUser.username}`, newMessage, data)
       }catch(error){
