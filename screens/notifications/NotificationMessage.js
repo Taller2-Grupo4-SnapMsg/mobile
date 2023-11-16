@@ -15,9 +15,10 @@ const NotificationMessage = ({ message, data, read }) => {
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Image source={{ uri: data.avatar_sender }} style={{ width: 50, height: 50, borderRadius: 25 }} />
+        { data?.avatarUrl && 
+        <Image source={{ uri: data.avatarUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />}
         <View style={{ marginLeft: 10 }}>
-          <Text style={{ fontWeight: 'bold' }}>{data.user2}</Text>
+          <Text style={{ fontWeight: 'bold' }}>{data.user_sender}</Text>
           <Text>{message}</Text>
         </View>
       </View>
