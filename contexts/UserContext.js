@@ -9,8 +9,6 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import SaveTokenDevice from '../handlers/notifications/saveTokenDevice';
-import SendNotification from '../handlers/notifications/sendNotification';
-import NotificationComponent from './NotificationComponent';
 
 import { useRef } from 'react';
 import { Text, View, Button, Platform } from 'react-native';
@@ -72,70 +70,6 @@ export function UserProvider({ children }) {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      const identifier = notification.request.identifier;
-      const route = notification.request.content.data.route;
-      const avatarUrl = notification.request.content.data.avatarUrl;
-      if (route === "message") {
-        const user_receiver = notification.request.content.data.user_receiver;
-        const newNotif = {
-          type: 'message',
-          title: notification.request.content.title,
-          body: notification.request.content.body,
-          data: notification.request.content.data,
-          timestamp: Date.now(),
-          read: false,
-        };
-        const notificationId = identifier;
-        const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
-        
-        get(notifRef)
-          .then(() => {
-              set(notifRef, {
-                notificationId,
-                ...newNotif,
-              }).catch((error) => {
-                console.log("hubo un error al crear la notificacion!!");
-              });
-            }
-          );
-
-        setNotificationReceived(true);
-      }
-  
-      if (route === 'mention') {
-        const post_id = notification.request.content.data.post_id;
-        const user_receiver = notification.request.content.data.user_receiver;
-        const newNotif = {
-          type: 'mention',
-          title: notification.request.content.title,
-          body: notification.request.content.body,
-          data: notification.request.content.data,
-          timestamp: Date.now(),
-          read: false,
-        };
-  
-        //const notificationId = generateNotificationID(post_id, Date.now());
-        const notificationId = identifier;
-        const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
-
-        get(notifRef)
-          .then(() => {
-              set(notifRef, {
-                notificationId,
-                ...newNotif,
-              }).catch((error) => {
-                console.log("hubo un error al crear la notificacion!!");
-              });
-            }
-          );
-  
-        setNotificationReceived(true);
-      }
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
     });
 
     return () => {

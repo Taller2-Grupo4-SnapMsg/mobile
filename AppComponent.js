@@ -98,31 +98,89 @@ const AuthNavigator = () => {
   );
 };
 
+//lastNotificationResponse.notification.request.content.data
+//lastNotificationResponse.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER
 const MainNavigator = () => {
     const navigation = useNavigation();
 
-    useEffect(() => {
-      const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-        const route = response.notification.request.content.data.route;
-        if (route === 'message') {
-          const chatID = response.notification.request.content.data.chatID;
-          const user_receiver = response.notification.request.content.data.user_sender;
-          const user_sender = response.notification.request.content.data.user_receiver;
-          markNotificationAsRead(response.notification.request.identifier, user_receiver);
-          navigation.navigate('Chat', { chatID, user_receiver, user_sender });
-        }
-        if (route === 'mention') {
-          const user_receiver = response.notification.request.content.data.user_sender;
-          const post_id = response.notification.request.content.data.post_id;
-          markNotificationAsRead(response.notification.request.identifier, user_receiver);
-          navigation.navigate('PostDetailed', { post_id }); 
-        }
-      });
-
-      return () => {
-        Notifications.removeNotificationSubscription(responseListener);
-      };
-    }, [navigation]);
+    // useEffect(() => {
+    //   const handleDeepLink = async () => {
+    //     const url = await Linking.getInitialURL();
+  
+    //     if (url) {
+    //       handleNavigation(url);
+    //     }
+  
+    //     const response = await Notifications.getLastNotificationResponseAsync();
+  
+    //     if (response) {
+    //       const urlFromNotification = response.notification.request.content.data;
+    //       const chatID = response.notification.request.content.data.chatID;
+    //       const user_receiver = response.notification.request.content.data.user_sender;
+    //       const user_sender = response.notification.request.content.data.user_receiver;
+          
+    //       if (urlFromNotification) {
+    //         navigation.navigate('Chat', { chatID, user_receiver, user_sender });
+    //       }
+    //     }
+    //   };
+  
+    //   const handleNavigation = (url) => {
+    //     console.log("ENTRA  A HANDLE NAVIGATION URL")
+    //     navigation.navigate('Chat', { chatID, user_receiver, user_sender });
+    //   };
+  
+    //   const extractScreenNameFromURL = (url) => {
+    //     const parts = url.split('//');
+    //     return parts[1];
+    //   };
+  
+    //   handleDeepLink();
+    //   const onReceiveURL = ({ url }) => handleNavigation(url);
+  
+    //   const linkingSubscription = Linking.addEventListener('url', onReceiveURL);
+    //   const notificationSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+    //     const url = response.notification.request.content.data.url;
+    //     if (url) {
+    //       handleNavigation(url);
+    //     }
+    //   });
+  
+    //   return () => {
+    //     linkingSubscription.remove();
+    //     notificationSubscription.remove();
+    //   };
+    // }, [navigation]);
+    console.log("ENTRA EN APP MAIN")
+      useEffect(() => async () => {
+         const response = await Notifications.getLastNotificationResponseAsync();
+         console.log("response")
+         console.log(response)
+         if (response) {
+          console.log("getLastNotificationResponseAsync");
+          const route = response.notification.request.content.data.route;
+          if (route === 'message') {
+            const chatID = response.notification.request.content.data.chatID;
+            const user_sender = response.notification.request.content.data.user_sender;
+            const user_receiver = response.notification.request.content.data.user_receiver;
+            markNotificationAsRead(response.notification.request.identifier);
+            console.log("al apretar la notificacion de mensaje")
+            console.log(chatID)
+            console.log(user_sender)
+            console.log(user_receiver)
+            navigation.navigate('Chat', { chatID, user_sender, user_receiver });
+          }
+          if (route === 'mention') {
+            const post_id = response.notification.request.content.data.post_id;
+            markNotificationAsRead(response.notification.request.identifier);
+            navigation.navigate('PostDetailed', { post_id }); 
+          }
+        };
+  
+        return () => {
+          Notifications.removeNotificationSubscription(responseListener);
+        };
+      }, [navigation]);
 
   
     function generateUserEmailID(user_receiver_email) {
@@ -158,6 +216,7 @@ const MainNavigator = () => {
 export default function AppComponent() {
   const {loggedInUser} = useUser(); 
   const colorScheme = useColorScheme();
+  console.log("ENTRA EN APP COMPONENT")
   
   return (
       <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -173,4 +232,4 @@ export default function AppComponent() {
         )}
       </NavigationContainer>
   );
-};
+}
