@@ -71,21 +71,23 @@ export default Chats = () => {
       limitToLast(AMOUNT_MSGS_BEGINNING)
     );
 
-    get(messageQuery)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const messages = Object.values(snapshot.val());
+    navigation.push('SpecificChat', { chatID: chatID });
 
-          navigation.push('SpecificChat', { messages: messages, chatID:  chatID});
-        } else {
-          // No messages found
-          navigation.push('SpecificChat', { messages: [], chatID: chatID });
-        }
-      })
-      .catch((error) => {
-        // Handle the error
-      });
-    };
+    // get(messageQuery)
+    //   .then((snapshot) => {
+    //     if (snapshot.exists()) {
+    //       const messages = Object.values(snapshot.val());
+
+    //       navigation.push('SpecificChat', { messages: messages, chatID:  chatID});
+    //     } else {
+    //       // No messages found
+    //       navigation.push('SpecificChat', { messages: [], chatID: chatID });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     // Handle the error
+    //   });
+  };
 
     if (item.user1Email === loggedInUser.email) {
       return (
