@@ -9,99 +9,80 @@ import NotificationMention from './NotificationMention';
 import { useUser } from '../../contexts/UserContext';
 import { useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+
 function generateUserEmailID(user_receiver_email) {
   return `${user_receiver_email.replace(/[\.\#\$\/\[\]]/g, '_')}`;
 }
 
-
 AMOUNT_NOTIFICATIONS_BACK = 1
 AMOUNT_NOTIFICATIONS_BEGINNING = 1
-
-
 
 const NotificationsScreen = () => {
   const { loggedInUser } = useUser();
   const [notifications, setNotifications] = useState([]);
-  const [latestTimestamp, setLatestTimestamp] = useState(0);
-  const [oldestTimestamp, setOldestTimestamp] = useState(0);
+  const [oldestTimestamp, setOldestTimestamp] = useState(0); // Inicializa con 0
   const flatListRef = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
   const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
 
-  const onChildAddedCallback = (snapshot) => {
-    if (snapshot) {
-      const newNotification = snapshot.val();
-      if (newNotification.timestamp > latestTimestamp) {
-        setLatestTimestamp(newNotification.timestamp);
-        setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
-        console.log("onChildAddedCallback", newNotification)
-      }
-    }
-  };
-
-  useEffect(() => {
-    const unsubscribe = onChildAdded(notificationsRef, onChildAddedCallback);
-
-    return () => {
-      off(notificationsRef, 'child_added', onChildAddedCallback);
-    };
-  }, []);
-
+  // ... (resto del código)
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          console.log("fetchData")
           const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
           const notificationQuery = query(
             notificationsRef,
             orderByChild('timestamp'),
             limitToLast(AMOUNT_NOTIFICATIONS_BEGINNING)
           );
+
           const snapshot = await get(notificationQuery);
+
           if (snapshot.exists()) {
-            const newest_notifications = Object.values(snapshot.val());
-            console.log("newest_notifications", newest_notifications)
-            setNotifications(newest_notifications);
-            console.log(newest_notifications)
-            setLatestTimestamp(newest_notifications[newest_notifications.length - 1].timestamp);
-            setOldestTimestamp(newest_notifications[0].timestamp);
-            
-          } else {
-            setNotifications([]);
-            setLatestTimestamp(0);
-            setOldestTimestamp(0);
+            const notificationsArray = [];
+            snapshot.forEach((childSnapshot) => {
+              const notification = childSnapshot.val();
+              notificationsArray.push(notification);
+            });
+
+            if (notificationsArray.length > 0) {
+              const newNotifications = [...notifications, ...notificationsArray];
+              setNotifications(newNotifications);
+              setOldestTimestamp(notificationsArray[0].timestamp);
+            }
           }
         } catch (error) {
-          // handle error
+          console.error('Error fetching notifications:', error);
         }
       };
 
       fetchData();
-    }, [])
+    }, [loggedInUser.email])
   );
-  
+
   const handleGetOlderNotifications = async () => {
-    console.log("handleGetOlderNotifications")
     if (refreshing) return;
     setRefreshing(true);
-    
+
     const queryRef = query(
       notificationsRef,
       orderByChild('timestamp'),
-      endAt(oldestTimestamp - 1), 
+      endAt(oldestTimestamp - 1),
       limitToLast(AMOUNT_NOTIFICATIONS_BACK)
     );
 
     try {
       const snapshot = await get(queryRef);
+
       if (snapshot.exists()) {
         const notificationsArray = [];
         snapshot.forEach((childSnapshot) => {
           const notification = childSnapshot.val();
           notificationsArray.push(notification);
         });
+
         if (notificationsArray.length > 0) {
           const newNotifications = [...notifications, ...notificationsArray];
           setNotifications(newNotifications);
@@ -111,9 +92,10 @@ const NotificationsScreen = () => {
 
       setRefreshing(false);
     } catch (error) {
-      console.error('Error fetching earlier messages:', error);
+      console.error('Error fetching earlier notifications:', error);
     }
   };
+
 
   return (
     <View style={styles.container}>
