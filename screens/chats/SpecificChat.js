@@ -17,29 +17,34 @@ import { query, orderByChild, endAt, get, limitToLast, ref, push, serverTimestam
 const { width, height } = Dimensions.get('window')
 
 AMOUNT_MSGS_BACK = 5
+AMOUNT_MSGS_BEGINNING = 10
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const chatID = route.params.chatID;
-  const [messages, setMessages] = useState(route.params.messages);
+  const [messages, setMessages] = useState([]);
   
-  function setInitialLatestTimestamp(messages) {
-    if (messages && messages.length > 0) {
-      return messages[messages.length - 1].timestamp;
-    } else {
-      return 0;
-    }
-  }
-  const [latestTimestamp, setLatestTimestamp] = useState(setInitialLatestTimestamp(messages));
+  // function setInitialLatestTimestamp(messages) {
+  //   if (messages && messages.length > 0) {
+  //     return messages[messages.length - 1].timestamp;
+  //   } else {
+  //     return 0;
+  //   }
+  // }
+  // const [latestTimestamp, setLatestTimestamp] = useState(setInitialLatestTimestamp(messages));
 
-  function setInitiaOldestTimestamp(messages) {
-    if (messages && messages.length > 0) {
-      return messages[0].timestamp;
-    } else {
-      return 0;
-    }
-  }
-  const [oldestTimestamp, setOldestTimestamp] = useState(setInitiaOldestTimestamp(messages));
+  // function setInitiaOldestTimestamp(messages) {
+  //   if (messages && messages.length > 0) {
+  //     return messages[0].timestamp;
+  //   } else {
+  //     return 0;
+  //   }
+  // }
+  // const [oldestTimestamp, setOldestTimestamp] = useState(setInitiaOldestTimestamp(messages));
+  
+  const [latestTimestamp, setLatestTimestamp] = useState(0);
+  const [oldestTimestamp, setOldestTimestamp] = useState(0);
+  
   const messagesRef = ref(db, `chats/${chatID}/messages`);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef(null);
@@ -74,8 +79,34 @@ export default SpecificChat = ({ route }) => {
     };
   }, [messages]);
 
+  useEffect(() => {
+    const messagesRef = ref(db, `chats/${chatID}/messages`); // Navigate to the 'messages' node
+    const messageQuery = query(
+      messagesRef,
+      orderByChild('timestamp'),
+      limitToLast(AMOUNT_MSGS_BEGINNING)
+    );
 
+    get(messageQuery)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const newest_messages = Object.values(snapshot.val());
+          setMessages(newest_messages);
+          setLatestTimestamp(messages[messages.length - 1].timestamp);
+          setOldestTimestamp(messages[0].timestamp);
+        } else {
+          // No messages found
+          setMessages([]);
+          setLatestTimestamp(0);
+          setOldestTimestamp(0);
+        }
+      })
+      .catch((error) => {
+        // Handle the error
+      });
+  }, []);
 
+  
   const handleGetOlderMsgs = async () => {
     if (refreshing) return;
 
