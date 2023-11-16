@@ -17,6 +17,7 @@ const NotificationsScreen = () => {
   const { loggedInUser } = useUser();
   const [notifications, setNotifications] = useState([]);
   const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
+  console.log("notificationsRef: ", notificationsRef)
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [oldestTimeStamp, setOldestTimeStamp] = useState(null);

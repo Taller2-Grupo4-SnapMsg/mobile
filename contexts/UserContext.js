@@ -4,8 +4,6 @@ import getUserByToken from '../handlers/getUserByToken';
 const UserContext = createContext();
 import { db } from '../firebase';
 import { ref, set, get } from 'firebase/database';
-
-import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import SaveTokenDevice from '../handlers/notifications/saveTokenDevice';
@@ -72,7 +70,6 @@ export function UserProvider({ children }) {
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       const identifier = notification.request.identifier;
       const route = notification.request.content.data.route;
-      const avatarUrl = notification.request.content.data.avatarUrl;
       if (route === "message") {
         const user_receiver = notification.request.content.data.user_receiver;
         const newNotif = {
@@ -85,7 +82,8 @@ export function UserProvider({ children }) {
         };
         const notificationId = identifier;
         const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
-        
+        console.log("notifRef: ", notifRef)
+
         get(notifRef)
           .then(() => {
               set(notifRef, {

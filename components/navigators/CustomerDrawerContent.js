@@ -3,11 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useUser } from '../../contexts/UserContext';
+import DeleteDeviceToken from '../../handlers/notifications/deleteTokenDevice';
 
 function CustomDrawerContent({ navigation }) {
   const {loggedInUser} = useUser(); 
 
   const handleSignOut = async () => {
+    await DeleteDeviceToken();
     navigation.reset({
       index: 0,
       routes: [{ name: 'SignIn' }],
