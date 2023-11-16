@@ -15,6 +15,7 @@ import { useUser } from '../../contexts/UserContext';
 import { db } from '../../firebase';
 import { query, orderByChild, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off } from 'firebase/database';
 const { width, height } = Dimensions.get('window')
+import SendNotification from '../../handlers/notifications/sendNotification'
 
 AMOUNT_MSGS_BACK = 5
 AMOUNT_MSGS_BEGINNING = 10

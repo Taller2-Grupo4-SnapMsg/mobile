@@ -1,13 +1,13 @@
-//me queda pendiente hacer que traiga de a x, recargue y demas
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
-import { query, orderByChild, onValue, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off } from 'firebase/database';
+import { query, orderByChild, limitToLast, ref, get, onChildAdded, off } from 'firebase/database';
 import { db } from '../../firebase';
 import { useFocusEffect } from '@react-navigation/native';
 import NotificationMessage from './NotificationMessage';
-import { StyleSheet } from 'react-native';
 import NotificationMention from './NotificationMention';
 import { useUser } from '../../contexts/UserContext';
+import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
+
+const AMOUNT_NOTIFICATIONS = 10;
 
 function generateUserEmailID(user_receiver_email) {
   return `${user_receiver_email.replace(/[\.\#\$\/\[\]]/g, '_')}`;
@@ -17,58 +17,58 @@ const NotificationsScreen = () => {
   const { loggedInUser } = useUser();
   const [notifications, setNotifications] = useState([]);
   const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [oldestTimeStamp, setOldestTimeStamp] = useState(null);
 
-  function setInitiaOldestTimestamp(notifications) {
-    if (notifications && notifications.length > 0) {
-      return notifications[0].timestamp;
-    } else {
-      return 0;
-    }
-  }
-  const [oldestTimestamp, setOldestTimestamp] = useState(setInitiaOldestTimestamp(notifications));
-
-  const handleGetNotifications = async () => {
-    //if (refreshing) return;
-
-    //setRefreshing(true);
-    const queryRef = query(
-      notificationsRef,
-      //orderByChild('timestamp'),
-      //endAt(oldestTimestamp - 1), // Fetch notifications with timestamps less than oldestTimestamp
-      //limitToLast(AMOUNT_MSGS_BACK)
-    );
+  const handleGetMoreNotifications = async (refresh) => {
+    if (loadingMore) return;
 
     try {
-      const snapshot = await get(queryRef);
-      if (snapshot.exists()) {
-        const notificationsArray = [];
-        snapshot.forEach((childSnapshot) => {
-          const message = childSnapshot.val();
-          notificationsArray.push(message);
-        });
-        if (notificationsArray.length > 0) {
-          setNotifications(notificationsArray);
-          //const NewNotifications = [...notificationsArray, ...notifications];
-          //setNotifications(NewNotifications);
-          const newOldestTimestamp = notificationsArray[0].timestamp;
-          setOldestTimestamp(newOldestTimestamp);
-        }
+      setLoadingMore(true);
+      setRefreshing(refresh);
+
+      const queryRef = query(
+        notificationsRef,
+        orderByChild('timestamp'),
+        limitToLast(AMOUNT_NOTIFICATIONS)
+      );
+
+      if (oldestTimeStamp) {
+        // Si ya tenemos un timestamp más antiguo, usamos endAt para obtener notificaciones anteriores
+        queryRef.endAt(oldestTimeStamp - 1);
       }
 
-      //setRefreshing(false);
+      const snapshot = await get(queryRef);
+
+      if (snapshot.exists()) {
+        const notificationsArray = Object.values(snapshot.val()).reverse();
+        if (notificationsArray.length > 0) {
+          const newOldestTimestamp = notificationsArray[0].timestamp;
+          setOldestTimeStamp(newOldestTimestamp);
+
+          if (refresh) {
+            setNotifications(notificationsArray);
+          } else {
+            setNotifications((prevNotifications) => [...prevNotifications, ...notificationsArray]);
+          }
+        }
+      }
     } catch (error) {
-      // Handle the error, e.g., display an error message
-      console.error('Error fetching earlier notifications:', error);
+      console.error('Error while loading more notifications:', error);
+    } finally {
+      setLoadingMore(false);
+      setRefreshing(false);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      handleGetNotifications();
+      // Al enfocar la pantalla, cargamos las notificaciones iniciales
+      handleGetMoreNotifications((new Date()).getTime(), true);
     }, [])
   );
 
-  const renderSeparator = () => <View style={styles.separator} />;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Notifications</Text>
@@ -85,6 +85,15 @@ const NotificationsScreen = () => {
             <View style={styles.separator} />
           </View>
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => handleGetMoreNotifications(true)}
+            colors={['#947EB0']}
+          />
+        }
+        onEndReached={() => handleGetMoreNotifications(false)}
+        onEndReachedThreshold={0.1}
       />
     </View>
   );
@@ -111,3 +120,4 @@ const styles = StyleSheet.create({
 });
 
 export default NotificationsScreen;
+
