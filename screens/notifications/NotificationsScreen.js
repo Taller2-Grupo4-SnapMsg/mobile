@@ -1,7 +1,7 @@
 //me queda pendiente hacer que traiga de a x, recargue y demas
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, RefreshControl } from 'react-native';
-import { query, orderByChild, onValue, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off } from 'firebase/database';
+import { query, orderByChild, onValue, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off, set } from 'firebase/database';
 import { db } from '../../firebase';
 import NotificationMessage from './NotificationMessage';
 import { StyleSheet } from 'react-native';
@@ -26,17 +26,8 @@ const NotificationsScreen = () => {
   const [oldestTimestamp, setOldestTimestamp] = useState(0);
   const flatListRef = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [initialFetch, setInitialFetch] = useState(true);
   const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
-
-
-  const onFlatListLayout = () => {
-    setTimeout(() => {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToEnd({ animated: true });
-      }
-    }, 100);
-  };
 
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
@@ -44,6 +35,7 @@ const NotificationsScreen = () => {
       if (newNotification.timestamp > latestTimestamp) {
         setLatestTimestamp(newNotification.timestamp);
         setNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+        console.log("onChildAddedCallback", newNotification)
       }
     }
   };
@@ -54,13 +46,14 @@ const NotificationsScreen = () => {
     return () => {
       off(notificationsRef, 'child_added', onChildAddedCallback);
     };
-  }, [notifications]);
+  }, []);
 
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
+          console.log("fetchData")
           const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
           const notificationQuery = query(
             notificationsRef,
@@ -70,14 +63,12 @@ const NotificationsScreen = () => {
           const snapshot = await get(notificationQuery);
           if (snapshot.exists()) {
             const newest_notifications = Object.values(snapshot.val());
+            console.log("newest_notifications", newest_notifications)
             setNotifications(newest_notifications);
-            
+            console.log(newest_notifications)
             setLatestTimestamp(newest_notifications[newest_notifications.length - 1].timestamp);
             setOldestTimestamp(newest_notifications[0].timestamp);
             
-            if (flatListRef.current) {
-              flatListRef.current.scrollToEnd({ animated: true });
-            }
           } else {
             setNotifications([]);
             setLatestTimestamp(0);
@@ -87,14 +78,12 @@ const NotificationsScreen = () => {
           // handle error
         }
       };
-  
-      fetchData();
     }, [])
   );
   
   const handleGetOlderNotifications = async () => {
+    console.log("handleGetOlderNotifications")
     if (refreshing) return;
-
     setRefreshing(true);
     
     const queryRef = query(
@@ -130,6 +119,7 @@ const NotificationsScreen = () => {
       <FlatList
         ref={flatListRef}
         data={notifications}
+
         renderItem={({ item }) => {
           if (item.type === 'message') {
             return <NotificationMessage message={item.body} data={item.data} read={item.read}  />;
@@ -137,9 +127,8 @@ const NotificationsScreen = () => {
             return <NotificationMention message={item.body} data={item.data} read={item.read}  />;
           }
         }}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.notificationId}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        onLayout={onFlatListLayout}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
