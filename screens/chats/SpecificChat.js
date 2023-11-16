@@ -28,13 +28,13 @@ export default SpecificChat = ({ route }) => {
   const email_user_receiver = route.params.user_receiver;
   const [messages, setMessages] = useState([]);
   
-  function setInitialLatestTimestamp(messages) {
-    if (messages && messages.length > 0) {
-      return messages[messages.length - 1].timestamp;
-    } else {
-      return 0;
-    }
-  }
+  // function setInitialLatestTimestamp(messages) {
+  //   if (messages && messages.length > 0) {
+  //     return messages[messages.length - 1].timestamp;
+  //   } else {
+  //     return 0;
+  //   }
+  // }
   const [latestTimestamp, setLatestTimestamp] = useState(setInitialLatestTimestamp(messages));
 
   function setInitiaOldestTimestamp(messages) {
@@ -126,17 +126,6 @@ export default SpecificChat = ({ route }) => {
         timestamp: currentTimestamp,
         avatar: loggedInUser.avatar,
       };
-
-      // email_user_sender = ""
-      // email_user_receiver = ""
-      // if (loggedInUser.email == email_user_sender){
-      //   email_user_sender = loggedInUser.email;
-      //   email_user_receiver = route.params.user_receiver;
-      // }
-      // if (loggedInUser.email != email_user_sender){
-      //   email_user_sender = loggedInUser.email;
-      //   email_user_receiver = route.params.user_sender;
-      // }
 
       try{
         data= {
