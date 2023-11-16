@@ -15,6 +15,7 @@ const NotificationMessage = ({ message, data, read }) => {
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={{ fontWeight: 'bold', marginRight: 10 }}>You have a new message!</Text>
         <Image source={{ uri: data.avatarUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
         <View style={{ marginLeft: 10 }}>
           <Text style={{ fontWeight: 'bold' }}>{data.user_sender}</Text>

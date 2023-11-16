@@ -103,8 +103,8 @@ const NotificationsScreen = () => {
           notificationsArray.push(notification);
         });
         if (notificationsArray.length > 0) {
-          const newNotifications = [...notificationsArray, ...notifications];
-          setNotifications(newNotifications.reverse());
+          const newNotifications = [...notifications, ...notificationsArray];
+          setNotifications(newNotifications);
           setOldestTimestamp(notificationsArray[0].timestamp);
         }
       }
