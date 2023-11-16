@@ -15,11 +15,9 @@ import { useUser } from '../../contexts/UserContext';
 import { db } from '../../firebase';
 import { query, orderByChild, endAt, get, limitToLast, ref, push, serverTimestamp, onChildAdded, off } from 'firebase/database';
 const { width, height } = Dimensions.get('window')
-import SendNotification from '../../handlers/notifications/sendNotification';
-import { useFocusEffect } from '@react-navigation/native';
-
 
 AMOUNT_MSGS_BACK = 5
+AMOUNT_MSGS_BEGINNING = 10
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
@@ -27,24 +25,9 @@ export default SpecificChat = ({ route }) => {
   const email_user_sender = route.params.user_sender;
   const email_user_receiver = route.params.user_receiver;
   const [messages, setMessages] = useState([]);
+  const [latestTimestamp, setLatestTimestamp] = useState(0);
+  const [oldestTimestamp, setOldestTimestamp] = useState(0);
   
-  // function setInitialLatestTimestamp(messages) {
-  //   if (messages && messages.length > 0) {
-  //     return messages[messages.length - 1].timestamp;
-  //   } else {
-  //     return 0;
-  //   }
-  // }
-  const [latestTimestamp, setLatestTimestamp] = useState(setInitialLatestTimestamp(messages));
-
-  function setInitiaOldestTimestamp(messages) {
-    if (messages && messages.length > 0) {
-      return messages[0].timestamp;
-    } else {
-      return 0;
-    }
-  }
-  const [oldestTimestamp, setOldestTimestamp] = useState(setInitiaOldestTimestamp(messages));
   const messagesRef = ref(db, `chats/${chatID}/messages`);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef(null);
@@ -62,7 +45,6 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
-      // Check if the new message has a higher timestamp than the latest one.
       if (newMessage.timestamp > latestTimestamp) {
         setLatestTimestamp(newMessage.timestamp);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -74,21 +56,54 @@ export default SpecificChat = ({ route }) => {
     const unsubscribe = onChildAdded(messagesRef, onChildAddedCallback);
 
     return () => {
-      // Stop listening for child added events when the component unmounts.
       off(messagesRef, 'child_added', onChildAddedCallback);
     };
   }, [messages]);
 
 
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const messagesRef = ref(db, `chats/${chatID}/messages`);
+        const messageQuery = query(
+          messagesRef,
+          orderByChild('timestamp'),
+          limitToLast(AMOUNT_MSGS_BEGINNING)
+        );
+  
+        const snapshot = await get(messageQuery);
+        if (snapshot.exists()) {
+          const newest_messages = Object.values(snapshot.val());
+          setMessages(newest_messages);
+          
+          setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
+          setOldestTimestamp(newest_messages[0].timestamp);
+          
+          if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+          }
+        } else {
+          setMessages([]);
+          setLatestTimestamp(0);
+          setOldestTimestamp(0);
+        }
+      } catch (error) {
+        // handle error
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
   const handleGetOlderMsgs = async () => {
     if (refreshing) return;
 
     setRefreshing(true);
+    
     const queryRef = query(
       messagesRef,
       orderByChild('timestamp'),
-      endAt(oldestTimestamp - 1), // Fetch messages with timestamps less than oldestTimestamp
+      endAt(oldestTimestamp - 1), 
       limitToLast(AMOUNT_MSGS_BACK)
     );
 
@@ -101,28 +116,25 @@ export default SpecificChat = ({ route }) => {
           messageArray.push(message);
         });
         if (messageArray.length > 0) {
-  
           const newMessages = [...messageArray, ...messages];
           setMessages(newMessages);
-          const newOldestTimestamp = messageArray[0].timestamp;
-          setOldestTimestamp(newOldestTimestamp);
+          setOldestTimestamp(messageArray[0].timestamp);
         }
       }
 
       setRefreshing(false);
     } catch (error) {
-      // Handle the error, e.g., display an error message
       console.error('Error fetching earlier messages:', error);
     }
   };
 
-  const send = async () => {
+  const send = async () =>  {
     if (newMessage.length > 0) {
       Keyboard.dismiss();
       const currentTimestamp = serverTimestamp();
       const newDBMessage = {
         text: newMessage,
-        sender: loggedInUser.email, //aca va siempre mi userId, porque soy el único que puede enviar en esta pantalla
+        sender: loggedInUser.email,
         timestamp: currentTimestamp,
         avatar: loggedInUser.avatar,
       };
@@ -140,10 +152,8 @@ export default SpecificChat = ({ route }) => {
         console.log(error)
       }
 
-      // Push the new message to the messages array
       push(messagesRef, newDBMessage)
       .then(() => {
-        // Message successfully added to the chat
         setNewMessage('')
       
         if (flatListRef.current) {
@@ -204,7 +214,7 @@ export default SpecificChat = ({ route }) => {
           style={styles.inputText}
           placeholderTextColor="#696969"
           onChangeText={msg => setNewMessage(msg)}
-          value={newMessage} // Bind the input value to the state
+          value={newMessage} 
           blurOnSubmit={true}
           onSubmitEditing={() => send()}
           placeholder="Type a message"

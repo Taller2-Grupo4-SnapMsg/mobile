@@ -6,8 +6,6 @@ import { Entypo } from '@expo/vector-icons';
 import { db } from '../../firebase';
 import { query, orderByChild, equalTo, or, limitToLast, get, ref } from 'firebase/database';
 import { useUser } from '../../contexts/UserContext';
-//import { Badge } from 'react-native-elements';
-import NotifBadge from '../../components/notifications/NotifBadge'
 
 AMOUNT_MSGS_BEGINNING = 10
 
@@ -17,8 +15,6 @@ export default Chats = () => {
   const [chats, setChats] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  //tendria que ponerla en un contexto
-  const [unreadMessages, setUnreadMessages] = useState({});
 
   useEffect(() => {
     handleRefresh();
@@ -65,11 +61,10 @@ export default Chats = () => {
   const renderItem = ({ item }) => {
     const handleChatPress = () => {
 
-      // Retrieve the 20 most recent messages for the selected chat
+    // Navigate to the 'messages' node
+    // Retrieve the 20 most recent messages for the selected chat
     const chatID = item.chatID;
-    const isNofification = false;
-    user_sender = "";
-    user_receiver = "";
+
     if (loggedInUser.email == item.user1Email){
       user_sender = loggedInUser.email;
       user_receiver = item.user2Email;
@@ -81,10 +76,7 @@ export default Chats = () => {
     navigation.push('SpecificChat', { chatID:  chatID, 
                                       user_sender: user_sender, 
                                       user_receiver: user_receiver});
-    };
-    
-    //setUnreadMessages({1: 3})
-    const getUnreadCount = (chatId) => unreadMessages[chatId] || 0;
+  };
 
     if (item.user1Email === loggedInUser.email) {
       return (
@@ -96,10 +88,7 @@ export default Chats = () => {
                 <Text style={styles.nameTxt} numberOfLines={1} ellipsizeMode="tail">
                   {item.user2Username}
                 </Text>
-                <View style={styles.columnContainer}>
-                  <Text style={styles.mblTxt}>Mobile</Text>
-                  <NotifBadge value={getUnreadCount(item.chatId)} />
-                </View>
+                <Text style={styles.mblTxt}>Mobile</Text>
               </View>
             </View>
           </View>
@@ -115,10 +104,7 @@ export default Chats = () => {
                 <Text style={styles.nameTxt} numberOfLines={1} ellipsizeMode="tail">
                   {item.user1Username}
                 </Text>
-                <View style={styles.columnContainer}>
-                  <Text style={styles.mblTxt}>Mobile</Text>
-                  <NotifBadge value={getUnreadCount(item.chatId)} />
-                </View>
+                <Text style={styles.mblTxt}>Mobile</Text>
               </View>
             </View>
           </View>
@@ -187,7 +173,6 @@ const styles = StyleSheet.create({
     fontWeight: '200',
     color: '#777',
     fontSize: 13,
-    marginRight: 50,
   },
   msgContainer: {
     flexDirection: 'row',
@@ -217,8 +202,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },columnContainer : {
-    flexDirection: 'row',
-    alignItems: 'center',
-  }
+  },
 })
