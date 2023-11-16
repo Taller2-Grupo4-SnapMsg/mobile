@@ -73,10 +73,10 @@ export default NewChat = () => {
             .then((snapshot) => {
               if (snapshot.exists()) {
                 const messages = Object.values(snapshot.val());
-                navigation.push('SpecificChat', { chatID: chatID });
+                navigation.push('SpecificChat', { messages: messages, chatID: chatID });
               } else {
                 // No messages found
-                navigation.push('SpecificChat', { chatID: chatID });
+                navigation.push('SpecificChat', { messages: [], chatID: chatID });
               }
             })
             .catch((error) => {
@@ -99,7 +99,7 @@ export default NewChat = () => {
               messages: [],
             }).then(() => {
               // chat created successfully
-              navigation.push('SpecificChat', { chatID: chatID });
+              navigation.push('SpecificChat', { messages: [], chatID: chatID });
             }).catch((error) => {
               console.log("hubo un error al crear la conver!!");
               // Handle the error
