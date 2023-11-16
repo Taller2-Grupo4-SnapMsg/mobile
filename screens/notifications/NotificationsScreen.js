@@ -26,7 +26,6 @@ const NotificationsScreen = () => {
   const [oldestTimestamp, setOldestTimestamp] = useState(0);
   const flatListRef = useRef(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [initialFetch, setInitialFetch] = useState(true);
   const notificationsRef = ref(db, `notifications/${generateUserEmailID(loggedInUser.email)}`);
 
   const onChildAddedCallback = (snapshot) => {
@@ -34,7 +33,7 @@ const NotificationsScreen = () => {
       const newNotification = snapshot.val();
       if (newNotification.timestamp > latestTimestamp) {
         setLatestTimestamp(newNotification.timestamp);
-        setNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+        setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
         console.log("onChildAddedCallback", newNotification)
       }
     }
