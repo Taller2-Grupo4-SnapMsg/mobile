@@ -77,6 +77,8 @@ const NotificationsScreen = () => {
           // handle error
         }
       };
+
+      fetchData();
     }, [])
   );
   
