@@ -13,7 +13,7 @@ const NotificationMessage = ({ message, data, read, onPress }) => {
         <View style={styles.rowContainer}>
           <Image source={{ uri: data.avatarUrl }} style={styles.avatar} />
           <View>
-            <Text style={styles.username}>{data.user_sender}</Text>
+            <Text style={styles.username}>{data.username}</Text>
             <Text>{message}</Text>
           </View>
         </View>

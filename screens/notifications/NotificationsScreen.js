@@ -7,6 +7,7 @@ import NotificationMention from './NotificationMention';
 import { useUser } from '../../contexts/UserContext';
 import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
+import { useNavigation } from '@react-navigation/native';
 
 const AMOUNT_NOTIFICATIONS = 10;
 
@@ -68,6 +69,10 @@ const NotificationsScreen = () => {
       setLoadingMore(false);
     }
   };
+  const navigation = useNavigation();
+  const handleTouchNotification = (data) => {
+    navigation.navigate('Chat', { chatID: data.chatID, user_receiver: data.user_receiver, user_sender: data.user_sender });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -77,14 +82,13 @@ const NotificationsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notifications</Text>
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.notificationId}
         renderItem={({ item }) => (
           <View style={styles.notificationContainer}>
             {item.type === 'message' ? (
-              <NotificationMessage message={item.body} data={item.data} read={item.read} />
+              <NotificationMessage message={item.body} data={item.data} read={item.read} onPress={handleTouchNotification}/>
             ) : item.type === 'mention' ? (
               <NotificationMention message={item.body} data={item.data} read={item.read} />
             ) : null}
@@ -109,7 +113,6 @@ const NotificationsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
   title: {
     fontSize: 24,
@@ -118,12 +121,9 @@ const styles = StyleSheet.create({
   },
   notificationContainer: {
     marginBottom: 15,
-    backgroundColor: '#f0f0f0',
     borderRadius: 8,
   },
-  separator: {
-    marginVertical: 10,
-  },
+
 });
 
 export default NotificationsScreen;
