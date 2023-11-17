@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { useColorScheme } from 'react-native';
 import Post from '../../components/posts/Post';
+import NotificationPost from '../../components/posts/NotificationPost';
 import React, { useState, useEffect } from 'react';
 import getPostById from '../../handlers/posts/getPostById';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -10,14 +11,14 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const NotificationMention = ({ message, data, read }) => {
+const NotificationMention = ({ message, data, read}) => {
   const [post, setPost] = useState(null);
   const [isFetchingPost, setIsFetchingPost] = useState(false);
 
   const navigation = useNavigation();
 
   const handlePressNotification = (data) => {
-    navigation.navigate('PostDetail', { postId: data.post_id });
+    navigation.navigate("PostDetailedNotification", { post_id: data.post_id });
   };
   
   useEffect(() => {
@@ -61,11 +62,11 @@ const NotificationMention = ({ message, data, read }) => {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
           <View style={styles.container}>
               <View style={styles.container_reposted}>
-                  <Text style={styles.name}>You have been mentioned</Text>
+                  <Text style={styles.boldText}>Someone mentioned you in a snap!</Text>
               </View>
           
               <View>
-              <Post post={post[0]} />
+              <NotificationPost post={post[0]} />
               </View>
           </View>
           
@@ -77,9 +78,8 @@ const NotificationMention = ({ message, data, read }) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingVertical: 5,
     flexDirection: 'column',
-    padding: 10,
-    //borderBottomWidth: StyleSheet.hairlineWidth,
   },
   container_reposted: {
     flexDirection: 'row',
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   username: {
-    marginTop: 10,
+    marginTop: 5,
     color: 'gray',
     marginLeft: 5,
   },
@@ -125,7 +125,14 @@ const styles = StyleSheet.create({
   reposted_text: {
     color: 'gray',
     fontSize: 14,
-  }
+  },
+  boldText: {
+    paddingHorizontal: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#6B5A8E',
+  },
+
 });
 
 export default NotificationMention;

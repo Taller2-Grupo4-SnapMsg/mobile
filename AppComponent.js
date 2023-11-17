@@ -47,11 +47,12 @@ const StackNavigatorHome = () => {
   );
 };
 
-const StackNavigatorNoifications = () => {
+const StackNavigatorNotifications = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="InNotificationsScreen" component={NotificationsScreen} />
       <Stack.Screen name="SpecificChat" component={SpecificChat} />
+      <Stack.Screen name="PostDetailedNotification" component={PostDetailed} />
     </Stack.Navigator>
   );
 };
@@ -149,7 +150,7 @@ return (
     <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
     <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
     <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
-    <Drawer.Screen name="NotificationsScreen" component={StackNavigatorNoifications} options={{ title: 'Notifications' }} />
+    <Drawer.Screen name="NotificationsScreen" component={StackNavigatorNotifications} options={{ title: 'Notifications' }} />
     <Drawer.Screen name="Chat" component={SpecificChat}/>
   </Drawer.Navigator>
 );
