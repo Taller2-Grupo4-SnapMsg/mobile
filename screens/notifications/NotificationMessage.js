@@ -1,12 +1,19 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const NotificationMessage = ({ message, data, read, onPress }) => {
+const NotificationMessage = ({ message, data, read }) => {
+  const navigation = useNavigation();
+
+  const handlePressNotification = (data) => {
+    navigation.navigate('SpecificChat', { chatID: data.chatID, user_receiver: data.user_receiver, user_sender: data.user_sender });
+  };
+
   return (
     <TouchableOpacity
-      disabled={read}
-      style={[styles.container, { opacity: read ? 0.5 : 1 }]}
-      onPress={() => onPress(data)}
+    disabled={read}
+    style={[styles.container, { opacity: read ? 0.5 : 1 }]}
+    onPress={() => handlePressNotification(data)}
     >
       <View style={styles.textContainer}>
         <Text style={styles.boldText}>You have a new message!</Text>
@@ -18,7 +25,7 @@ const NotificationMessage = ({ message, data, read, onPress }) => {
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
   );
 };
 
@@ -36,6 +43,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#6B5A8E',
+    marginBottom: 20,
   },
   rowContainer: {
     flexDirection: 'row',

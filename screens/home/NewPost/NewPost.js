@@ -73,7 +73,7 @@ export default function NewPost() {
         "user_sender": loggedInUser.email,
         "user_receiver": emails[i],
       }
-      await SendNotification(emails[i], `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
+      await SendNotification([emails[i]], `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
     }
     
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)

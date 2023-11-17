@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { useColorScheme } from 'react-native';
 import Post from '../../components/posts/Post';
 import React, { useState, useEffect } from 'react';
 import getPostById from '../../handlers/posts/getPostById';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { useNavigation } from '@react-navigation/native';
 import {
   DarkTheme,
   ThemeProvider,
@@ -12,6 +13,12 @@ import {
 const NotificationMention = ({ message, data, read }) => {
   const [post, setPost] = useState(null);
   const [isFetchingPost, setIsFetchingPost] = useState(false);
+
+  const navigation = useNavigation();
+
+  const handlePressNotification = (data) => {
+    navigation.navigate('PostDetail', { postId: data.post_id });
+  };
   
   useEffect(() => {
     const fetchPostById = async () => {
@@ -46,6 +53,11 @@ const NotificationMention = ({ message, data, read }) => {
     );
   } if (post){
     return (
+      <TouchableOpacity
+      disabled={read}
+      style={[styles.container, { opacity: read ? 0.5 : 1 }]}
+      onPress={() => handlePressNotification(data)}
+      >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
           <View style={styles.container}>
               <View style={styles.container_reposted}>
@@ -58,6 +70,7 @@ const NotificationMention = ({ message, data, read }) => {
           </View>
           
         </ThemeProvider>
+        </TouchableOpacity>
       );
   }
   };

@@ -149,9 +149,11 @@ export default SpecificChat = ({ route }) => {
           "avatarUrl": loggedInUser.avatar,
           "name": loggedInUser.name,
           "username": loggedInUser.username,
-          "send_at": currentTimestamp,
         }
-        await SendNotification([email_user_receiver], `You have a new message from ${loggedInUser.username}`, newMessage, data)
+        await SendNotification([email_user_receiver], 
+                              `You have a new message from ${loggedInUser.username}`, 
+                              newMessage, 
+                              data)
       }catch(error){
         console.log(error)
       }

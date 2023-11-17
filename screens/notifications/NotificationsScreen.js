@@ -69,10 +69,6 @@ const NotificationsScreen = () => {
       setLoadingMore(false);
     }
   };
-  const navigation = useNavigation();
-  const handleTouchNotification = (data) => {
-    navigation.navigate('Chat', { chatID: data.chatID, user_receiver: data.user_receiver, user_sender: data.user_sender });
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -88,7 +84,7 @@ const NotificationsScreen = () => {
         renderItem={({ item }) => (
           <View style={styles.notificationContainer}>
             {item.type === 'message' ? (
-              <NotificationMessage message={item.body} data={item.data} read={item.read} onPress={handleTouchNotification}/>
+              <NotificationMessage message={item.body} data={item.data} read={item.read}/>
             ) : item.type === 'mention' ? (
               <NotificationMention message={item.body} data={item.data} read={item.read} />
             ) : null}
@@ -120,7 +116,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   notificationContainer: {
-    marginBottom: 15,
     borderRadius: 8,
   },
 
