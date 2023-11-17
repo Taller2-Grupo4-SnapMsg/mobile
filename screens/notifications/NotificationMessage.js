@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 const NotificationMessage = ({ message, data, read }) => {
   const navigation = useNavigation();
 
@@ -16,7 +16,12 @@ const NotificationMessage = ({ message, data, read }) => {
     onPress={() => handlePressNotification(data)}
     >
       <View style={styles.textContainer}>
+
+      <View style={styles.container_reposted}> 
+      <Icon name="envelope" size={16} color="#FFA07A" />
         <Text style={styles.boldText}>You have a new message!</Text>
+              </View>
+      
         <View style={styles.rowContainer}>
           <Image source={{ uri: data.avatarUrl }} style={styles.avatar} />
           <View>
@@ -35,15 +40,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
   },
+  container_reposted: {
+    flexDirection: 'row',
+    paddingBottom: 6,
+    alignItems: 'center',
+  },
   textContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
   boldText: {
+    paddingLeft: 5,
     fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#6B5A8E',
-    marginBottom: 20,
+    color: '#FFA07A',
   },
   rowContainer: {
     flexDirection: 'row',

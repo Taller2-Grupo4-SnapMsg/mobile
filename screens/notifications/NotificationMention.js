@@ -10,6 +10,8 @@ import {
   DarkTheme,
   ThemeProvider,
 } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const NotificationMention = ({ message, data, read}) => {
   const [post, setPost] = useState(null);
@@ -61,7 +63,8 @@ const NotificationMention = ({ message, data, read}) => {
       >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
           <View style={styles.container}>
-              <View style={styles.container_reposted}>
+              <View style={styles.container_reposted}> 
+                <Icon name="at" size={16} color="blue" />
                   <Text style={styles.boldText}>Someone mentioned you in a snap!</Text>
               </View>
           
@@ -82,7 +85,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   container_reposted: {
+    paddingLeft: 20,
     flexDirection: 'row',
+    alignItems: 'center',
   },
   mainContainer: {
     marginLeft: 10,
@@ -127,10 +132,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   boldText: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
     fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#6B5A8E',
+    color: 'blue',
   },
 
 });
