@@ -27,5 +27,7 @@ const styles = StyleSheet.create({
   },
   followButtonText: {
     fontWeight: 'bold',
+    color: 'white',
   },
 });
+

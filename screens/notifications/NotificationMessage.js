@@ -1,30 +1,56 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-const avatarLink = 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-2.webp';
-
-const NotificationMessage = ({ message, data, read }) => {
+const NotificationMessage = ({ message, data, read, onPress }) => {
   return (
     <TouchableOpacity
       disabled={read}
-      style={{
-        opacity: read ? 0.5 : 1,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        padding: 10,
-        marginBottom: 10,
-      }}
+      style={[styles.container, { opacity: read ? 0.5 : 1 }]}
+      onPress={() => onPress(data)}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text style={{ fontWeight: 'bold', marginRight: 10 }}>You have a new message!</Text>
-        <Image source={{ uri: data.avatarUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
-        <View style={{ marginLeft: 10 }}>
-          <Text style={{ fontWeight: 'bold' }}>{data.user_sender}</Text>
-          <Text>{message}</Text>
+      <View style={styles.textContainer}>
+        <Text style={styles.boldText}>You have a new message!</Text>
+        <View style={styles.rowContainer}>
+          <Image source={{ uri: data.avatarUrl }} style={styles.avatar} />
+          <View>
+            <Text style={styles.username}>{data.user_sender}</Text>
+            <Text>{message}</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default NotificationMessage;
+const styles = StyleSheet.create({
+  container: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  textContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  boldText: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#6B5A8E',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  username: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+});
 
+export default NotificationMessage;

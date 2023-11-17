@@ -51,6 +51,7 @@ const StackNavigatorNoifications = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="InNotificationsScreen" component={NotificationsScreen} />
+      <Stack.Screen name="SpecificChat" component={SpecificChat} />
     </Stack.Navigator>
   );
 };
