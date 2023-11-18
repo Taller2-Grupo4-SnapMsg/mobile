@@ -64,7 +64,7 @@ const NotificationMention = ({ message, data, read}) => {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
           <View style={styles.container}>
               <View style={styles.container_reposted}> 
-                <Icon name="at" size={16} color="blue" />
+                <Icon name="at" size={16} color="#449DD1" />
                   <Text style={styles.boldText}>Someone mentioned you in a snap!</Text>
               </View>
           
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   boldText: {
     paddingHorizontal: 5,
     fontWeight: 'bold',
-    color: 'blue',
+    color: '#449DD1',
   },
 
 });

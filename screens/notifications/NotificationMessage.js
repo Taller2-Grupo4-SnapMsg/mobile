@@ -18,7 +18,7 @@ const NotificationMessage = ({ message, data, read }) => {
       <View style={styles.textContainer}>
 
       <View style={styles.container_reposted}> 
-      <Icon name="envelope" size={16} color="#FFA07A" />
+      <Icon name="envelope" size={16} color="#D8572A" />
         <Text style={styles.boldText}>You have a new message!</Text>
               </View>
       
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   container_reposted: {
     flexDirection: 'row',
-    paddingBottom: 6,
+    paddingBottom: 10,
     alignItems: 'center',
   },
   textContainer: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   boldText: {
     paddingLeft: 5,
     fontWeight: 'bold',
-    color: '#FFA07A',
+    color: '#D8572A',
   },
   rowContainer: {
     flexDirection: 'row',
