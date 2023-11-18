@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { query, orderByChild, limitToLast, ref, get, onChildAdded, off, endAt } from 'firebase/database';
+import { query, orderByChild, limitToLast, ref, get, endAt } from 'firebase/database';
 import { db } from '../../firebase';
 import { useFocusEffect } from '@react-navigation/native';
 import NotificationMessage from './NotificationMessage';
@@ -7,7 +7,6 @@ import NotificationMention from './NotificationMention';
 import { useUser } from '../../contexts/UserContext';
 import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
-import { useNavigation } from '@react-navigation/native';
 
 const AMOUNT_NOTIFICATIONS = 10;
 

@@ -1,16 +1,12 @@
 import React from 'react';
 import { storage } from '../../firebase';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {useState, useEffect} from 'react'; 
-import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+import { ref, getDownloadURL } from "firebase/storage";
+import {useState} from 'react'; 
+import { View, Text, Image, StyleSheet} from 'react-native';
 import { useColorScheme } from 'react-native';
 import Avatar from '../Avatar';
-import RepostButton from './RepostButton';
-import LikeButton from './LikeButton';
 import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../../contexts/UserContext';
-import PostPictureModal from '../PostPictureModal';
-import { useNavigation } from '@react-navigation/native';
 import {
   DarkTheme,
   ThemeProvider,
@@ -50,7 +46,6 @@ const NotificationPost = ({ post,}) => {
     }
   };
   
-  // Call the function when the component mounts
   useFocusEffect(
     React.useCallback(() => {
       fetchImageURL();
@@ -121,37 +116,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingRight: 25,
   }
-
-
-  // container: {
-  //   borderBottomWidth: StyleSheet.hairlineWidth,
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 15,
-  // },
-  // textContainer: {
-  //   flexDirection: 'column',
-  //   alignItems: 'flex-start',
-  // },
-  // boldText: {
-  //   fontWeight: 'bold',
-  //   marginBottom: 5,
-  //   color: '#6B5A8E',
-  //   marginBottom: 20,
-  // },
-  // rowContainer: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
-  // avatar: {
-  //   width: 50,
-  //   height: 50,
-  //   borderRadius: 25,
-  //   marginRight: 10,
-  // },
-  // username: {
-  //   fontWeight: 'bold',
-  //   marginBottom: 5,
-  // },
 });
 
 export default NotificationPost;

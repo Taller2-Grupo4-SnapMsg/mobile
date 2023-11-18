@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { useColorScheme } from 'react-native';
-import Post from '../../components/posts/Post';
 import NotificationPost from '../../components/posts/NotificationPost';
 import React, { useState, useEffect } from 'react';
 import getPostById from '../../handlers/posts/getPostById';

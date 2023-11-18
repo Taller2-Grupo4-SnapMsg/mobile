@@ -9,7 +9,7 @@ import * as Notifications from 'expo-notifications';
 import SaveTokenDevice from '../handlers/notifications/saveTokenDevice';
 
 import { useRef } from 'react';
-import { Text, View, Button, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 const appConfig = require('../app.json')
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
@@ -110,7 +110,6 @@ export function UserProvider({ children }) {
           read: false,
         };
   
-        //const notificationId = generateNotificationID(post_id, Date.now());
         const notificationId = identifier;
         const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
 
