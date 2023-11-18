@@ -80,7 +80,6 @@ const handleSelectImage = async () => {
   };
 
   const addTag = () => {
-    console.log("Entra a addTag: ",tagInput.trim());
     if (tagInput.trim() !== '') {
       setNewHashtags([...newHashtags, tagInput.trim()]);
       setTagInput('');

@@ -61,31 +61,22 @@ export default Chats = () => {
   const renderItem = ({ item }) => {
     const handleChatPress = () => {
 
-      // Retrieve the 20 most recent messages for the selected chat
+    // Navigate to the 'messages' node
+    // Retrieve the 20 most recent messages for the selected chat
     const chatID = item.chatID;
 
-    const messagesRef = ref(db, `chats/${chatID}/messages`); // Navigate to the 'messages' node
-    const messageQuery = query(
-      messagesRef,
-      orderByChild('timestamp'),
-      limitToLast(AMOUNT_MSGS_BEGINNING)
-    );
-
-    get(messageQuery)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const messages = Object.values(snapshot.val());
-
-          navigation.push('SpecificChat', { messages: messages, chatID:  chatID});
-        } else {
-          // No messages found
-          navigation.push('SpecificChat', { messages: [], chatID: chatID });
-        }
-      })
-      .catch((error) => {
-        // Handle the error
-      });
-    };
+    if (loggedInUser.email == item.user1Email){
+      user_sender = loggedInUser.email;
+      user_receiver = item.user2Email;
+    }
+    if (loggedInUser.email == item.user2Email){
+      user_sender = loggedInUser.email;
+      user_receiver = item.user1Email;
+    }
+    navigation.push('SpecificChat', { chatID:  chatID, 
+                                      user_sender: user_sender, 
+                                      user_receiver: user_receiver});
+  };
 
     if (item.user1Email === loggedInUser.email) {
       return (

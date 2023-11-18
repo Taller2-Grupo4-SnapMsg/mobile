@@ -16,6 +16,7 @@ import { ref } from 'firebase/database';
 import { query, orderByChild, limitToLast, get, set, serverTimestamp } from 'firebase/database';
 
 
+
 export default NewChat = () => { 
     const navigation = useNavigation();
     const { loggedInUser } = useUser();
@@ -73,10 +74,10 @@ export default NewChat = () => {
             .then((snapshot) => {
               if (snapshot.exists()) {
                 const messages = Object.values(snapshot.val());
-                navigation.push('SpecificChat', { messages: messages, chatID: chatID });
+                navigation.push('SpecificChat', { chatID: chatID });
               } else {
                 // No messages found
-                navigation.push('SpecificChat', { messages: [], chatID: chatID });
+                navigation.push('SpecificChat', { chatID: chatID });
               }
             })
             .catch((error) => {
@@ -99,7 +100,7 @@ export default NewChat = () => {
               messages: [],
             }).then(() => {
               // chat created successfully
-              navigation.push('SpecificChat', { messages: [], chatID: chatID });
+              navigation.push('SpecificChat', { chatID: chatID });
             }).catch((error) => {
               console.log("hubo un error al crear la conver!!");
               // Handle the error

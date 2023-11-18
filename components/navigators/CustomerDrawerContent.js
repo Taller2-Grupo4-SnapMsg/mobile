@@ -3,11 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useUser } from '../../contexts/UserContext';
+import DeleteDeviceToken from '../../handlers/notifications/deleteTokenDevice';
 
 function CustomDrawerContent({ navigation }) {
   const {loggedInUser} = useUser(); 
 
   const handleSignOut = async () => {
+    await DeleteDeviceToken();
     navigation.reset({
       index: 0,
       routes: [{ name: 'SignIn' }],
@@ -78,6 +80,18 @@ function CustomDrawerContent({ navigation }) {
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            navigation.navigate('NotificationsScreen');
+          }}
+        >
+          <View style={styles.itemContainer}>
+            <Icon name="bell" size={25} color="#6B5A8E" style={styles.icon}/>
+            <Text style={styles.drawerItemText}>Notifications</Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
         <View style={styles.avatarSignoutContainer}>
           <View style={styles.cont}>
@@ -97,7 +111,7 @@ function CustomDrawerContent({ navigation }) {
           onPress={handleSignOut}
         >
           <View style={styles.icon}>
-            <Icon name="sign-out" size={40} color="#6B5A8E" />
+            <Icon name="sign-out" size={30} color="#6B5A8E" />
             <Text style={[styles.drawerItemText, styles.signOutText]}></Text>
           </View>
         </TouchableOpacity>

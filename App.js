@@ -4,7 +4,6 @@ import { UserProvider } from './contexts/UserContext';
 import AppComponent from './AppComponent';
 
 export default function App() {
-  
   return (
     <UserProvider>
       <AppComponent />

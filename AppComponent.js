@@ -19,12 +19,18 @@ import CustomDrawerContent from './components/navigators/CustomerDrawerContent';
 import Chats from './screens/chats/Chats';
 import SpecificChat from './screens/chats/SpecificChat';
 import NewChat from './screens/chats/NewChat';
+import NotificationsScreen from './screens/notifications/NotificationsScreen';
+import { ref, set, get, update } from 'firebase/database';
+import { db } from './firebase';
 
 import { useColorScheme } from 'react-native';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 
 import { useUser } from './contexts/UserContext';
+
+import * as Notifications from 'expo-notifications';
+import { useNavigation } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -37,6 +43,16 @@ const StackNavigatorHome = () => {
       <Stack.Screen name="PostDetailed" component={PostDetailed} />
       <Stack.Screen name="NewPost" component={NewPost} />
       <Stack.Screen name="Profile" component={Profile} />
+    </Stack.Navigator>
+  );
+};
+
+const StackNavigatorNotifications = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="InNotificationsScreen" component={NotificationsScreen} />
+      <Stack.Screen name="SpecificChat" component={SpecificChat} />
+      <Stack.Screen name="PostDetailedNotification" component={PostDetailed} />
     </Stack.Navigator>
   );
 };
@@ -85,25 +101,65 @@ const AuthNavigator = () => {
 };
 
 const MainNavigator = () => {
-  return (
-    <Drawer.Navigator
-      initialRouteName="Home"
-      drawerContent={props => <CustomDrawerContent {...props} navigation={props.navigation} />}
-    >
-      <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
-      <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
-      <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
-      <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
-      <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
-    </Drawer.Navigator>
-  );
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      const route = response.notification.request.content.data.route;
+      if (route === 'message') {
+        const chatID = response.notification.request.content.data.chatID;
+        const user_receiver = response.notification.request.content.data.user_sender;
+        const user_sender = response.notification.request.content.data.user_receiver;
+        markNotificationAsRead(response.notification.request.identifier, user_receiver);
+        navigation.navigate('Chat', { chatID, user_receiver, user_sender });
+      }
+      if (route === 'mention') {
+        const user_receiver = response.notification.request.content.data.user_sender;
+        const post_id = response.notification.request.content.data.post_id;
+        markNotificationAsRead(response.notification.request.identifier, user_receiver);
+        navigation.navigate('PostDetailed', { post_id }); 
+      }
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, [navigation]);
+
+
+  function generateUserEmailID(user_receiver_email) {
+    return `${user_receiver_email.replace(/[\.\#\$\/\[\]]/g, '_')}`;
+  }
+
+  const markNotificationAsRead = (notificationId, user_receiver) => {
+    const notifRef = ref(db,`notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
+    get(notifRef)
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        update(notifRef, { read: true })
+      }
+    });
+  };
+
+return (
+  <Drawer.Navigator
+    drawerContent={props => <CustomDrawerContent {...props} navigation={props.navigation} />}
+  >
+    <Drawer.Screen name="InHome" component={StackNavigatorHome}  options={{ title: 'Home' }} />
+    <Drawer.Screen name="ProfileDetail" component={StackNavigatorProfile}  options={{ title: 'Profile' }} />
+    <Drawer.Screen name="SearchUserScreen" component={StackNavigatorSearch} options={{ title: 'Search' }} />
+    <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
+    <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
+    <Drawer.Screen name="NotificationsScreen" component={StackNavigatorNotifications} options={{ title: 'Notifications' }} />
+    <Drawer.Screen name="Chat" component={SpecificChat}/>
+  </Drawer.Navigator>
+);
 };
 
 
 export default function AppComponent() {
   const {loggedInUser} = useUser(); 
   const colorScheme = useColorScheme();
-
   return (
       <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         {loggedInUser ? (
@@ -118,4 +174,4 @@ export default function AppComponent() {
         )}
       </NavigationContainer>
   );
-};
+}

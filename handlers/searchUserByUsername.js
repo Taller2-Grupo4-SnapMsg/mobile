@@ -6,7 +6,7 @@ const USER_NOT_FOUND = 404;
 
 const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
-const searchUserByUsername = async (username, offset, ammount) => {
+const searchUserByUsername = async (username, offset, ammount, in_followers) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -15,7 +15,7 @@ const searchUserByUsername = async (username, offset, ammount) => {
           'accept': 'application/json',
           'token': token,
         };
-      const response = await fetch(`${API_BASE_URL}/user/search/${username}?offset=${offset}&ammount=${ammount}`, {
+      const response = await fetch(`${API_BASE_URL}/user/search/${username}?offset=${offset}&ammount=${ammount}&in_followers=${in_followers}`, {
         method: 'GET',
         headers: headers
       });

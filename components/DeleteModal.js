@@ -15,10 +15,9 @@ export default function DeleteModal({ isVisible, onDelete, onClose, loading }) {
         <View style={styles.modalContainer}>
           <Text>Are you sure you want to delete this post?</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <TouchableOpacity style={styles.closeButton} onPress={onDelete}>
               <Feather name="x" size={24} color="white" />
             </TouchableOpacity>
-            <PurpleButton text="Delete" onPress={onDelete} loading={loading}/>
           </View>
         </View>
       </View>

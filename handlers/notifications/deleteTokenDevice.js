@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const DeletePost = async (post_id) => {
+const DeleteDeviceToken = async () => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -12,14 +12,14 @@ const DeletePost = async (post_id) => {
         'token': token,
       };
 
-      const response = await fetch(`${URL_POST_BACK}/posts/${post_id}/`, {
+      const response = await fetch(`${URL_POST_BACK}/notifications/${token}`, {
         method: 'DELETE',
         headers: headers,
       });
 
       console.log(response.status);
       if (response.status === 200) {
-        console.log('Post deleted successfully');
+        console.log('Device token deleted successfully');
         return;
       }
 
@@ -38,4 +38,4 @@ const DeletePost = async (post_id) => {
   } 
 };
 
-  export default DeletePost;
+  export default DeleteDeviceToken;

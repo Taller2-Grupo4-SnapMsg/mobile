@@ -4,7 +4,7 @@ const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const PostHandler = async (content, image, tags) => {
+const PostHandler = async (content, image, tags, selectedMentions) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -18,6 +18,7 @@ const PostHandler = async (content, image, tags) => {
                 content: content,
                 image: encodedImage,
                 hashtags: tags,
+                mentions: selectedMentions,
             };
     
             const response = await fetch(`${URL_POST_BACK}/posts`, {
@@ -28,7 +29,8 @@ const PostHandler = async (content, image, tags) => {
     
             if (response.status === OK) {
                 const post = await response.json();
-                return post;
+                const { post_id, message } = post;
+                return post_id;
             } else {
                 console.error('Fallo el request al back de post:', response.status);
             }

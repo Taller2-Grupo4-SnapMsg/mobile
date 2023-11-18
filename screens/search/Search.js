@@ -50,6 +50,7 @@ export default function SearchUser() {
           ammount,
           setFollowingStatus,
           setIsFetchingMap,
+          false,
         );
         setSearched(true); 
       } else {
@@ -100,6 +101,7 @@ export default function SearchUser() {
       ammount,
       setFollowingStatus,
       setIsFetchingMap,
+      false,
     );
   };
   const [searchByUsername, setSearchByUsername] = useState(false);

@@ -47,8 +47,6 @@ const Statistics = () => {
 
   const setDefaultOption = (defaultSelected) => {
 
-    console.log("defaultSelected: ", defaultSelected);
-
     setDefaultOptionSelected(defaultSelected);
     const today = new Date(); 
 

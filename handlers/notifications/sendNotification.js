@@ -1,11 +1,13 @@
-// Aun no esta implementado en el otro front
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const getPostById = async (post_id) => {
+const SendNotification = async (user_emails_that_receive, 
+                                title,
+                                body,
+                                data) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -14,17 +16,24 @@ const getPostById = async (post_id) => {
                 'Accept': 'application/json',
                 'token': token,
               };
+            const requestBody = {
+                user_emails_that_receive: user_emails_that_receive,
+                title: title,
+                body: body,
+                data: data,
+            };
     
-              const response = await fetch(`${URL_POST_BACK}/posts/${post_id}`, {
-                method: 'GET',
+            const response = await fetch(`${URL_POST_BACK}/notifications/push`, {
+                method: 'POST',
                 headers: headers,
-              });
+                body: JSON.stringify(requestBody),
+            });
     
             if (response.status === OK) {
                 const post = await response.json();
                 return post;
             } else {
-                console.error('Fallo el request al back de post by id:', response.status);
+                console.error('Fallo el request al back de post:', response.status);
             }
         } catch (error) {
             const message =
@@ -37,4 +46,4 @@ const getPostById = async (post_id) => {
     }
 };
 
-export default getPostById;
+export default SendNotification;
