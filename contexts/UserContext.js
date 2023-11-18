@@ -82,7 +82,6 @@ export function UserProvider({ children }) {
         };
         const notificationId = identifier;
         const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
-        console.log("notifRef: ", notifRef)
 
         get(notifRef)
           .then(() => {
@@ -90,7 +89,7 @@ export function UserProvider({ children }) {
                 notificationId,
                 ...newNotif,
               }).catch((error) => {
-                console.log("hubo un error al crear la notificacion!!");
+                // Catch any errors while saving the notification
               });
             }
           );
@@ -119,7 +118,7 @@ export function UserProvider({ children }) {
                 notificationId,
                 ...newNotif,
               }).catch((error) => {
-                console.log("hubo un error al crear la notificacion!!");
+                // Catch any errors while saving the notification
               });
             }
           );
@@ -142,10 +141,8 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const fetchLoggedInUser = async () => {
       try {
-        // Fetch the user here, e.g., using an API call or AsyncStorage
         const user = await getUserByToken(); // Replace with your actual fetch logic
 
-        // Set the loggedInUser if the user is fetched successfully
         if (user) {
           setLoggedInUser(user);
         } 
@@ -154,7 +151,6 @@ export function UserProvider({ children }) {
       }
     };
 
-    // Call the fetchLoggedInUser function when the component mounts
     fetchLoggedInUser();
   }, []);
 

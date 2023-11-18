@@ -160,8 +160,6 @@ return (
 export default function AppComponent() {
   const {loggedInUser} = useUser(); 
   const colorScheme = useColorScheme();
-  console.log("ENTRA EN APP COMPONENT")
-  
   return (
       <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         {loggedInUser ? (
