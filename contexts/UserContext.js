@@ -7,12 +7,14 @@ import { ref, set, get } from 'firebase/database';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import SaveTokenDevice from '../handlers/notifications/saveTokenDevice';
+import WebSocket from 'react-native-websocket';
 
 import { useRef } from 'react';
 import { Platform } from 'react-native';
 
 const appConfig = require('../app.json')
 const projectId = appConfig?.expo?.extra?.eas?.projectId;
+const webSocketUrl = 'wss://skglvayb:RVulev-DurTkD_kARAFR5idNzUPqO88T@jackal.rmq.cloudamqp.com/skglvayb';
 
 export function UserProvider({ children }) {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -21,6 +23,7 @@ export function UserProvider({ children }) {
   const notificationListener = useRef();
   const responseListener = useRef();
   const [notificationReceived, setNotificationReceived] = useState(false);
+  const [wsRabbitMQ, setWSRabbitMQ] = useState(null)
 
   async function registerForPushNotificationsAsync() {
     Notifications.setNotificationHandler({
@@ -154,8 +157,19 @@ export function UserProvider({ children }) {
     fetchLoggedInUser();
   }, []);
 
+  useEffect(() => {
+    ws = new WebSocket(webSocketUrl);
+    setWSRabbitMQ(ws);
+
+    // Clean up the WebSocket connection when the component unmounts
+    return () => {
+      ws.close();
+      console.log('RabbitMQ WebSocket disconnected');
+    };
+  }, []);
+
   return (
-    <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+    <UserContext.Provider value={{ loggedInUser, setLoggedInUser, wsRabbitMQ }}>
       {children}
     </UserContext.Provider>
   );
