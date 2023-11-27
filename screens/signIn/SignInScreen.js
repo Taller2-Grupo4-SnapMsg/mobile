@@ -13,6 +13,9 @@ import SignInButton from '../../components/PurpleButton';
 import SignInGoogleButton from '../../components/SignInGoogleButton';
 import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import { useUser } from '../../contexts/UserContext';
+import BiometricAuth from './BIometricAuth'; // Correct import statement
+import * as LocalAuthentication from 'expo-local-authentication';
+
 WebBrowser.maybeCompleteAuthSession();
 
 const SignInScreen = ({ navigation }) => {
@@ -104,6 +107,40 @@ const SignInScreen = ({ navigation }) => {
     promptAsync();
   };
 
+  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
+  const handleSignInWithBiometrics = () => {
+    console.log('handleSignInWithBiometrics');
+  
+    const checkBiometricAvailability = async () => {
+      const available = await LocalAuthentication.hasHardwareAsync();
+      setIsBiometricAvailable(available);
+    };
+  
+    const handleBiometricAuthentication = async () => {
+      if (isBiometricAvailable) {
+        const result = await LocalAuthentication.authenticateAsync({
+          promptMessage: 'Autenticación biométrica requerida',
+        });
+  
+        if (result.success) {
+          // La autenticación biométrica fue exitosa
+          console.log('Autenticación exitosa');
+          // Aquí puedes acceder al token encriptado y enviarlo al servidor
+        } else {
+          // La autenticación biométrica falló o fue cancelada
+          console.log('Autenticación fallida');
+        }
+      } else {
+        // Dispositivo sin soporte para autenticación biométrica
+        console.log('Autenticación biométrica no disponible en este dispositivo');
+      }
+    };
+
+    checkBiometricAvailability();
+    handleBiometricAuthentication();
+  
+  }
+
   return (
     <ImageBackground style={styles.container}>
       <Modal transparent={true} visible={showSpinner}>
@@ -127,6 +164,12 @@ const SignInScreen = ({ navigation }) => {
       <View style={{ marginVertical: 30 }}>
         <SignInGoogleButton onPress={handleSignInWithGoogle} text="Sign in with Google" />
       </View>
+
+
+      <View style={{ marginVertical: 0 }}>
+        <SignInGoogleButton onPress={handleSignInWithBiometrics} text="Sign in with Google" />
+      </View>
+
       <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
         <Text style={styles.btnText}>Don't have an account? Sign up today!</Text>
       </TouchableOpacity>
