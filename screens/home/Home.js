@@ -37,6 +37,11 @@ export default function Home({}) {
       navigation.navigate('NewPost');
     };
 
+    const handlePressUserPlus = () => {
+      navigation.navigate('User Recommendation');
+    };
+
+
     const handleGetMorePosts = async (date, refresh) => {
       if (loadingMore || (reachedEnd && !refresh)) return;
     
@@ -92,12 +97,17 @@ export default function Home({}) {
         onEndReachedThreshold={0.1}
         />
       {loadingMore && <LoadingMoreIndicator />}
-      <Pressable style={styles.floatingButton} onPress={handlePressPlus}>
+      <Pressable style={styles.floatingButton} onPress={handlePressUserPlus}>
         <Entypo
           name="plus"
           size={24}
           color="white"
         />
+      </Pressable>
+      <Pressable style={styles.floatingButton2} onPress={handlePressUserPlus}>
+        <View style={styles.iconcontainer}>
+          <Entypo name="add-user" size={24} color="white" />
+        </View>
       </Pressable>
       {alertMessageRepost && (
           <AlertBottomBanner
@@ -134,4 +144,29 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  floatingButton2: {
+    backgroundColor: '#947EB0',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 15,
+    top: 15,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    //shadowOpacity: 0.25,
+    //shadowRadius: 3.84,
+    elevation: 5,
+  },
+  iconcontainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

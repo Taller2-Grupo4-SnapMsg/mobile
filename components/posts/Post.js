@@ -2,7 +2,7 @@ import React from 'react';
 import { storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {useState, useEffect} from 'react'; 
-import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable , TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'react-native';
 import Avatar from '../Avatar';
 import RepostButton from './RepostButton';
