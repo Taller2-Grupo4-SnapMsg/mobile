@@ -20,6 +20,9 @@ import Chats from './screens/chats/Chats';
 import SpecificChat from './screens/chats/SpecificChat';
 import NewChat from './screens/chats/NewChat';
 import NotificationsScreen from './screens/notifications/NotificationsScreen';
+import UserRecommendation from './screens/home/UserRecommendation/UserRecommendation';
+import TrendingTopics from './screens/home/TrendingTopics/TrendingTopics';
+import TrendingTopicDetail from './screens/home/TrendingTopics/DetailTrendingTopic';
 import { ref, set, get, update } from 'firebase/database';
 import { db } from './firebase';
 
@@ -43,6 +46,7 @@ const StackNavigatorHome = () => {
       <Stack.Screen name="PostDetailed" component={PostDetailed} />
       <Stack.Screen name="NewPost" component={NewPost} />
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="User Recommendation" component={UserRecommendation} />
     </Stack.Navigator>
   );
 };
@@ -72,6 +76,20 @@ const StackNavigatorProfile = () => {
 const StackNavigatorSearch = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Search" component={Search} />
+      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="FollowingsList" component={FollowingsList} />
+      <Stack.Screen name="FollowersList" component={FollowersList} />
+      <Stack.Screen name="PostDetailed" component={PostDetailed} />
+    </Stack.Navigator>
+  );
+}
+
+const StackNavigatorTrendingTopics = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Trending Topics" component={TrendingTopics} />
+      <Stack.Screen name="Trending Topic" component={TrendingTopicDetail} />
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
@@ -151,9 +169,10 @@ return (
     <Drawer.Screen name="StatisticsScreen" component={Statistics} options={{ title: 'Statistics' }} />
     <Drawer.Screen name="ChatsScreen" component={StackNavigatorChats} options={{ title: 'Chats' }} />
     <Drawer.Screen name="NotificationsScreen" component={StackNavigatorNotifications} options={{ title: 'Notifications' }} />
+    <Drawer.Screen name="TrendingTopicScreen" component={StackNavigatorTrendingTopics} options={{ title: 'Trending Topics' }} />
     <Drawer.Screen name="Chat" component={SpecificChat}/>
   </Drawer.Navigator>
-);
+  );
 };
 
 

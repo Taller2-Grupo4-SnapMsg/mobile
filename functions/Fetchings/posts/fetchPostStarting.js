@@ -12,7 +12,7 @@ function formatDate(date) {
     return `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
   }
 
-  AMOUNT_POST = 2
+  AMOUNT_POST = 10;
 
   export const HandleStarting = async (setPosts, setLatestDate, setIsStarting) =>{
     try {

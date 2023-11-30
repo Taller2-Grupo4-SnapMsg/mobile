@@ -49,7 +49,6 @@ const handleSelectImage = async () => {
     try {
       if (post.image) {
         if (changeImage) {
-          console.log("post.image original: ", post.image);
           const storageRef = ref(storage, decodeURIComponent(post.image));
           const response = await fetch(newImage);
           const blob = await response.blob();
