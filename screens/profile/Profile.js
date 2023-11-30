@@ -23,10 +23,7 @@ import LoadingMoreIndicator from '../../components/LoadingMoreIndicator';
 import DeleteRepost from '../../handlers/posts/deleteRepost';
 import { fetchSnaps } from '../../functions/Fetchings/fetchSnaps';
 import { Text } from 'react-native';
-import DeleteModal from '../../components/DeleteModal';
 import Modal from 'react-native-modal';
-import { TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 import {
   View,
   FlatList,
@@ -34,8 +31,8 @@ import {
   Pressable,
 } from 'react-native';
 import PurpleButton from '../../components/PurpleButton';
-import { set } from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
+import { set } from 'firebase/database';
 AMOUNT_POST = 10
 SOFT_GREEN = "#B4D3B2"
 SOFT_RED = "#FF5733"
@@ -105,8 +102,9 @@ function ProfileUser({ user }) {
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [userSnaps, setUserSnaps] = useState(null);
-  const [deleteButtonsSpinners, setDeleteButtonsSpinners] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteButtonsSpinnerYes, setDeleteButtonsSpinnerYes] = useState(false);
+  const [deleteButtonsSpinnerNo, setDeleteButtonsSpinnerNo] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -156,34 +154,22 @@ function ProfileUser({ user }) {
     navigation.navigate('ProfileEditPost', { post: post});
   };
 
-  const setAlert = (message, color, timeout) => {
-    setAlertMessageColor(color);
-    setAlertMessage(message);
-    setTimeout(() => {
-      setAlertMessage(null);
-      setAlertMessageColor(null);
-    }, timeout);
-  }
-
-
 
   const handlePressDelete = (post) => {
     return async () => {
       try {
         if (post.user_poster.email === post.user_creator.email) {
-          setDeleteButtonsSpinners(true);
+          setDeleteButtonsSpinnerYes(true);
           await DeletePost(post.post_id);
         } else {
+          setDeleteButtonsSpinnerYes(true);
           await DeleteRepost(post.post_id);
         }
         setRefreshing(true);
-        // Remove the deleted post from the posts array
         const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
-  
-        // Update the state with the modified posts array
         setPosts(updatedPosts);
-        setDeleteButtonsSpinners(false);
-        
+        setDeleteButtonsSpinnerYes(false);
+        setDeleteModalVisible(false);
       } catch (error) {
         return;
       }
@@ -233,11 +219,14 @@ function ProfileUser({ user }) {
     }, [])
   );
 
+  const onClose = () => {
+    setDeleteButtonsSpinnerNo(true);
+    setDeleteButtonsSpinnerNo(false);
+    setDeleteModalVisible(false);
+  }
+
   const handleSetDeleteModalVisible = () => {
-    if (deleteButtonsSpinners) {
-      setDeleteButtonsSpinners(!deleteButtonsSpinners);
-    }
-    setDeleteModalVisible(!deleteModalVisible);
+    setDeleteModalVisible(true);
   }
 
   return  (
@@ -252,10 +241,8 @@ function ProfileUser({ user }) {
           onlyReposts={onlyReposts} 
           snaps = {userSnaps}
           setOnlyReposts={setOnlyReposts}
-          style={{ flex: 1}}
           />
         }
-        style={{ flex: 1, maginTop: 0}}
         data={posts} 
         ListEmptyComponent={() => (
           <View style={styles.noUsersContainer}>
@@ -282,26 +269,24 @@ function ProfileUser({ user }) {
                       <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
 
+                                  </View>
+                </View>)}
                     <Modal
                       animationType="fade"
                       transparent={true}
                       visible={deleteModalVisible}
-                      onRequestClose={handleSetDeleteModalVisible}
+                      onRequestClose={onClose}
                     >
                       <View style={styles.modalBackground}>
                         <View style={styles.modalContainer}>
-                          <Text>Are you sure you want to delete this post?</Text>
+                          <Text style={{ textAlign: 'center' }}>Are you sure you want to delete this post?</Text>
                           <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.closeButton} onPress={handleSetDeleteModalVisible}>
-                              <Feather name="x" size={24} color="white" />
-                            </TouchableOpacity>
-                            <PurpleButton text="Delete" onPress={handlePressDelete(item)} loading={deleteButtonsSpinners}/>
+                            <PurpleButton onPress={onClose} text="No" loading={deleteButtonsSpinnerNo} />
+                            <PurpleButton onPress={handlePressDelete(item)} text="Yes" loading={deleteButtonsSpinnerYes} />
                           </View>
                         </View>
                       </View>
                     </Modal>
-                  </View>
-                </View>)}
               </View>);
         } else {
           return (
@@ -348,14 +333,12 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '40%',
   },
   modalContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     width: '80%',
-    height: '20%',
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 8,

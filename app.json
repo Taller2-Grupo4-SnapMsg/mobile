@@ -28,7 +28,8 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "CAMERA_ROLL"
+        "CAMERA_ROLL",
+        "USE_FINGERPRINT"
       ],
       "package": "com.nathencinoza.AwesomeProject"
     },
