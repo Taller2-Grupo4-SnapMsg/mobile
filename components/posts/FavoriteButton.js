@@ -28,7 +28,6 @@ const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
     }
   };
 
-  console.log("favorited: ", favorited)
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <TouchableOpacity onPress={handleFavoritePress}>

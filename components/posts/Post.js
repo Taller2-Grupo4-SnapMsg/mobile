@@ -22,6 +22,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
     return null;
     
   const {loggedInUser} = useUser();
+
   var {post_id, 
       user_poster, 
       user_creator,
@@ -157,9 +158,9 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
           
           <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
 
-          <FavoriteButton icon="star" isLiked={did_i_put_favorite} post_id={post_id} />
+          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} />
         </View>
-        </View>
+            </View>
         </Pressable>
     </ThemeProvider>
     );

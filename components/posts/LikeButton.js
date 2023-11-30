@@ -32,15 +32,12 @@ const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
     }
   };
 
-  console.log("liked: ", liked)
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 60 }}>
       <TouchableOpacity onPress={handleLikePress}>
         {liked ? (
-            console.log("entra a liked: ", liked),
             <AntDesign name="heart" size={22} color="#E1306C" />
           ) : (
-            console.log("no entra a liked: ", liked),
             <AntDesign name="hearto" size={22} color="gray" />
           )}
       </TouchableOpacity>
