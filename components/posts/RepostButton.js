@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 import RepostPost from '../../handlers/posts/repost';
 import DeleteRepostByPostId from '../../handlers/posts/deleteRepostByPostId';
 
@@ -23,6 +24,13 @@ const RepostButton = ({ icon,
       setAlertMessageColor(null);
     }, timeout);
   }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setReposted(isReposted);
+      setReposts(initialReposts);
+    }, [isReposted, initialReposts])
+  );
 
   const handlePressRepost = async () => {
     try {
@@ -58,12 +66,12 @@ const RepostButton = ({ icon,
   };
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 90 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 60 }}>
      <TouchableOpacity onPress={handlePressRepost} disabled={disabled}>
         {reposted ? (
-          <AntDesign name={icon} size={20} color={disabled ? "dimgray" : "#6B5A8E"} />
+          <AntDesign name={icon} size={24} color={disabled ? "dimgray" : "#6B5A8E"} />
         ) : (
-          <AntDesign name={icon} size={20} color={disabled ? "dimgray" : "gray"} />
+          <AntDesign name={icon} size={24} color={disabled ? "dimgray" : "gray"} />
         )}
       </TouchableOpacity>
       <Text style={{ fontSize: 15, color: 'gray', marginLeft: 5 }}>{reposts}</Text>

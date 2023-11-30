@@ -99,7 +99,7 @@ function CustomDrawerContent({ navigation }) {
           }}
         >
           <View style={styles.itemContainer}>
-            <Icon name="star" size={25} color="#6B5A8E" style={styles.icon}/>
+            <Icon name="hashtag" size={25} color="#6B5A8E" style={styles.icon}/>
             <Text style={styles.drawerItemText}>Trending Topics</Text>
           </View>
         </TouchableOpacity>

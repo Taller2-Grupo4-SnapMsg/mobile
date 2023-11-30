@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 16,
         borderBottomWidth: StyleSheet.hairlineWidth,
+        marginTop: 20,
       },
     
       image: {
@@ -83,8 +84,8 @@ const styles = StyleSheet.create({
         color: '#6B5A8E',
       },
       followButton: {
-        paddingVertical: 4,
-        paddingHorizontal: 12,
+        paddingVertical: 6,
+        paddingHorizontal: 16,
         borderRadius: 50,
         backgroundColor: '#6B5A8E',
       },

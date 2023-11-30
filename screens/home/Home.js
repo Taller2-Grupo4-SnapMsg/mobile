@@ -13,6 +13,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 import getPosts from "../../handlers/posts/getPosts"
+import { useFocusEffect } from "expo-router";
 
 AMOUNT_POST = 6
 
@@ -25,7 +26,7 @@ export default function Home({}) {
     const { loggedInUser } = useUser();
     const colorScheme = useColorScheme();
     const navigation = useNavigation();
-    const [posts, setPosts] = useState([]);
+    const [postsFeed, setPostsFeed] = useState([]);
     const [latestDate, setLatestDate] = useState(new Date());
     const [refreshing, setRefreshing] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -53,11 +54,11 @@ export default function Home({}) {
     
         if (fetchedPosts && fetchedPosts.length > 0) {
           if (refresh) {
-            setPosts(fetchedPosts);
+            setPostsFeed(fetchedPosts);
             setRefreshing(false);
             setReachedEnd(false);
           } else {
-            setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+            setPostsFeed((prevPosts) => [...prevPosts, ...fetchedPosts]);
           }
           setLatestDate(fetchedPosts[fetchedPosts.length - 1].created_at);
         } else {
@@ -70,15 +71,21 @@ export default function Home({}) {
       }
     };
     
-    useEffect(() => {  
-      handleGetMorePosts((new Date()).toISOString(), true)
-     }, []);
+    // useEffect(() => {  
+    //   handleGetMorePosts((new Date()).toISOString(), true)
+    //  }, []);
+
+    useFocusEffect(
+      React.useCallback(() => {
+        handleGetMorePosts((new Date()).toISOString(), true);
+      }, [])
+    );
 
    return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
       <FlatList
-        data={posts}
+        data={postsFeed}
         renderItem={({ item }) => {
           if (item.user_poster.email == item.user_creator.email) {
             return <Post post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>;
@@ -94,7 +101,7 @@ export default function Home({}) {
           />
         }
         onEndReached={() => handleGetMorePosts(latestDate, false)}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.3}
         />
       {loadingMore && <LoadingMoreIndicator />}
       <Pressable style={styles.floatingButton} onPress={handlePressUserPlus}>
@@ -104,7 +111,7 @@ export default function Home({}) {
           color="white"
         />
       </Pressable>
-      <Pressable style={styles.floatingButton2} onPress={handlePressUserPlus}>
+      <Pressable style={styles.buttonRecommendedUser} onPress={handlePressUserPlus}>
         <View style={styles.iconcontainer}>
           <Entypo name="add-user" size={24} color="white" />
         </View>
@@ -144,23 +151,23 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  floatingButton2: {
+  buttonRecommendedUser: {
     backgroundColor: '#947EB0',
-    borderRadius: 30,
+    borderRadius: 20,
     width: 60,
-    height: 60,
+    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
     right: 15,
     top: 15,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    //shadowOpacity: 0.25,
-    //shadowRadius: 3.84,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     elevation: 5,
   },
   iconcontainer: {

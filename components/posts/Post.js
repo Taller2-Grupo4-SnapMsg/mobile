@@ -7,6 +7,7 @@ import { useColorScheme } from 'react-native';
 import Avatar from '../Avatar';
 import RepostButton from './RepostButton';
 import LikeButton from './LikeButton';
+import FavoriteButton from './FavoriteButton';
 import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../../contexts/UserContext';
 import PostPictureModal from '../PostPictureModal';
@@ -31,7 +32,8 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
       hashtags, 
       mentions,
       did_i_like, 
-      did_i_repost} = post;
+      did_i_repost,
+      did_i_put_favorite} = post;
   
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
@@ -154,6 +156,8 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
           />
           
           <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
+
+          <FavoriteButton icon="star" isLiked={did_i_put_favorite} post_id={post_id} />
         </View>
         </View>
         </Pressable>
@@ -223,12 +227,14 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    marginVertical: 5,
+    marginVertical: 10,
     justifyContent: 'center',
-    paddingRight: 25,
+    alignItems: 'center',
+    paddingRight: 40,
+    marginLeft: 5,
   },
   mentions: {
-    alignItems: 'baseline', // Add this line to align the "@" symbol with the hashtags
+    alignItems: 'baseline',
     color: '#6B5A8E',
     fontWeight: 'bold',
   },
