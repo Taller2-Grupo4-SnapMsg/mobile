@@ -3,10 +3,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
+const USER_BLOCKED = 403;
 
 const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
-const getFollowings = async (email) => {
+const getFollowings = async (email, navigation) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -24,10 +25,21 @@ const getFollowings = async (email) => {
         const data = await response.json();
         return data;
       } else if (response.status === 422) {
-        const errorData = await response.json();
-        console.error('Validation Error:', errorData);
+        Alert.alert('Error', 'Please enter a valid email');
+      } else if (response.status === USER_BLOCKED) {
+        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
+      } else if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
       } else {
-        console.error('Error al obtener followings:', response.status);
+        console.error('Error al obtener los seguidos:', response.status);
       }
     } catch (error) {
       const message =

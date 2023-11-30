@@ -33,13 +33,13 @@ const Followings = ({ user }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchFollowsData(getFollowings, setFollowings, setFollowingStatus, setIsFetching, setIsFetchingMap, user);
+      fetchFollowsData(getFollowings, setFollowings, setFollowingStatus, setIsFetching, setIsFetchingMap, user, navigation);
     }, [user])
   );
 
 
   const handleFollowButton = async (itemEmail) => {
-    await handleFollowButtonInList(setIsFetchingMap, setFollowingStatus, followingStatus, itemEmail);
+    await handleFollowButtonInList(setIsFetchingMap, setFollowingStatus, followingStatus, itemEmail, navigation);
   };
 
 

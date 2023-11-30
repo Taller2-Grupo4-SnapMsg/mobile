@@ -3,10 +3,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
+const USER_BLOCKED = 403;
 
 const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
-const changeAvatar = async (avatar) => {
+const changeAvatar = async (avatar, navigation) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -26,6 +27,18 @@ const changeAvatar = async (avatar) => {
       } else if (response.status === 422) {
         const errorData = await response.json();
         console.error('Validation Error:', errorData);
+      } else if (response.status === USER_BLOCKED) {
+        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
+      } else if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
       } else {
         console.error('Error al actualizar avatar:', response.status);
       }

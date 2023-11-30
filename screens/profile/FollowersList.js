@@ -42,7 +42,7 @@ const Followers = ({ user }) => {
   );
 
   const handleFollowButton = async (itemEmail) => {
-    await handleFollowButtonInList(setIsFetchingMap, setFollowersStatus, followerStatus, itemEmail);
+    await handleFollowButtonInList(setIsFetchingMap, setFollowersStatus, followerStatus, itemEmail, navigation);
   };
 
   return (

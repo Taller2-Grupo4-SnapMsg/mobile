@@ -5,8 +5,10 @@ import Post from '../../components/posts/Post';
 import getPostById from '../../handlers/posts/getPostById';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+
 const PostDetailed = ({ route }) => {
   const post_id = route.params.post_id;
+  const navigation = useRoute();
   const [post, setPost] = useState(null);
   const [isFetchingPost, setIsFetchingPost] = useState(false);
   
@@ -14,7 +16,7 @@ const PostDetailed = ({ route }) => {
     const fetchPostById = async () => {
       try {
         setIsFetchingPost(true);
-        const fetchedPost = await getPostById(post_id);
+        const fetchedPost = await getPostById(post_id, navigation);
         setPost(fetchedPost);
       } catch (error) {
         console.error('Error while checking posts status:', error);

@@ -1,8 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
+const OK = 200;
+const USER_NOT_FOUND = 404;
+const USER_BLOCKED = 403;
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const DeletePost = async (post_id) => {
+const DeletePost = async (post_id, navigation) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -18,12 +22,19 @@ const DeletePost = async (post_id) => {
       });
 
       console.log(response.status);
-      if (response.status === 200) {
-        console.log('Post deleted successfully');
+      if (response.status === OK) {
         return;
+      } else if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+      } else if (response.status === USER_BLOCKED) {
+        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
+      } else {
+        console.error('Error al eliminar post:', response.status);
       }
-
-      // Handle errors using catch block
       const errorData = await response.json();
       throw new Error('Server Error: ' + JSON.stringify(errorData));
       

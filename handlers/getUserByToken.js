@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
+const USER_NOT_FOUND = 404;
+const USER_BLOCKED = 403;
 
 const getUserByToken = async () => {
     try {
@@ -18,7 +20,13 @@ const getUserByToken = async () => {
             if (response.status === OK) {
                 const user = await response.json();
                 return user;
-            } 
+            } else if (response.status === USER_NOT_FOUND) {
+                return null;
+            } else if (response.status === USER_BLOCKED) {
+                return null;
+            } else {
+                console.error('Error al obtener el usuario:', response.status);
+            }
         } else {
             return null;
         }

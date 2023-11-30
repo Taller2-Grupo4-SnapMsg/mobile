@@ -13,6 +13,7 @@ export async function handleSearch (
     setFollowingStatus,
     setIsFetchingMap,
     in_followers,
+    navigation,
 ) {
     const newOffset = 0;
     setOffset(newOffset); 
@@ -21,7 +22,7 @@ export async function handleSearch (
     
     setSearchingText(user_to_search);
     try {
-        const response = await searchUserByUsername(user_to_search, newOffset, ammount, in_followers);
+        const response = await searchUserByUsername(user_to_search, newOffset, ammount, in_followers, navigation);
         if (response) {
         if (response.length < ammount) {
             setShowMoreVisible(false);
@@ -35,7 +36,7 @@ export async function handleSearch (
             [user_email]: true,
             }));
 
-            const isUserFollowing = await checkIfFollowing(user_email);
+            const isUserFollowing = await checkIfFollowing(user_email, navigation);
 
             setIsFetchingMap((prevIsFetchingMap) => ({
             ...prevIsFetchingMap,

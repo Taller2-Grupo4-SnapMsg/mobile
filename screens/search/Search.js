@@ -51,6 +51,7 @@ export default function SearchUser() {
           setFollowingStatus,
           setIsFetchingMap,
           false,
+          navigation,
         );
         setSearched(true); 
       } else {
@@ -59,7 +60,7 @@ export default function SearchUser() {
     } else if (searchByHashtag) {
       if (searchText !== '') {
         setIsFetching(true); 
-        posts_fetched = await searchPostsByHashtag(searchText, offset, ammount);
+        posts_fetched = await searchPostsByHashtag(searchText, offset, ammount, navigation);
         setPostsByHashtags(posts_fetched);
         setSearched(true); 
         setIsFetching(false);
@@ -69,7 +70,7 @@ export default function SearchUser() {
     } else if (searchByText) {
       if (searchText !== '') {
         setIsFetching(true); 
-        posts_fetched = await searchPostsByText(searchText, offset, ammount);
+        posts_fetched = await searchPostsByText(searchText, offset, ammount, navigation);
         setPostsByText(posts_fetched);
         setSearched(true);
         setIsFetching(false); 
@@ -87,6 +88,7 @@ export default function SearchUser() {
       setFollowingStatus,
       followingStatus,
       itemEmail,
+      navigation,
     );
   };
 
@@ -102,6 +104,7 @@ export default function SearchUser() {
       setFollowingStatus,
       setIsFetchingMap,
       false,
+      navigation,
     );
   };
   const [searchByUsername, setSearchByUsername] = useState(false);

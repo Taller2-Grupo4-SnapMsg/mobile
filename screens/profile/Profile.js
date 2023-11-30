@@ -111,9 +111,9 @@ function ProfileUser({ user }) {
   };
 
   useEffect(() => {
-    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
-    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
-    fetchSnaps({ user, setSnaps: setUserSnaps });
+    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername, navigation });
+    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername, navigation });
+    fetchSnaps({ user, setSnaps: setUserSnaps, navigation });
   }, [user, refreshing]);
   
   const handleEditButton = () => {
@@ -136,14 +136,14 @@ function ProfileUser({ user }) {
     setIsFetching(true); 
   
     if (isFollowing) {
-      await unfollowUser(user.email);
+      await unfollowUser(user.email, navigation);
     } else {
-      await followUser(user.email);
+      await followUser(user.email, navigation);
     }
   
     setIsFollowing(!isFollowing);
-    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
-    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
+    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername, navigation });
+    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername, navigation });
   
     setIsFetching(false); 
   };
@@ -157,10 +157,10 @@ function ProfileUser({ user }) {
       try {
         if (deletePost.user_poster.email === deletePost.user_creator.email) {
           setDeleteButtonsSpinnerYes(true);
-          await DeletePost(deletePost.post_id);
+          await DeletePost(deletePost.post_id, navigation);
         } else {
           setDeleteButtonsSpinnerYes(true);
-          await DeleteRepost(deletePost.post_id);
+          await DeleteRepost(deletePost.post_id, navigation);
         }
         setRefreshing(true);
         const updatedPosts = posts.filter((p) => p.post_id !== deletePost.post_id);
@@ -179,7 +179,7 @@ function ProfileUser({ user }) {
     try {
       setLoadingMore(true);
       setRefreshing(refresh);
-      const fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts);
+      const fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts, navigation);
       if (fetchedPosts && fetchedPosts.length > 0) {
         if (refresh) {
           setPosts(fetchedPosts);
@@ -200,8 +200,8 @@ function ProfileUser({ user }) {
   };
 
   useEffect(() => {  
-    fetchFollowStatus({ user, setStatus: setIsFollowing, followStatusFunction: checkIfFollowing, setIsFetching });
-    fetchFollowStatus({ user, setStatus: setIsFollower, followStatusFunction: checkIfFollower, setIsFetching });
+    fetchFollowStatus({ user, setStatus: setIsFollowing, followStatusFunction: checkIfFollowing, setIsFetching, navigation });
+    fetchFollowStatus({ user, setStatus: setIsFollower, followStatusFunction: checkIfFollower, setIsFetching, navigation });
   }, [user]);
 
   useEffect(() => {  

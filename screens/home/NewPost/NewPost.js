@@ -58,11 +58,11 @@ export default function NewPost() {
 
       setSelectedImage('');
       const usernames = selectedMentions.map(mention => mention.username);
-      post_id = await PostHandler(text, file_route, tags, usernames);
+      post_id = await PostHandler(text, file_route, tags, usernames, navigation);
     } else {
       setSelectedImage('');
       const usernames = selectedMentions.map(mention => mention.username);
-      post_id = await PostHandler(text, '', tags, usernames);
+      post_id = await PostHandler(text, '', tags, usernames, navigation);
     }
     
     const emails = selectedMentions.map(mention => mention.email);

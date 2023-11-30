@@ -13,7 +13,7 @@ TIMEOUT_ALERT_EDIT = 1500
 DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"
 
 const ProfileEditPost = ({ route }) => {
-  navigation = useNavigation();
+  const navigation = useNavigation();
   const { loggedInUser } = useUser();
   const { post } = route.params;
 
@@ -54,7 +54,7 @@ const handleSelectImage = async () => {
           const blob = await response.blob();
           await uploadBytes(storageRef, blob);
         }
-        await editPostHandler(post.post_id, decodeURIComponent(post.image), newText, newHashtags);
+        await editPostHandler(post.post_id, decodeURIComponent(post.image), newText, newHashtags, navigation);
       } else {
         file_route = '';
         if (changeImage) {
@@ -67,7 +67,7 @@ const handleSelectImage = async () => {
           const blob = await response.blob();
           await uploadBytes(storageRef, blob);
         }
-        await editPostHandler(post.post_id, file_route, newText, newHashtags);
+        await editPostHandler(post.post_id, file_route, newText, newHashtags, navigation);
       } 
       navigation.navigate('Profile');
       Alert.alert('Alert', 'Post edited successfully');

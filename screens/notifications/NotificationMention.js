@@ -29,7 +29,7 @@ const NotificationMention = ({ message, data, read}) => {
         const postId = parseInt(data.post_id, 10);
 
         try {
-          const fetchedPost = await getPostById(postId);
+          const fetchedPost = await getPostById(postId, navigation);
           setPost(fetchedPost);
         } catch (error) {
           console.error('Error while checking posts status:', error);

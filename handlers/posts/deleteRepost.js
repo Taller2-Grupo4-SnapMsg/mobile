@@ -1,11 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
+const USER_BLOCKED = 403;
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const DeleteRepost = async (post_id) => {
+const DeleteRepost = async (post_id, navigation) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -20,12 +22,22 @@ const DeleteRepost = async (post_id) => {
         headers: headers,
       });
 
-      if (response.status === 200) {
+      if (response.status === OK) {
         return;
-      } else if (response.status === 422) {
-        console.error('Validation Error:', errorData);
+      } else if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
+      } else if (response.status === USER_BLOCKED) {
+        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
       } else {
-        console.error('Error when disliking', response.status);
+        console.error('Error al eliminar repost:', response.status);
       }
     } catch (error) {
       const message =

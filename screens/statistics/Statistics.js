@@ -5,6 +5,7 @@ import { useUser } from '../../contexts/UserContext';
 import getStatistics from '../../handlers/statistics/getStatistics';
 import DatePicker from 'react-native-modern-datepicker';
 import PurpleButton from "../../components/PurpleButton";
+import { useNavigation } from '@react-navigation/native';
 
 function formatDate(date) {
   return date.replace("T", "_").split(".")[0];
@@ -23,6 +24,7 @@ DAYS_FROM_OP4 = 30
 DAYS_FROM_OP5 = 180
 
 const Statistics = () => {
+  const navigation = useNavigation();
   const { loggedInUser } = useUser();
   const [isFromDatePickerVisible, setFromDatePickerVisible] = useState(false);
   const [isToDatePickerVisible, setToDatePickerVisible] = useState(false);
@@ -161,7 +163,7 @@ const Statistics = () => {
         const fromDate_date = new Date(fromDate);
   
         if (toDate_date.getTime() > fromDate_date.getTime()) {
-          stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
+          stats = await getStatistics(formatDate(fromDate), formatDate(toDate), navigation);
           transformedStats = setStats(0, 0, 0, 0);
           if (stats) {
             transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);

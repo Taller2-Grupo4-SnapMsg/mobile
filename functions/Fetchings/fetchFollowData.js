@@ -7,12 +7,13 @@ export async function fetchFollowsData(
     setFollowersStatusFn,
     setIsFetchingFn,
     setIsFetchingMapFn,
-    user
+    user, 
+    navigation
   ) {
     try {
       setIsFetchingFn(true); // Set isFetching to true when starting to fetch
       setIsFetchingMapFn({});
-      const fetchedFollowers = await getFollowersFn(user.email);
+      const fetchedFollowers = await getFollowersFn(user.email, navigation);
       setFollowersFn(fetchedFollowers);
       const initialFollowerStatus = {};
       const followersEmails = fetchedFollowers.map((follower) => follower.email);
@@ -23,7 +24,7 @@ export async function fetchFollowsData(
           [followerEmail]: true,
         }));
   
-        const isUserFollower = await checkIfFollowing(followerEmail);
+        const isUserFollower = await checkIfFollowing(followerEmail, navigation);
   
         setIsFetchingMapFn((prevIsFetchingMap) => ({
           ...prevIsFetchingMap,

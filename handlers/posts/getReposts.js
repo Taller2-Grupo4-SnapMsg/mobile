@@ -1,12 +1,15 @@
 //queda completar cuando este
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const OK = 200;
-const USER_NOT_FOUND = 404;
+import { Alert } from 'react-native';
+
+const OK = 200
+const USER_BLOCKED = 403
+const USER_NOT_FOUND = 404
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const UndoRepostPost = async () => {
+const UndoRepostPost = async (navigation) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -23,11 +26,20 @@ const UndoRepostPost = async () => {
 
       if (response.status === 200) {
         return;
-      } else if (response.status === 422) {
-        const errorData = await response.json();
-        console.error('Validation Error:', errorData);
+      } else if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
+      } else if (response.status === USER_BLOCKED) {
+        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
       } else {
-        console.error('Error when undoing repost', response.status);
+        console.error('Error al eliminar repost:', response.status);
       }
     } catch (error) {
       const message =

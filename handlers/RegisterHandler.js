@@ -6,7 +6,6 @@ const USER_ALREADY_REGISTERED = 409
 const CHECK_USERNAME = "Username"
 const CHECK_EMAIL= "Email"
 
-
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
     'Access-Control-Allow-Origin': '*',

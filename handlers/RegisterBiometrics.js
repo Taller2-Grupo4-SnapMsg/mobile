@@ -4,7 +4,7 @@ import { Alert }  from 'react-native';
 
 const OK = 200
 const USER_NOT_FOUND = 404
-const PASSWORD_DOESNT_MATCH = 401
+const USER_BLOCKED = 403
 
 const RegisterBiometrics = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -25,13 +25,7 @@ const RegisterBiometrics = async () => {
                 return responseData.biometric_token;
         
             case USER_NOT_FOUND:
-                Alert.alert('Usuario no encontrado');
                 return false;
-    
-            case PASSWORD_DOESNT_MATCH:
-                Alert.alert('Contraseña incorrecta');
-                return false;
-    
             default:
                 Alert.alert('Error desconocido');
                 return false;

@@ -50,7 +50,7 @@ export default function Home({}) {
         setLoadingMore(true);
         setRefreshing(refresh);
     
-        const fetchedPosts = await getPosts(formatDate(date), AMOUNT_POST, loggedInUser.email);
+        const fetchedPosts = await getPosts(formatDate(date), AMOUNT_POST, loggedInUser.email, navigation);
     
         if (fetchedPosts && fetchedPosts.length > 0) {
           if (refresh) {

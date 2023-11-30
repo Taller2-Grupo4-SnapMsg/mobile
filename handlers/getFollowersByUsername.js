@@ -3,11 +3,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
+const USER_BLOCKED = 403;
 
-//ponerlo en un .env como en la clase
 const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
-const getFollowersByUsername = async (email) => {
+const getFollowersByUsername = async (email, navigation) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
     try {
@@ -23,8 +23,20 @@ const getFollowersByUsername = async (email) => {
       if (response.status === OK) {
         const followers = await response.json();
         return followers;
+      } else if (response.status === USER_NOT_FOUND) {
+        Alert.alert('Error', 'User not found');
+      } else if (response.status === USER_BLOCKED) {
+        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
       } else {
-        console.error('Error al obtener followers count:', response.status);
+        console.error('Error al obtener followers:', response.status);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignIn' }],
+        });
       }
     } catch (error) {
       const message =

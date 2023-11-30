@@ -5,6 +5,7 @@ import { Alert }  from 'react-native';
 const OK = 200
 const USER_NOT_FOUND = 404
 const PASSWORD_DOESNT_MATCH = 401
+const USER_BLOCKED = 403
 
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
@@ -34,7 +35,9 @@ const headers = {
 
         case PASSWORD_DOESNT_MATCH:
             return false;
-
+        case USER_BLOCKED: 
+            Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+            return false;
         default:
             return false;
       }

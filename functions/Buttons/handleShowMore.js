@@ -10,15 +10,16 @@ export async function handleShowMore(
   setShowMoreVisible,
   searchingText,
   ammount,
-  setFollowingStatus, // Add setFollowingStatus to the arguments
+  setFollowingStatus, 
   setIsFetchingMap,
   in_followers,
+  navigation,
 ) {
-  const newOffset = offset + ammount; // Calculate the new offset
-  setOffset(newOffset); // Update the offset
+  const newOffset = offset + ammount; 
+  setOffset(newOffset); 
   setIsFetching(true);
   try {
-    const response = await searchUserByUsername(searchingText, newOffset, ammount, in_followers);
+    const response = await searchUserByUsername(searchingText, newOffset, ammount, in_followers, navigation);
     if (response) {
       if (response.length < ammount) {
         setShowMoreVisible(false);
@@ -31,7 +32,7 @@ export async function handleShowMore(
           [user_email]: true,
         }));
 
-        const isUserFollowing = await checkIfFollowing(user_email);
+        const isUserFollowing = await checkIfFollowing(user_email, navigation);
 
         setIsFetchingMap((prevIsFetchingMap) => ({
           ...prevIsFetchingMap,

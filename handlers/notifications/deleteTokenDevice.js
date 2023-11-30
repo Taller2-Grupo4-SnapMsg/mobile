@@ -1,4 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+
+const OK = 200
+const USER_BLOCKED = 403
+const USER_NOT_FOUND = 404
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
@@ -19,11 +24,14 @@ const DeleteDeviceToken = async () => {
 
       console.log(response.status);
       if (response.status === 200) {
-        console.log('Device token deleted successfully');
         return;
+      } else if (response.status === USER_NOT_FOUND) {
+        return; 
+      } else if (response.status === USER_BLOCKED) {
+        return; 
+      } else {
+        console.error('Error al eliminar device token:', response.status);
       }
-
-      // Handle errors using catch block
       const errorData = await response.json();
       throw new Error('Server Error: ' + JSON.stringify(errorData));
       

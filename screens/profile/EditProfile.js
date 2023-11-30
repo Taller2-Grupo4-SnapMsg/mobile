@@ -117,26 +117,26 @@ const EditProfile = ({  user  }) => {
     setIsSaving(true); 
 
     if (nameHasChanged) {
-      await changeName(name);
+      await changeName(name, navigation);
     }
     if (bioHasChanged) {
-      await changeBio(bio);
+      await changeBio(bio, navigation);
     }
     if (avatarHasChanged) {
-      await changeAvatar(selectedImage);
+      await changeAvatar(selectedImage, navigation);
     }
     if (dateOfBirthHasChanged) {
       const formattedDate = selectedStartDate.split('/').join(' ');
-      await changeDateOfBirth(formattedDate);
+      await changeDateOfBirth(formattedDate, navigation);
     }
     if (lastNameHasChanged) {
-      await changeLastName(lastName);
+      await changeLastName(lastName, navigation);
     }
     if (CountryNameHasChanged) {
-      await changeLocation(selectedCountryName);
+      await changeLocation(selectedCountryName, navigation);
     } 
     if (privacyHasChanged) {
-      await changePrivacy(accountIsPublic);
+      await changePrivacy(accountIsPublic, navigation);
     }
   
     const fetchLoggedInUser = async () => {
