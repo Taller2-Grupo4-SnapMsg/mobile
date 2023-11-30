@@ -110,14 +110,12 @@ function ProfileUser({ user }) {
     setModalVisible(!isModalVisible);
   };
 
-  useFocusEffect( 
-    React.useCallback(() => {
-      fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
-      fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
-      fetchSnaps({ user, setSnaps: setUserSnaps })
-    }, [user])
-  );
-
+  useEffect(() => {
+    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
+    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
+    fetchSnaps({ user, setSnaps: setUserSnaps });
+  }, [user, refreshing]);
+  
   const handleEditButton = () => {
     navigation.push('EditProfile', { user: user });
   };
@@ -155,28 +153,26 @@ function ProfileUser({ user }) {
   };
 
 
-  const handlePressDelete = (post) => {
-    return async () => {
+  const handlePressDelete = async () => {
       try {
-        if (post.user_poster.email === post.user_creator.email) {
+        if (deletePost.user_poster.email === deletePost.user_creator.email) {
           setDeleteButtonsSpinnerYes(true);
-          await DeletePost(post.post_id);
+          await DeletePost(deletePost.post_id);
         } else {
           setDeleteButtonsSpinnerYes(true);
-          await DeleteRepost(post.post_id);
+          await DeleteRepost(deletePost.post_id);
         }
         setRefreshing(true);
-        const updatedPosts = posts.filter((p) => p.post_id !== post.post_id);
+        const updatedPosts = posts.filter((p) => p.post_id !== deletePost.post_id);
         setPosts(updatedPosts);
         setDeleteButtonsSpinnerYes(false);
         setDeleteModalVisible(false);
       } catch (error) {
         return;
       }
-    };
-  }
+  };
   
-
+  
   const handleGetMorePosts = async (date, refresh) => {
     if (loadingMore || (reachedEnd && !refresh)) return;
 
@@ -225,8 +221,11 @@ function ProfileUser({ user }) {
     setDeleteModalVisible(false);
   }
 
-  const handleSetDeleteModalVisible = () => {
+  const [deletePost, setDeletePost] = useState(null);
+
+  const handleSetDeleteModalVisible = (post) => {
     setDeleteModalVisible(true);
+    setDeletePost(post);
   }
 
   return  (
@@ -265,7 +264,7 @@ function ProfileUser({ user }) {
                       <AntDesign name="edit" size={20} color="gray" />
                     </Pressable>
 
-                    <Pressable onPress={handleSetDeleteModalVisible} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
+                    <Pressable onPress={() => handleSetDeleteModalVisible(item)} style={{ marginTop: 18, marginBottom: 15, marginRight: 5}}>
                       <AntDesign name="delete" size={20} color="gray" />
                     </Pressable>
 
@@ -282,7 +281,7 @@ function ProfileUser({ user }) {
                           <Text style={{ textAlign: 'center' }}>Are you sure you want to delete this post?</Text>
                           <View style={styles.buttonContainer}>
                             <PurpleButton onPress={onClose} text="No" loading={deleteButtonsSpinnerNo} />
-                            <PurpleButton onPress={handlePressDelete(item)} text="Yes" loading={deleteButtonsSpinnerYes} />
+                            <PurpleButton onPress={() => handlePressDelete()} text="Yes" loading={deleteButtonsSpinnerYes} />
                           </View>
                         </View>
                       </View>

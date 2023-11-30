@@ -29,7 +29,7 @@ export default function UserSearchForMentionFlatList({
             <Text style={styles.nameText}>{item.name}</Text>
             <Text style={styles.usernameText}>@{item.username}</Text>
           </View>
-          {selectedMentions.includes(item.username) && ( // Conditionally render the checkmark icon
+          {selectedMentions.includes(item) && ( 
             <MaterialIcons name="check" size={24} color="#6B5A8E" />
           )}
         </TouchableOpacity>
