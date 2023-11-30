@@ -12,7 +12,7 @@ import changeAvatar from '../../handlers/changeAvatar';
 import { storage } from '../../firebase';
 import { ref, getDownloadURL } from "firebase/storage";
 import { useUser } from '../../contexts/UserContext';
-
+import RegisterBioModal from '../../components/RegisterBioModal';
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [last_name, setLastName] = useState();
@@ -39,6 +39,7 @@ const SignUpScreen = ({ navigation }) => {
     setSelectedCountryName(country.name); 
     setCountryNameHasChanged(true);
   };
+  const [modalVisibleBio, setModalVisibleBio] = useState(false);
 
   const handleSignUp = async () => {
     try {
@@ -58,7 +59,7 @@ const SignUpScreen = ({ navigation }) => {
         const downloadURL = await getDownloadURL(storageRef);
         await changeAvatar(downloadURL);
         await fetchLoggedInUser({ setLoggedInUser });
-        navigation.navigate('Interests');
+        setModalVisibleBio(true);
       }
       setIsLoading(false);
     }
@@ -70,6 +71,7 @@ const SignUpScreen = ({ navigation }) => {
   const handleSignIn = () => {
     navigation.navigate('SignIn');
   };
+
 
   return (
     <ImageBackground
@@ -195,6 +197,9 @@ const SignUpScreen = ({ navigation }) => {
         onPress={handleSignIn}>
         <Text style={styles.btnText}>Already have an account? Sign in</Text>
       </TouchableOpacity>
+
+      <RegisterBioModal isVisible={modalVisibleBio} setModalVisible={setModalVisibleBio} navigation={navigation} />
+
     </View>
     </ScrollView>
     </ImageBackground>

@@ -1,11 +1,13 @@
 import React from 'react';
 import { TouchableOpacity, View, Image, Text, StyleSheet } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons'; 
 
-const GoogleSignInButton = ({ onPress, text }) => {
+
+const SignInWithBiometrics = ({ onPress, text }) => {
   return (
     <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
       <View style={styles.googleSigninContent}>
-        <Image source={require('../assets/google_icon.png')} style={styles.googleIcon} />
+        <FontAwesome5 name="fingerprint" size={24} color="black" style={styles.googleIcon} />
         <Text style={styles.buttonText}>{text}</Text>
       </View>
     </TouchableOpacity>
@@ -14,7 +16,7 @@ const GoogleSignInButton = ({ onPress, text }) => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    padding: 10,
+    padding: 15,
     borderRadius: 30,
     marginTop: 10,
   },
@@ -35,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GoogleSignInButton;
+export default SignInWithBiometrics;

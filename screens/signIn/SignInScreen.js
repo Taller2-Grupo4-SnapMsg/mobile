@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, Alert, ActivityIndicator, Modal } from 'react-native';
 import small_logo from '../../assets/small_logo.png';
 import LogInHandler from '../../handlers/LogInHandler';
-import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../../firebase';
 import * as Google from 'expo-auth-session/providers/google';
 import { useEffect } from 'react';
@@ -13,8 +13,10 @@ import SignInButton from '../../components/PurpleButton';
 import SignInGoogleButton from '../../components/SignInGoogleButton';
 import { fetchLoggedInUser } from '../../functions/Fetchings/fetchLoggedInUser';
 import { useUser } from '../../contexts/UserContext';
-import BiometricAuth from './BIometricAuth'; // Correct import statement
 import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
+import LoginWithBiometrics from '../../handlers/LoginWithBiometrics';
+import SignInWithBiometricsButton from '../../components/SignInWithBiometricsButton'; 
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -108,9 +110,8 @@ const SignInScreen = ({ navigation }) => {
   };
 
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
-  const handleSignInWithBiometrics = () => {
-    console.log('handleSignInWithBiometrics');
-  
+  const handleSignInWithBiometrics = async ()  => {
+
     const checkBiometricAvailability = async () => {
       const available = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricAvailable(available);
@@ -123,23 +124,35 @@ const SignInScreen = ({ navigation }) => {
         });
   
         if (result.success) {
-          // La autenticación biométrica fue exitosa
-          console.log('Autenticación exitosa');
-          // Aquí puedes acceder al token encriptado y enviarlo al servidor
+          const biometricToken = await SecureStore.getItemAsync('biometricToken');
+          if (biometricToken) {
+            const response = await LoginWithBiometrics(biometricToken);
+            if (response) {
+              navigation.navigate("MainNavigator");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "MainNavigator" }],
+              });
+            } else  {
+              Alert.alert('Alert', 'To be able to log in with Biometrics you must have an account. Please sign up.');
+            }
+          } else {
+            Alert.alert('Alert', 'Could not sign in with biometrics. Please try again.');
+          }
         } else {
           // La autenticación biométrica falló o fue cancelada
-          console.log('Autenticación fallida');
+          console.log('Could not sign in with biometrics. Please try again.');
         }
       } else {
-        // Dispositivo sin soporte para autenticación biométrica
         console.log('Autenticación biométrica no disponible en este dispositivo');
       }
     };
-
+  
     checkBiometricAvailability();
     handleBiometricAuthentication();
+  };
   
-  }
+
 
   return (
     <ImageBackground style={styles.container}>
@@ -159,20 +172,24 @@ const SignInScreen = ({ navigation }) => {
         <SignInTextInput setEmail={setEmail} setPassword={setPassword} showPassword={showPassword} togglePasswordVisibility={togglePasswordVisibility} />
       </View>
  
+      <View style={{ marginVertical: -20 }}>
        <SignInButton onPress={handleSignIn} text="Sign in" loading={loading} />
+      </View>
 
-      <View style={{ marginVertical: 30 }}>
+      <View style={{ marginTop: 30 }}>
         <SignInGoogleButton onPress={handleSignInWithGoogle} text="Sign in with Google" />
       </View>
 
 
       <View style={{ marginVertical: 0 }}>
-        <SignInGoogleButton onPress={handleSignInWithBiometrics} text="Sign in with Google" />
+        <SignInWithBiometricsButton onPress={handleSignInWithBiometrics} text="Sign in with Biometrics" />
       </View>
 
-      <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
-        <Text style={styles.btnText}>Don't have an account? Sign up today!</Text>
-      </TouchableOpacity>
+      <View style={{ marginTop: 20 }}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
+          <Text style={styles.btnText}>Don't have an account? Sign up today!</Text>
+        </TouchableOpacity>
+      </View>
     </ImageBackground>
   );
 };
@@ -211,8 +228,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 130,
+    height: 130,
     top: -10,
   },
   spinnerContainer: {
