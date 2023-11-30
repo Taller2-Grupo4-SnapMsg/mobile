@@ -1,12 +1,14 @@
 
 // Cambiar cuando este el post del feed
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Alert } from 'react-native';
 const OK = 200
+const USER_NOT_FOUND = 404
+const USER_BLOCKED = 403
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
-const getPostsOnATrendingTopic = async (hashtag, amount, offset) => {
+const getPostsOnATrendingTopic = async (hashtag, amount, offset, navigation) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -22,8 +24,18 @@ const getPostsOnATrendingTopic = async (hashtag, amount, offset) => {
             if (response.status === OK) {
                 const posts = await response.json();
                 return posts;
-            } else {
-                console.error('Fallo el request al back de getPosts:', response.status);
+            } else if (response.status ===  USER_NOT_FOUND) {
+                Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'SignIn' }],
+                  });
+            } else if (response.status === USER_BLOCKED) {
+                Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'SignIn' }],
+                  });
             }
         } catch (error) {
 

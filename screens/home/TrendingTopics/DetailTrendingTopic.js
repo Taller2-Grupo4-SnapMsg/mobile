@@ -12,7 +12,6 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-
 AMOUNT_POST_TRENDING = 10
 
 export default function TrendingTopicDetail({ route }) {
@@ -26,6 +25,7 @@ export default function TrendingTopicDetail({ route }) {
     const [reachedEnd, setReachedEnd] = useState(false);
     const [alertMessageRepost, setAlertMessage] = useState('');
     const [alerMessageRepostColor, setAlertMessageColor] = useState(true);
+    const navigation = useNavigation();
 
     const handleGetMorePosts = async (offset, refresh) => {
         if (loadingMore || (reachedEnd && !refresh)) return;
@@ -34,7 +34,7 @@ export default function TrendingTopicDetail({ route }) {
             setLoadingMore(true);
             setRefreshing(refresh);
         
-            const fetched = await getPostsOnATrendingTopic(trending_topic, AMOUNT_POST_TRENDING, offset);
+            const fetched = await getPostsOnATrendingTopic(trending_topic, AMOUNT_POST_TRENDING, offset, navigation);
 
             if (fetched && fetched.length > 0) {
               if (refresh) {
