@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-// ### QUEDA PROBAR Y PONER MAS LINDO
+
 export default function RecommendedUser(
     {item,
     loggedInUser,

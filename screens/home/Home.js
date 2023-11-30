@@ -70,10 +70,6 @@ export default function Home({}) {
         setLoadingMore(false);
       }
     };
-    
-    // useEffect(() => {  
-    //   handleGetMorePosts((new Date()).toISOString(), true)
-    //  }, []);
 
     useFocusEffect(
       React.useCallback(() => {

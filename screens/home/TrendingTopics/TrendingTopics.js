@@ -19,11 +19,6 @@ export default function TrendingTopics({}) {
           setReachedEndTrendingTopics } = useTrendingTopics();
     const colorScheme = useColorScheme();
     
-    // const handleGetMoreTrendingTopicsOnEndReached = async () =>
-    // {
-    //   setReachedEnd(true);
-    //   handleGetMoreTrendingTopics(0, false);
-    // }
    return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
@@ -39,7 +34,6 @@ export default function TrendingTopics({}) {
             colors={['#947EB0']}
           />
         }
-        //onEndReached={() => handleGetMoreTrendingTopicsOnEndReached()}
         onEndReachedThreshold={0.1}
         />
       {loadingMoreTrendingTopics && <LoadingMoreIndicator />}

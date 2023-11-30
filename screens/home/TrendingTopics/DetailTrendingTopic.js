@@ -62,13 +62,6 @@ export default function TrendingTopicDetail({ route }) {
    return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>
     <View style={styles.container}>
-      {/*<View style={styles.introcontainer}>
-        <View style={styles.iconContainer}>
-          <Text style={styles.hashtag}>#</Text>
-        </View>
-        <Text style={styles.text}>{trending_topic}</Text>
-        </View>*/}
-
       <FlatList
         data={posts}
         renderItem={({ item }) => {
