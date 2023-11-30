@@ -20,7 +20,6 @@ const RegisterBiometrics = async () => {
             headers: headers,
         });
         const responseData = await response.json();
-        console.log('Response:', response.status);
         switch (response.status) {
             case OK:
                 return responseData.biometric_token;
