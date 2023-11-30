@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonRecommendedUser: {
-    backgroundColor: '#947EB0',
+    backgroundColor: '#6B5A8E',
     borderRadius: 20,
     width: 60,
     height: 50,

@@ -2,49 +2,47 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import getTrendingTopics from '../handlers/trending_topics/getTrendingTopics';
 
-AMOUNT_TRENDING_TOPIC = 4
+AMOUNT_TRENDING_TOPIC = 7
 
 const TrendingTopicsContext = createContext();
 
 export const TrendingTopicsProvider = ({ children }) => {
   const [trendingTopics, setTrendingTopics] = useState([]);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [reachedEnd, setReachedEnd] = useState(false);
+  const [loadingMoreTrendingTopics, setLoadingMoreTrendingTopics] = useState(false);
+  const [refreshingTrendingTopics, setRefreshingTrendingTopics] = useState(false);
+  const [offsetTrendingTopics, setOffsetTrendingTopics] = useState(0);
+  const [reachedEndTrendingTopics, setReachedEndTrendingTopics] = useState(false);
 
-  const handleGetMoreTrendingTopics = async (offset, refresh) => {
-    console.log('handleGetMoreTrendingTopics')
-    console.log('offset', offset)
-    if (loadingMore || (reachedEnd && !refresh)) return;
+  const handleGetMoreTrendingTopics = async (offsetTrendingTopics, refresh) => {
+    if (loadingMoreTrendingTopics || (reachedEndTrendingTopics && !refresh)) return;
 
     try {
-        setLoadingMore(true);
-        setRefreshing(refresh);
+        setLoadingMoreTrendingTopics(true);
+        setRefreshingTrendingTopics(refresh);
 
-        if (!offset){
-            offset = 0;
+        if (!offsetTrendingTopics){
+            offsetTrendingTopics = 0;
         }
-        const fetched = await getTrendingTopics(AMOUNT_TRENDING_TOPIC, offset, 50);
+        const fetched = await getTrendingTopics(AMOUNT_TRENDING_TOPIC, offsetTrendingTopics, 50);
 
         if (fetched && fetched.length > 0) {
-          if (reachedEnd){
+          if (reachedEndTrendingTopics){
              setTrendingTopics((prevTrendingTopics) => [...prevTrendingTopics, ...fetched]);
-             setOffset(offset + AMOUNT_TRENDING_TOPIC);
-             setReachedEnd(false);
+             setOffsetTrendingTopics(offsetTrendingTopics + AMOUNT_TRENDING_TOPIC);
+             setReachedEndTrendingTopics(false);
           }
           else {
               setTrendingTopics(fetched);
-              setRefreshing(false);
-              setReachedEnd(false);
+              setRefreshingTrendingTopics(false);
+              setReachedEndTrendingTopics(false);
           }
         } else {
-          setReachedEnd(true);
+          setReachedEndTrendingTopics(true);
         }
     } catch (error) {
         console.error('Error while loading more trending topics:', error);
     } finally {
-        setLoadingMore(false);
+        setLoadingMoreTrendingTopics(false);
     }
   };
 
@@ -52,7 +50,7 @@ export const TrendingTopicsProvider = ({ children }) => {
     const interval = 6000;
     
     handleGetMoreTrendingTopics(0, true);
-    const intervalId = setInterval(() => handleGetMoreTrendingTopics(offset, false), interval);
+    const intervalId = setInterval(() => handleGetMoreTrendingTopics(offsetTrendingTopics, false), interval);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -60,10 +58,10 @@ export const TrendingTopicsProvider = ({ children }) => {
   return (
     <TrendingTopicsContext.Provider value={{
         trendingTopics,
-        loadingMore,
-        refreshing,
+        loadingMoreTrendingTopics,
+        refreshingTrendingTopics,
         handleGetMoreTrendingTopics,
-        setReachedEnd,
+        setReachedEndTrendingTopics,
         }}>
       {children}
     </TrendingTopicsContext.Provider>

@@ -7,9 +7,9 @@ import AppComponent from './AppComponent';
 export default function App() {
   return (
     <UserProvider>
-      {/*<TrendingTopicsProvider>*/}
+      <TrendingTopicsProvider>
         <AppComponent />
-      {/*</TrendingTopicsProvider>*/}
+      </TrendingTopicsProvider>
     </UserProvider>
   );
 }

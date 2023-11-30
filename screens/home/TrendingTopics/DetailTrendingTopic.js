@@ -13,7 +13,7 @@ import {
 } from '@react-navigation/native';
 
 
-AMOUNT_POST = 6
+AMOUNT_POST_TRENDING = 10
 
 export default function TrendingTopicDetail({ route }) {
     const { trending_topic } = route.params;
@@ -34,7 +34,7 @@ export default function TrendingTopicDetail({ route }) {
             setLoadingMore(true);
             setRefreshing(refresh);
         
-            const fetched = await getPostsOnATrendingTopic(trending_topic, AMOUNT_POST, offset);
+            const fetched = await getPostsOnATrendingTopic(trending_topic, AMOUNT_POST_TRENDING, offset);
 
             if (fetched && fetched.length > 0) {
               if (refresh) {
@@ -44,7 +44,7 @@ export default function TrendingTopicDetail({ route }) {
               } else {
                   setPosts((prevPosts) => [...prevPosts, ...fetched]);
               }
-              setOffset(offset + AMOUNT_POST);
+              setOffset(offset + AMOUNT_POST_TRENDING);
             } else {
               setReachedEnd(true);
             }

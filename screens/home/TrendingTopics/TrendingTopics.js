@@ -13,10 +13,10 @@ import {
 
 export default function TrendingTopics({}) {
   const { trendingTopics, 
-          loadingMore, 
-          refreshing, 
+          loadingMoreTrendingTopics, 
+          refreshingTrendingTopics, 
           handleGetMoreTrendingTopics,
-          setReachedEnd } = useTrendingTopics();
+          setReachedEndTrendingTopics } = useTrendingTopics();
     const colorScheme = useColorScheme();
     
     // const handleGetMoreTrendingTopicsOnEndReached = async () =>
@@ -34,7 +34,7 @@ export default function TrendingTopics({}) {
         }}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={refreshingTrendingTopics}
             onRefresh={() => handleGetMoreTrendingTopics(0, true)}
             colors={['#947EB0']}
           />
@@ -42,7 +42,7 @@ export default function TrendingTopics({}) {
         //onEndReached={() => handleGetMoreTrendingTopicsOnEndReached()}
         onEndReachedThreshold={0.1}
         />
-      {loadingMore && <LoadingMoreIndicator />}
+      {loadingMoreTrendingTopics && <LoadingMoreIndicator />}
     </View>
     </ThemeProvider>
    );
