@@ -5,7 +5,7 @@ import LikePost from '../../handlers/posts/likePost';
 import UnlikePost from '../../handlers/posts/unlikePost';
 import { useFocusEffect } from 'expo-router';
 
-const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
+const LikeButton = ({ icon, initialLikes, isLiked, post_id, navigation }) => {
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(initialLikes);
 
@@ -21,11 +21,11 @@ const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
       if (liked) {
         setLikes(likes - 1);
         setLiked(false);
-        response = await UnlikePost(post_id);
+        response = await UnlikePost(post_id, navigation);
       } else {
         setLikes(likes + 1);
         setLiked(true);
-        response = await LikePost(post_id);
+        response = await LikePost(post_id, navigation);
       }
     }catch (error) {
       console.error('Error while liking:', error);

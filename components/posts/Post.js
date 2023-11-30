@@ -154,11 +154,12 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
             setAlertMessage={setAlertMessage}
             setAlertMessageColor={setAlertMessageColor}
             disabled={user_creator.email === loggedInUser.email}
+              navigation={navigation}
           />
           
-          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
+          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} navigation={navigation} />
 
-          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} />
+          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} navigation={navigation} />
         </View>
             </View>
         </Pressable>

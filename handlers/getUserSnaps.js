@@ -24,18 +24,23 @@ const getUserSnaps = async (email, navigation) => {
       if (response.status === OK) {
         const snaps = await response.json();
         return snaps;
-      } else if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Error', 'I am sorry, your session has expired, please login again');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'SignIn' }],
-        });
       } else if (response.status === USER_BLOCKED) {
-        Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'SignIn' }],
-        });
+        if (!isSignInScreen(navigation)) {
+          console.log("entre aca")
+          Alert.alert('Error', 'I am sorry, your account has been blocked, please contact us for more information');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignIn' }],
+          });
+        }
+      } else if (response.status === USER_NOT_FOUND) {
+        if (!isSignInScreen(navigation)) {
+          Alert.alert('Error', 'I am sorry, your session has expired, please login again');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignIn' }],
+          });
+        }
       } else {
         console.error('Error al obtener snaps:', response.status);
       }s
@@ -49,4 +54,8 @@ const getUserSnaps = async (email, navigation) => {
   } 
 };
 
+const isSignInScreen = (navigation) => {
+  console.log("snaps");
+  return navigation.dangerouslyGetState().routes[0].name === 'SignIn';
+}
 export default getUserSnaps;

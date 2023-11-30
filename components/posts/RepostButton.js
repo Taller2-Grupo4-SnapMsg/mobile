@@ -11,7 +11,9 @@ const RepostButton = ({ icon,
                         post_id, 
                         setAlertMessage,
                         setAlertMessageColor, 
-                        disabled }) => {
+                        disabled, 
+                        navigation
+                      }) => {
 
   const [reposted, setReposted] = useState(isReposted);
   const [reposts, setReposts] = useState(initialReposts);
@@ -35,7 +37,7 @@ const RepostButton = ({ icon,
   const handlePressRepost = async () => {
     try {
       if (reposted){
-        response = await DeleteRepostByPostId(post_id);
+        response = await DeleteRepostByPostId(post_id, navigation);
         if (response == 200) {
           setReposts(reposts - 1);
           setReposted(false);
@@ -48,7 +50,7 @@ const RepostButton = ({ icon,
           Alert.alert('Alert', 'Unknown error');
         }
       } else {
-        response = await RepostPost(post_id);
+        response = await RepostPost(post_id, navigation);
         if (response){
           if (response === 200) {
             setReposts(reposts + 1);

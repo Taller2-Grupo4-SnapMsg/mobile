@@ -5,7 +5,7 @@ import { useFocusEffect } from 'expo-router';
 import UnFavoritePost from '../../handlers/posts/unfavoritePost';
 import FavoritePost from '../../handlers/posts/favoritePost';
 
-const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
+const FavoriteButton = ({ icon,  isFavorited, post_id, navigation }) => {
   const [favorited, setFavorited] = useState(isFavorited);
 
   useFocusEffect(
@@ -18,10 +18,10 @@ const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
     try {
       if (favorited) {
         setFavorited(false);
-        response = await UnFavoritePost(post_id);
+        response = await UnFavoritePost(post_id, navigation);
       } else {
         setFavorited(true);
-        response = await FavoritePost(post_id);
+        response = await FavoritePost(post_id, navigation);
       }
     }catch (error) {
       console.error('Error while liking:', error);
