@@ -135,9 +135,8 @@ const EditProfile = ({  user  }) => {
     if (CountryNameHasChanged) {
       await changeLocation(selectedCountryName);
     } 
-    if (privacyHasChanged) {
-      await changePrivacy(accountIsPublic);
-    }
+    await changePrivacy(accountIsPublic, navigation);
+    
   
     const fetchLoggedInUser = async () => {
       try {

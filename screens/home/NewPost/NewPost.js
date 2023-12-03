@@ -13,6 +13,7 @@ import AlertBottomBanner from "../../../components/communicating_info/AlertBotto
 import MentionModal from '../../../components/MentionModal';
 import { Feather } from '@expo/vector-icons';
 import SendNotification from "../../../handlers/notifications/sendNotification"
+import { Alert }from 'react-native'
 
 TIMEOUT_ALERT_POST = 1500
 
@@ -44,6 +45,10 @@ export default function NewPost() {
   }
 
   const onPostPress = async () => {
+    if (!text && !selectedImage) {
+      Alert.alert('Please enter some text or select an image');
+      return;
+    }
     setIsLoading(true);
 
     if (selectedImage) {
@@ -58,11 +63,11 @@ export default function NewPost() {
 
       setSelectedImage('');
       const usernames = selectedMentions.map(mention => mention.username);
-      post_id = await PostHandler(text, file_route, tags, usernames);
+      post_id = await PostHandler(text, file_route, tags, usernames, navigation);
     } else {
       setSelectedImage('');
       const usernames = selectedMentions.map(mention => mention.username);
-      post_id = await PostHandler(text, '', tags, usernames);
+      post_id = await PostHandler(text, '', tags, usernames, navigation);
     }
     
     const emails = selectedMentions.map(mention => mention.email);
@@ -105,6 +110,10 @@ export default function NewPost() {
   };
 
   const addTag = (tag) => {
+    if (!tag) {
+      Alert.alert('Please enter a tag to add');
+      return;
+    }
     setTags([...tags, tag]);
     setTagInput('');
   };

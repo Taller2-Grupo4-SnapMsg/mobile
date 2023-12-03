@@ -38,7 +38,7 @@ const UserRecommendation = () => {
             setLoadingMore(true);
             setRefreshing(refresh);
         
-            const fetchedUsers = await getUserRecommendation(AMOUNT_NOTIFICATIONS, offset);
+            const fetchedUsers = await getUserRecommendation(AMOUNT_NOTIFICATIONS, offset, navigation);
 
             if (fetchedUsers && fetchedUsers.length > 0) {
               if (refresh) {

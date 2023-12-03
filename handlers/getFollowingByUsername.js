@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
-
+const USER_BLOCKED = 403;
 const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
 const getFollowingByUsername = async (email) => {
@@ -23,8 +23,10 @@ const getFollowingByUsername = async (email) => {
       if (response.status === OK) {
         const following = await response.json();
         return following;
-      } else {
-        console.error('Error al obtener following count:', response.status);
+      } else if (response.status === USER_NOT_FOUND) {
+        return;
+      } else if (response.status === USER_BLOCKED) {
+        return;
       }
     } catch (error) {
       const message =

@@ -17,7 +17,6 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 import LoginWithBiometrics from '../../handlers/LoginWithBiometrics';
 import SignInWithBiometricsButton from '../../components/SignInWithBiometricsButton'; 
-
 WebBrowser.maybeCompleteAuthSession();
 
 const SignInScreen = ({ navigation }) => {
@@ -53,9 +52,7 @@ const SignInScreen = ({ navigation }) => {
           routes: [{ name: "MainNavigator" }],
         });
       } else {
-        setLoading(false); 
-        Alert.alert('Alert', 'Incorrect email or password.');
-      }
+        setLoading(false);       }
     } catch (error) {
       setLoading(false); 
       console.error('Error in registration:', error);
@@ -90,7 +87,6 @@ const SignInScreen = ({ navigation }) => {
             });
           } else {
             setShowSpinner(false); 
-            Alert.alert('Alert', 'To be able to log in with Google you must have an account. Please sign up.');
           }
         } catch (error) {
           setShowSpinner(false); 
@@ -114,7 +110,7 @@ const SignInScreen = ({ navigation }) => {
 
     const checkBiometricAvailability = async () => {
       const available = await LocalAuthentication.hasHardwareAsync();
-      setIsBiometricAvailable(available);
+      setIsBiometricAvailable( () => available);
     };
   
     const handleBiometricAuthentication = async () => {
@@ -133,19 +129,10 @@ const SignInScreen = ({ navigation }) => {
                 index: 0,
                 routes: [{ name: "MainNavigator" }],
               });
-            } else  {
-              Alert.alert('Alert', 'To be able to log in with Biometrics you must have an account. Please sign up.');
             }
-          } else {
-            Alert.alert('Alert', 'Could not sign in with biometrics. Please try again.');
           }
-        } else {
-          // La autenticación biométrica falló o fue cancelada
-          console.log('Could not sign in with biometrics. Please try again.');
-        }
-      } else {
-        console.log('Autenticación biométrica no disponible en este dispositivo');
-      }
+        } 
+      } 
     };
   
     checkBiometricAvailability();

@@ -51,6 +51,7 @@ export default function SearchUser() {
           setFollowingStatus,
           setIsFetchingMap,
           false,
+          navigation,
         );
         setSearched(true); 
       } else {
@@ -59,7 +60,7 @@ export default function SearchUser() {
     } else if (searchByHashtag) {
       if (searchText !== '') {
         setIsFetching(true); 
-        posts_fetched = await searchPostsByHashtag(searchText, offset, ammount);
+        posts_fetched = await searchPostsByHashtag(searchText, offset, ammount, navigation);
         setPostsByHashtags(posts_fetched);
         setSearched(true); 
         setIsFetching(false);
@@ -69,7 +70,7 @@ export default function SearchUser() {
     } else if (searchByText) {
       if (searchText !== '') {
         setIsFetching(true); 
-        posts_fetched = await searchPostsByText(searchText, offset, ammount);
+        posts_fetched = await searchPostsByText(searchText, offset, ammount, navigation);
         setPostsByText(posts_fetched);
         setSearched(true);
         setIsFetching(false); 
@@ -102,6 +103,7 @@ export default function SearchUser() {
       setFollowingStatus,
       setIsFetchingMap,
       false,
+      navigation,
     );
   };
   const [searchByUsername, setSearchByUsername] = useState(false);
@@ -177,7 +179,7 @@ export default function SearchUser() {
             />
           )
         ) : searchByHashtag ? (
-          postsByHashtags.length === 0 ? (
+          postsByHashtags && postsByHashtags.length === 0 ? (
             <View style={styles.noUsersContainer}>
               <Text>No posts found.</Text>
             </View>
@@ -192,7 +194,7 @@ export default function SearchUser() {
           />
           )
         ) :  (
-          postsByText.length === 0 ? (
+          postsByText && postsByText.length === 0 ? (
             <View style={styles.noUsersContainer}>
               <Text>No posts found.</Text>
             </View>

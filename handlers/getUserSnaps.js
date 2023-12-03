@@ -3,7 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
-
+const USER_BLOCKED = 403;
+const OTHER_USER_BLOCKED = 405;
 //ponerlo en un .env como en la clase
 const API_BASE_URL = 'https://postsback.onrender.com';
 
@@ -23,8 +24,12 @@ const getUserSnaps = async (email) => {
       if (response.status === OK) {
         const snaps = await response.json();
         return snaps;
-      } else {
-        console.error('Error al obtener snaps count:', response.status);
+      } else if (response.status === USER_BLOCKED) {
+        return;
+      } else if (response.status === USER_NOT_FOUND) {
+        return;
+      } else if (response.status === OTHER_USER_BLOCKED) {
+        return;
       }
     } catch (error) {
       const message =

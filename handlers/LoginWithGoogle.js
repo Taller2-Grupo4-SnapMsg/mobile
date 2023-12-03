@@ -5,7 +5,7 @@ import { Alert }  from 'react-native';
 const OK = 200
 const USER_NOT_FOUND = 404
 const PASSWORD_DOESNT_MATCH = 401
-
+const USER_BLOCKED = 403
 
   const LoginWithGoogle = async (firebase_id_token) => {
     const headers = {
@@ -27,7 +27,12 @@ const PASSWORD_DOESNT_MATCH = 401
             return true;
     
         case USER_NOT_FOUND:
+            Alert.alert('Alert', 'To be able to log in with Google you must have an account. Please sign up.');
             return false;
+        
+        case USER_BLOCKED:
+          Alert.alert('User blocked', 'You have been blocked by an administrator');
+          return false;
 
         case PASSWORD_DOESNT_MATCH:
             return false;

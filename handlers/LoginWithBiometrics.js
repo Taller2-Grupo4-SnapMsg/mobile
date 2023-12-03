@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Alert } from 'react-native';
 
 const OK = 200
 const USER_NOT_FOUND = 404
 const PASSWORD_DOESNT_MATCH = 401
-
+const USER_BLOCKED = 403
 
 const LoginWithBiometrics = async (biometric_token) => {
     const headers = {
@@ -26,11 +26,15 @@ const LoginWithBiometrics = async (biometric_token) => {
                 return true;
         
             case USER_NOT_FOUND:
+                Alert.alert('Alert', 'To be able to log in with biometrics you must have an account. Please sign up.');
                 return false;
         
             case PASSWORD_DOESNT_MATCH:
                 return false;
-        
+            
+            case USER_BLOCKED:
+                Alert.alert('User blocked', 'You have been blocked by an administrator');
+                return false;
             default:
                 return false;
         }

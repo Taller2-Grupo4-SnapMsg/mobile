@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
-
+const OTHER_USER_BLOCKED = 405
+const USER_NOT_FOUND = 404
+const USER_BLOCKED = 403
 URL_POST_BACK = "https://postsback.onrender.com"
     
 const SaveTokenDevice = async (device_token) => {
@@ -22,10 +24,12 @@ const SaveTokenDevice = async (device_token) => {
             if (response.status === OK) {
                 const post = await response.json();
                 return post;
-            } if (response.status === 400) {
-                console.log(response)
-            } else {
-                console.error('Fallo el request al back de post:', response.status);
+            } else if (response.status === USER_BLOCKED) {
+                return null;
+            } else if (response.status === USER_NOT_FOUND) {
+                return null;
+            } else if (response.status === OTHER_USER_BLOCKED) {
+                return null;
             }
         } catch (error) {
             const message =

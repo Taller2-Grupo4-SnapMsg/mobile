@@ -5,7 +5,7 @@ import { useUser } from '../../contexts/UserContext';
 import getStatistics from '../../handlers/statistics/getStatistics';
 import DatePicker from 'react-native-modern-datepicker';
 import PurpleButton from "../../components/PurpleButton";
-
+import { useNavigation } from '@react-navigation/native';
 function formatDate(date) {
   return date.replace("T", "_").split(".")[0];
 }
@@ -31,6 +31,7 @@ const Statistics = () => {
   const [isChoosingDate, setIsChoosingDate] = useState(false);
   const [isGettingStatistics, setIsGettingStatistics] = useState(false);
   const [defaultOptionSelected, setDefaultOptionSelected] = useState("");
+  const navigation = useNavigation();
   const [data, setData] = useState([
     { category: 'My Posts', value: 1000 },
     { category: 'My Likes', value: 500 },
@@ -161,7 +162,7 @@ const Statistics = () => {
         const fromDate_date = new Date(fromDate);
   
         if (toDate_date.getTime() > fromDate_date.getTime()) {
-          stats = await getStatistics(formatDate(fromDate), formatDate(toDate));
+          stats = await getStatistics(formatDate(fromDate), formatDate(toDate), navigation);
           transformedStats = setStats(0, 0, 0, 0);
           if (stats) {
             transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);

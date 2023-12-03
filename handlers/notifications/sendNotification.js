@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
-
+const USER_BLOCKED = 403
+const OTHER_USER_BLOCKED = 405
+const USER_NOT_FOUND = 404
 URL_POST_BACK = "https://postsback.onrender.com"
     
 const SendNotification = async (user_emails_that_receive, 
@@ -32,8 +34,12 @@ const SendNotification = async (user_emails_that_receive,
             if (response.status === OK) {
                 const post = await response.json();
                 return post;
-            } else {
-                console.error('Fallo el request al back de post:', response.status);
+            } else if (response.status === USER_BLOCKED) {
+                return null;
+            } else if (response.status === USER_NOT_FOUND) {
+                return null;
+            } else if (response.status === OTHER_USER_BLOCKED) {
+                return null;
             }
         } catch (error) {
             const message =

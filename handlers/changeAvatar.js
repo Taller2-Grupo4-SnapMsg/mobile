@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200;
 const USER_NOT_FOUND = 404;
-
+const USER_BLOCKED = 403;
 const API_BASE_URL = 'https://gateway-api-service-merok23.cloud.okteto.net';
 
 const changeAvatar = async (avatar) => {
@@ -23,11 +23,10 @@ const changeAvatar = async (avatar) => {
       if (response.status === OK) {
         const data = await response.json();
         return data;
-      } else if (response.status === 422) {
-        const errorData = await response.json();
-        console.error('Validation Error:', errorData);
-      } else {
-        console.error('Error al actualizar avatar:', response.status);
+      } else if (response.status ===  USER_BLOCKED) {
+        return; 
+      } else if (response.status === USER_NOT_FOUND) {
+        return;
       }
     } catch (error) {
       const message =

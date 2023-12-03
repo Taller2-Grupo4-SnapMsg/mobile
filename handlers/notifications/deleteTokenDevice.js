@@ -16,10 +16,13 @@ const DeleteDeviceToken = async () => {
         method: 'DELETE',
         headers: headers,
       });
-
-      console.log(response.status);
       if (response.status === 200) {
-        console.log('Device token deleted successfully');
+        return;
+      } else if (response.status === 403) {
+        return;
+      } else if (response.status === 404) {
+        return;
+      } else if (response.status === 405) {
         return;
       }
 

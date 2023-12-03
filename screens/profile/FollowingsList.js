@@ -39,7 +39,7 @@ const Followings = ({ user }) => {
 
 
   const handleFollowButton = async (itemEmail) => {
-    await handleFollowButtonInList(setIsFetchingMap, setFollowingStatus, followingStatus, itemEmail);
+    await handleFollowButtonInList(setIsFetchingMap, setFollowingStatus, followingStatus, itemEmail, navigation);
   };
 
 
@@ -50,7 +50,7 @@ const Followings = ({ user }) => {
       <View style={styles.spinnerContainer}>
         <ActivityIndicator size="large" color="#6B5A8E" />
       </View>
-    ) : followings.length === 0 ? (
+    ) : followings && followings.length === 0 ? (
       <View style={styles.noUsersContainer}>
         <Text>No users found.</Text>
       </View>
