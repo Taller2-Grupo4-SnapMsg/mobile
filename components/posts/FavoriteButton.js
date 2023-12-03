@@ -4,10 +4,12 @@ import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import UnFavoritePost from '../../handlers/posts/unfavoritePost';
 import FavoritePost from '../../handlers/posts/favoritePost';
-
+import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../../contexts/UserContext';
 const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
   const [favorited, setFavorited] = useState(isFavorited);
-
+  const navigation = useNavigation();
+  const { loggedInUser } = useUser();
   useFocusEffect(
     React.useCallback(() => {
       setFavorited(isFavorited);
@@ -18,10 +20,10 @@ const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
     try {
       if (favorited) {
         setFavorited(false);
-        response = await UnFavoritePost(post_id);
+        response = await UnFavoritePost(post_id, navigation);
       } else {
         setFavorited(true);
-        response = await FavoritePost(post_id);
+        response = await FavoritePost(post_id, navigation);
       }
     }catch (error) {
       console.error('Error while liking:', error);

@@ -9,6 +9,9 @@ import ProfileExtraInfo from './ProfileExtraInfo';
 import EditProfileButton from './EditProfileButton';
 import FollowButton from './FollowButton';
 import { AntDesign } from '@expo/vector-icons';
+import RoundedCheckboxButton from './RoundedCheckBox';
+import { useState } from 'react';
+import { set } from 'firebase/database';
 
 
 export default function ProfileBanner({ 
@@ -28,8 +31,37 @@ export default function ProfileBanner({
   handleFollowersButton,
   colorScheme, 
   onlyReposts,
-  setOnlyReposts
+  setOnlyReposts,
+  setOnlyFavs,
+  setAllPosts,
+  onlyFavs,
+  allPosts,
+  loadingMore, 
  }) {
+
+  const handleSetOnlyReposts = () => {
+    if (loadingMore) return;
+    if (!onlyFavs && !allPosts) return;
+    setOnlyReposts(!onlyReposts);
+    setOnlyFavs(false);
+    setAllPosts(false);
+  }
+
+  const handleSetOnlyFavs= () => {
+    if (loadingMore) return;
+    if (!onlyReposts && !allPosts) return;
+    setOnlyFavs(!onlyFavs);
+    setAllPosts(false);
+    setOnlyReposts(false);
+  }
+
+  const handleSetAllPosts = () => {
+    if (loadingMore) return;
+    if (!onlyReposts && !onlyFavs) return; 
+    setAllPosts(!allPosts);
+    setOnlyReposts(false);
+    setOnlyFavs(false);
+  }
     return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
@@ -83,13 +115,20 @@ export default function ProfileBanner({
                 onFollowingPress={handleFollowingButton}
                 onFollowersPress={handleFollowersButton}
               />
+              { ((user && user.is_public) || (user.email !== loggedInUser.email && isFollower) || (user.email === loggedInUser.email)) && (
               <ProfileExtraInfo
                 dateOfBirth={user.date_of_birth}
                 location={user.location}
-              />
+              />)}
             </View>
           </View>
         </View>
+        {user && loggedInUser && user.email === loggedInUser.email &&
+        <View style={styles.checkBoxesContainer}>
+          <RoundedCheckboxButton text="Posts" isChecked={allPosts} onToggle={handleSetAllPosts} />
+          <RoundedCheckboxButton text="Snapshares" isChecked={onlyReposts} onToggle={handleSetOnlyReposts} />
+          <RoundedCheckboxButton text="Favorites" isChecked={onlyFavs} onToggle={handleSetOnlyFavs} />
+      </View> }
       </ThemeProvider>
     )
 }
@@ -97,7 +136,7 @@ export default function ProfileBanner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 15,
+    marginTop: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: 'column',
     //height: 'auto', 
@@ -186,5 +225,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     color: '#fff',
     fontSize: 12,
+  },
+  checkBoxesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });

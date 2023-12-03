@@ -50,7 +50,7 @@ export default function Home({}) {
         setLoadingMore(true);
         setRefreshing(refresh);
     
-        const fetchedPosts = await getPosts(formatDate(date), AMOUNT_POST, loggedInUser.email);
+        const fetchedPosts = await getPosts(formatDate(date), AMOUNT_POST, loggedInUser.email, navigation);
     
         if (fetchedPosts && fetchedPosts.length > 0) {
           if (refresh) {
@@ -100,7 +100,7 @@ export default function Home({}) {
         onEndReachedThreshold={0.3}
         />
       {loadingMore && <LoadingMoreIndicator />}
-      <Pressable style={styles.floatingButton} onPress={handlePressUserPlus}>
+      <Pressable style={styles.floatingButton} onPress={handlePressPlus}>
         <Entypo
           name="plus"
           size={24}

@@ -7,7 +7,8 @@ export async function handleFollowButtonInList(
     setIsFetchingMap,
     setFollowStatus,
     followStatus,
-    itemEmail
+    itemEmail,
+    navigation,
 ){
     setIsFetchingMap((prevIsFetchingMap) => ({
       ...prevIsFetchingMap,
@@ -15,9 +16,9 @@ export async function handleFollowButtonInList(
     }));
 
     if (followStatus[itemEmail]) {
-      await unfollowUser(itemEmail);
+      await unfollowUser(itemEmail, navigation);
     } else {
-      await followUser(itemEmail);
+      await followUser(itemEmail, navigation);
     }
 
     setFollowStatus((prevStatus) => ({

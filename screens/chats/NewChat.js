@@ -132,7 +132,7 @@ export default NewChat = () => {
 
   const handleSearchButtonFunction = async () => {
     Keyboard.dismiss();
-    user_data = await searchUserByUsername(usernameSearched, 0, 10);
+    user_data = await searchUserByUsername(usernameSearched, 0, 10, navigation);
     // Create a copy of the current users array
     const updatedUsers = [...users];
 

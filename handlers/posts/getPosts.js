@@ -1,12 +1,13 @@
 
-// Cambiar cuando este el post del feed
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Alert } from 'react-native';
 const OK = 200
+const USER_BLOCKED = 403
+const USER_NOT_FOUND = 404
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const getPosts = async (oldest_date, n) => {
+const getPosts = async (oldest_date, n, email, navigation) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -23,8 +24,18 @@ const getPosts = async (oldest_date, n) => {
             if (response.status === OK) {
                 const posts = await response.json();
                 return posts;
-            } else {
-                console.error('Fallo el request al back de getPosts:', response.status);
+            } if (response.status === USER_BLOCKED) {
+                Alert.alert('User blocked', 'You have been blocked by an administrator');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'SignIn' }],
+                });
+            } else if (response.status === USER_NOT_FOUND) {
+                Alert.alert('Session expired', 'Your session has expired, please log in again');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'SignIn' }],
+                });
             }
         } catch (error) {
 

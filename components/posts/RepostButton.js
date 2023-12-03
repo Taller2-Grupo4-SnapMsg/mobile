@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import RepostPost from '../../handlers/posts/repost';
 import DeleteRepostByPostId from '../../handlers/posts/deleteRepostByPostId';
-
+import { useNavigation } from '@react-navigation/native';
 const RepostButton = ({ icon, 
                         initialReposts, 
                         isReposted, 
@@ -15,7 +15,7 @@ const RepostButton = ({ icon,
 
   const [reposted, setReposted] = useState(isReposted);
   const [reposts, setReposts] = useState(initialReposts);
-
+  const navigation = useNavigation();
   const setAlert = (message, color, timeout) => {
     setAlertMessageColor(color);
     setAlertMessage(message);
@@ -35,20 +35,13 @@ const RepostButton = ({ icon,
   const handlePressRepost = async () => {
     try {
       if (reposted){
-        response = await DeleteRepostByPostId(post_id);
+        response = await DeleteRepostByPostId(post_id, navigation);
         if (response == 200) {
           setReposts(reposts - 1);
           setReposted(false);
-          Alert.alert('Success', 'Repost deleted successfully');
-        } else if (response === 403) {
-          setAlert("You can't delete a post with this button", SOFT_RED, TIMEOUT_ALERT);
-        } else if (response === 404) {
-          Alert.alert('Alert', 'The post you are trying to delete your repost from doesnt exist');
-        } else {
-          Alert.alert('Alert', 'Unknown error');
-        }
+        } 
       } else {
-        response = await RepostPost(post_id);
+        response = await RepostPost(post_id, navigation);
         if (response){
           if (response === 200) {
             setReposts(reposts + 1);

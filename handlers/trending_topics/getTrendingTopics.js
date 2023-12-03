@@ -3,6 +3,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OK = 200
+const USER_BLOCKED = 403
+const USER_NOT_FOUND = 404
 
 URL_POST_BACK = "https://postsback.onrender.com"
 
@@ -22,8 +24,8 @@ const getTrendingTopics = async (amount, offset, days) => {
             if (response.status === OK) {
                 const posts = await response.json();
                 return posts;
-            } else {
-                console.error('Fallo el request al back de get trending topics:', response.status);
+            } if (response.status === USER_BLOCKED || response.status === USER_NOT_FOUND) {
+                return [];
             }
         } catch (error) {
 

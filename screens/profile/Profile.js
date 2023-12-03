@@ -32,7 +32,7 @@ import {
 } from 'react-native';
 import PurpleButton from '../../components/PurpleButton';
 import { StyleSheet } from 'react-native';
-import { set } from 'firebase/database';
+import getFavoritePosts from '../../handlers/posts/getFavoritePosts';
 AMOUNT_POST = 10
 SOFT_GREEN = "#B4D3B2"
 SOFT_RED = "#FF5733"
@@ -51,12 +51,17 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [alertMessageRepost, setAlertMessage] = useState('');
   const [alerMessageRepostColor, setAlertMessageColor] = useState(true);
-
+  const navigation = useNavigation();
+  const [isUserBlocked, setIsUserBlocked] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (route.params && Object.keys(user_param).length !== 0) {
           setUser(user_param);
+          const fetchedPosts = await getPostsProfile(formatDate(new Date().toISOString()), AMOUNT_POST, user_param.email, false, loggedInUser.email, navigation);       
+          if (fetchedPosts && fetchedPosts[0] === "User blocked") {
+            setIsUserBlocked( () => true);
+          }
         } else {
           setUser(loggedInUser);
         }
@@ -80,7 +85,12 @@ export default function Profile() {
       </View>
     );
   }
-  return <ProfileUser user={user} />;
+  return ( isUserBlocked ?
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{ fontSize: 20, color: 'gray' }}>This user is blocked</Text>
+    </View> :
+    <ProfileUser user={user} />
+  ); 
 }
 
 
@@ -98,13 +108,16 @@ function ProfileUser({ user }) {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reachedEnd, setReachedEnd] = useState(false);
-  const [onlyReposts, setOnlyReposts] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [userSnaps, setUserSnaps] = useState(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteButtonsSpinnerYes, setDeleteButtonsSpinnerYes] = useState(false);
   const [deleteButtonsSpinnerNo, setDeleteButtonsSpinnerNo] = useState(false);
+
+  const [allPosts, setAllPosts] = useState(true);
+  const [onlyFavs, setOnlyFavs] = useState(false);
+  const [onlyReposts, setOnlyReposts] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -141,9 +154,9 @@ function ProfileUser({ user }) {
       await followUser(user.email);
     }
   
-    setIsFollowing(!isFollowing);
-    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername });
-    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername });
+    setIsFollowing(!isFollowing); 
+    fetchFollowsCount({ user, setFollowsCount: setFollowers, followsFunction: getFollowersByUsername});
+    fetchFollowsCount({ user, setFollowsCount: setFollowing, followsFunction: getFollowingByUsername});
   
     setIsFetching(false); 
   };
@@ -157,10 +170,10 @@ function ProfileUser({ user }) {
       try {
         if (deletePost.user_poster.email === deletePost.user_creator.email) {
           setDeleteButtonsSpinnerYes(true);
-          await DeletePost(deletePost.post_id);
+          await DeletePost(deletePost.post_id, navigation);
         } else {
           setDeleteButtonsSpinnerYes(true);
-          await DeleteRepost(deletePost.post_id);
+          await DeleteRepost(deletePost.post_id, navigation);
         }
         setRefreshing(true);
         const updatedPosts = posts.filter((p) => p.post_id !== deletePost.post_id);
@@ -173,13 +186,20 @@ function ProfileUser({ user }) {
   };
   
   
+
+
   const handleGetMorePosts = async (date, refresh) => {
     if (loadingMore || (reachedEnd && !refresh)) return;
 
     try {
       setLoadingMore(true);
       setRefreshing(refresh);
-      const fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts);
+      let fetchedPosts = null;
+      if (allPosts || onlyReposts) {
+        fetchedPosts = await getPostsProfile(formatDate(date), AMOUNT_POST, user.email, onlyReposts, loggedInUser.email, navigation);
+      } else if (onlyFavs) {
+        fetchedPosts = await getFavoritePosts(user.email, formatDate(date), AMOUNT_POST, navigation, loggedInUser.email);
+      }
       if (fetchedPosts && fetchedPosts.length > 0) {
         if (refresh) {
           setPosts(fetchedPosts);
@@ -198,7 +218,6 @@ function ProfileUser({ user }) {
       setLoadingMore(false);
     }
   };
-
   useEffect(() => {  
     fetchFollowStatus({ user, setStatus: setIsFollowing, followStatusFunction: checkIfFollowing, setIsFetching });
     fetchFollowStatus({ user, setStatus: setIsFollower, followStatusFunction: checkIfFollower, setIsFetching });
@@ -206,12 +225,15 @@ function ProfileUser({ user }) {
 
   useEffect(() => {  
     handleGetMorePosts((new Date()).toISOString(), true)
-   }, [onlyReposts, refreshing]);
+   }, [onlyReposts, refreshing, onlyFavs]);
   
    useFocusEffect(
     React.useCallback(() => {
       setRefreshing(true);
       setDeleteModalVisible(false);
+      setAllPosts(true);
+      setOnlyFavs(false);
+      setOnlyReposts(false);
     }, [])
   );
 
@@ -240,6 +262,11 @@ function ProfileUser({ user }) {
           onlyReposts={onlyReposts} 
           snaps = {userSnaps}
           setOnlyReposts={setOnlyReposts}
+          setOnlyFavs={setOnlyFavs}
+          setAllPosts={setAllPosts}
+          onlyFavs={onlyFavs}
+          allPosts={allPosts}
+          loadingMore={loadingMore}
           />
         }
         data={posts} 
@@ -253,7 +280,7 @@ function ProfileUser({ user }) {
             return null;
           }
 
-          if (item.user_poster.email == item.user_creator.email) {
+          if (item.user_poster && (item.user_poster.email == item.user_creator.email)) {
             return (
               <View style={{ flexDirection: 'row' , justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <Post post={item} style={{ flex: 1}}/>

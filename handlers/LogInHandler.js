@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert }  from 'react-native';
 
-
 const OK = 200
 const USER_NOT_FOUND = 404
 const PASSWORD_DOESNT_MATCH = 401
+const USER_BLOCKED = 403
 
 const headers = {
     'Content-Type': 'application/json;charset=utf-8',
@@ -30,10 +30,16 @@ const headers = {
             return true;
     
         case USER_NOT_FOUND:
+            Alert.alert('Alert', 'Incorrect email or password.');
             return false;
 
         case PASSWORD_DOESNT_MATCH:
+            Alert.alert('Alert', 'Incorrect email or password.');
             return false;
+
+        case USER_BLOCKED:
+          Alert.alert('User blocked', 'You have been blocked by an administrator');
+          return false;
 
         default:
             return false;
