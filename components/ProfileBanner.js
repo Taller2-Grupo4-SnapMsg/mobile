@@ -69,19 +69,7 @@ export default function ProfileBanner({
             {user && loggedInUser && user.email === loggedInUser.email && (
               <View style={styles.buttonContainer}>
                 <EditProfileButton onPress={handleEditButton} />
-                <View style={onlyReposts
-                  ? styles.iconContainerPress
-                  : styles.iconContainer
-                }>
-                <AntDesign name={"retweet"} size={25} color="white"
-                onPress={() => {
-                  setOnlyReposts(!onlyReposts);
-                }}
-                />
-                </View>
               </View>
-                
-                
             )}
             {user && loggedInUser && user.email !== loggedInUser.email && (
             <FollowButton isFollowing={isFollowing} isFetching={isFetching} onPress={handleFollowButton} />
@@ -100,8 +88,17 @@ export default function ProfileBanner({
                   <Text style={styles.followsYouText}>Follows you</Text>
                 </View>
               )}
+              {user.name && user.last_name && ((user.name.length > 7 && user.last_name.length >5)) ? (
+                <View>
+                  {console.log(user.name.length)}
+                  <Text style={styles.nameText}>{user.name}</Text>
+                  <Text style={styles.lastNameText}>{user.last_name}</Text>
+                </View>
+              ) : (
+                <Text style={styles.nameText}>{user.name} {user.last_name}</Text>
+              )}
 
-                {user.name && <Text style={styles.nameText}>{user.name} {user.last_name}</Text>}
+
                 {user.username && <Text style={styles.usernameText}>@{user.username}</Text>}
               </View>
             </View>
@@ -155,6 +152,10 @@ const styles = StyleSheet.create({
   nameText: {
     fontWeight: 'bold',
     fontSize: 24,
+  },
+  lastNameText :{
+    fontWeight: 'bold',
+    fontSize: 22,
   },
   usernameText: {
     fontSize: 15,

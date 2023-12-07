@@ -106,14 +106,16 @@ const SignInScreen = ({ navigation }) => {
   };
 
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
-  const handleSignInWithBiometrics = async ()  => {
 
+  const handleSignInWithBiometrics = async () => {
     const checkBiometricAvailability = async () => {
       const available = await LocalAuthentication.hasHardwareAsync();
-      setIsBiometricAvailable( () => available);
+      setIsBiometricAvailable(available);
     };
   
     const handleBiometricAuthentication = async () => {
+      await checkBiometricAvailability(); // Wait for availability check
+  
       if (isBiometricAvailable) {
         const result = await LocalAuthentication.authenticateAsync({
           promptMessage: 'Autenticación biométrica requerida',
@@ -125,21 +127,15 @@ const SignInScreen = ({ navigation }) => {
             const response = await LoginWithBiometrics(biometricToken);
             if (response) {
               navigation.navigate("MainNavigator");
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "MainNavigator" }],
-              });
             }
           }
-        } 
-      } 
+        }
+      }
     };
   
-    checkBiometricAvailability();
-    handleBiometricAuthentication();
-  };
+    await handleBiometricAuthentication();
+};
   
-
 
   return (
     <ImageBackground style={styles.container}>
