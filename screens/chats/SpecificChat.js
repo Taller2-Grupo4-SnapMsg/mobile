@@ -196,7 +196,7 @@ export default SpecificChat = ({ route }) => {
   }
 
   return (
-    <KeyboardAvoidingView behavior="padding" enabled style={styles.container}> 
+    <View style={styles.container}>
       <FlatList
       ref={flatListRef}
       style={styles.list}
@@ -227,13 +227,14 @@ export default SpecificChat = ({ route }) => {
           returnKeyType="send"
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  
   },
   list: {
     flex: 1,
