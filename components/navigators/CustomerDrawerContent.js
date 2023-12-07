@@ -40,7 +40,7 @@ function CustomDrawerContent({ navigation }) {
         >
           <View style={styles.itemContainer}>
             <Icon name="user" size={25} color="#6B5A8E" style={styles.icon}/>
-            <Text style={styles.drawerItemText}>Profile</Text>
+            <Text style={styles.drawerItemText}> Profile</Text>
           </View>
         </TouchableOpacity>
 
@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 10,
   },
   drawerItemText: {
     fontSize: 18,
