@@ -8,7 +8,7 @@ import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../contexts/UserContext';
-import MentionModal2 from '../../components/MentionModal2';
+import MentionModal from '../../components/MentionModal';
 import { MaterialIcons } from '@expo/vector-icons';
 
 TIMEOUT_ALERT_EDIT = 1500
@@ -204,12 +204,13 @@ useEffect(() => {
           </Pressable>
         </View>
 
-        <MentionModal2
+        <MentionModal
             isVisible={mentionsModalVisible}
             onClose={handleMentionModal}
             selectedMentions={newMentions}
             setSelectedMentions={setNewMentions}
             in_followers={true}
+            onlyUsernames={true}
           />
 
 

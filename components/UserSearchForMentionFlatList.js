@@ -9,19 +9,24 @@ export default function UserSearchForMentionFlatList({
   handleShowMoreButton,
   selectedMentions,
   setSelectedMentions,
+  onlyUsernames,
 }) {
   const handleUserSelection = (selectedUser) => {
-    console.log("handleUserSelection")
-    console.log(selectedMentions)
-    console.log(selectedUser)
-    if (selectedMentions.includes(selectedUser)) {
-      console.log("selectedMentions.includes(selectedUser)");
-      console.log(selectedMentions)
-      setSelectedMentions(selectedMentions.filter((user) => user !== selectedUser));
+    if (onlyUsernames) {
+      if (selectedMentions.includes(selectedUser.username)) {
+        setSelectedMentions(selectedMentions.filter((user) => user !== selectedUser.username));
+      } else {
+        setSelectedMentions([...selectedMentions, selectedUser.username]);
+      }    
     } else {
-      setSelectedMentions([...selectedMentions, selectedUser]);
-    }
+      if (selectedMentions.includes(selectedUser)) {
+        setSelectedMentions(selectedMentions.filter((user) => user !== selectedUser));
+      } else {
+        setSelectedMentions([...selectedMentions, selectedUser]);
+      }    
+    } 
   }
+
 
   return (
     <FlatList
@@ -34,11 +39,13 @@ export default function UserSearchForMentionFlatList({
             <Text style={styles.nameText}>{item.name}</Text>
             <Text style={styles.usernameText}>@{item.username}</Text>
           </View>
-          {selectedMentions.includes(item) && ( 
-            <MaterialIcons name="check" size={24} color="#6B5A8E" />
+          {onlyUsernames && selectedMentions.includes(item.username) ? (
+              <MaterialIcons name="check" size={24} color="#6B5A8E" />
+            ) : (!onlyUsernames && selectedMentions.includes(item) ? (
+              <MaterialIcons name="check" size={24} color="#6B5A8E" />
+            ) : null)}
+             </TouchableOpacity>
           )}
-        </TouchableOpacity>
-      )}
       ListFooterComponent={() => (
         showMoreVisible && (
           <TouchableOpacity

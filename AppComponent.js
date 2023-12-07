@@ -69,6 +69,7 @@ const StackNavigatorProfile = () => {
       <Stack.Screen name="FollowingsList" component={FollowingsList} />
       <Stack.Screen name="FollowersList" component={FollowersList} />
       <Stack.Screen name="ProfileEditPost" component={ProfileEditPost} />
+      <Stack.Screen name="PostDetailed" component={PostDetailed} />
     </Stack.Navigator>
   );
 };

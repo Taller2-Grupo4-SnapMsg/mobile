@@ -81,7 +81,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
 
   const handleMentionUserPressed = async (username) => {
     profile_user = await getUserByUsername(username);
-    navigation.navigate('Profile', { user_param: profile_user });
+    navigation.push('Profile', { user_param: profile_user });
   };
 
   

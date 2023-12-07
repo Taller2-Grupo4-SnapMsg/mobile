@@ -10,7 +10,7 @@ import { ActivityIndicator } from 'react-native';
 import { handleShowMore } from '../functions/Buttons/handleShowMore';
 import { Alert } from 'react-native';
 
-export default function MentionModal({ isVisible, onClose, setSelectedMentions, selectedMentions, in_followers }) {
+export default function MentionModal({ isVisible, onClose, setSelectedMentions, selectedMentions, in_followers, onlyUsernames }) {
   const [searchText, setSearchText] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [showMoreVisible, setShowMoreVisible] = useState(false);
@@ -89,7 +89,8 @@ export default function MentionModal({ isVisible, onClose, setSelectedMentions, 
               showMoreVisible={showMoreVisible}
               handleShowMoreButton={handleShowMoreButton}
               setSelectedMentions={setSelectedMentions}
-              selectedMentions={selectedMentions} 
+              selectedMentions={selectedMentions}
+              onlyUsernames={onlyUsernames}
             />
             )
           )}
