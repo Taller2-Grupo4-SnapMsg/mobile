@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, TouchableOpacity, Text, View } from "react-native
 import Avatar from "./Avatar";
 import { MaterialIcons } from "@expo/vector-icons"; // Import the checkmark icon from a suitable library
 
-export default function UserSearchForMentionFlatList({
+export default function UserSearchForMentionFlatList2({
   users,
   showMoreVisible,
   handleShowMoreButton,
@@ -28,7 +28,7 @@ export default function UserSearchForMentionFlatList({
       data={users}
       keyExtractor={(item) => item.email}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item.username)}>
           <Avatar user={item} />
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>{item.name}</Text>
