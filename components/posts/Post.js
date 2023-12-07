@@ -16,6 +16,7 @@ import {
   DarkTheme,
   ThemeProvider,
 } from '@react-navigation/native';
+import getUserByUsername from '../../handlers/getUserByUsername';
 
 const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   if (!post)
@@ -74,12 +75,13 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   }
 
   const handlePressPost = () => {
-    //navigation.navigate('PostDetailed', { postId: post.post_id });
+    navigation.navigate('PostDetailed', { post_id: post.post_id });
     return;
   };
 
-  const handleMentionUserPressed = () => {
-    navigation.navigate('Profile', { user_param: user_creator });
+  const handleMentionUserPressed = async (username) => {
+    profile_user = await getUserByUsername(username);
+    navigation.navigate('Profile', { user_param: profile_user });
   };
 
   
@@ -122,7 +124,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
         <Text style={styles.content}>{text}</Text>
         <View style={styles.tagsContainer} >
             {mentions && mentions.map((mention) => (
-              <TouchableOpacity key={mention} onPress={handleMentionUserPressed} styles={styles.mentionsButton}>
+              <TouchableOpacity key={mention} onPress={() => handleMentionUserPressed(mention)} styles={styles.mentionsButton}>
                 <Text style={styles.mentions} >{" @"}{mention}{" "}</Text>
               </TouchableOpacity>
             ))}

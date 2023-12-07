@@ -90,7 +90,6 @@ export default function ProfileBanner({
               )}
               {user.name && user.last_name && ((user.name.length > 7 && user.last_name.length >5)) ? (
                 <View>
-                  {console.log(user.name.length)}
                   <Text style={styles.nameText}>{user.name}</Text>
                   <Text style={styles.lastNameText}>{user.last_name}</Text>
                 </View>
