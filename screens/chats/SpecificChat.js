@@ -57,22 +57,21 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
-      console.log("newMessage.timestamp : ", newMessage.timestamp);
-      console.log("Latest timestamp: ", latestTimestamp);
-      if (newMessage.timestamp > latestTimestamp) {
-        setLatestTimestamp(newMessage.timestamp);
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      }
+      console.log("newMessage.timestamp: ", newMessage);
+  
+      // Update state with the latest message without losing the message history
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     }
   };
   
   useEffect(() => {
+    const callback = (snapshot) => onChildAddedCallback(snapshot);
     const unsubscribe = onChildAdded(messagesRef, onChildAddedCallback);
-
+  
     return () => {
-      off(messagesRef, 'child_added', onChildAddedCallback);
+      off(messagesRef, 'child_added', callback);
     };
-  }, [messages]);
+  }, []);
 
   useEffect(() => {
     setMessages([]);
@@ -89,9 +88,6 @@ export default SpecificChat = ({ route }) => {
         const snapshot = await get(messageQuery);
         if (snapshot.exists()) {
           let newest_messages = Object.values(snapshot.val());
-          if (isNotificacion){
-            newest_messages = newest_messages.slice(0, newest_messages.length - 1);
-          }
           setMessages(newest_messages);
           
           setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
