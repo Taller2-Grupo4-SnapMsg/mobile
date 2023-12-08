@@ -60,9 +60,11 @@ export default NewChat = () => {
                 console.log("chatID: ", chatID);
                 console.log("user_receiver: ", user_receiver);
                 console.log("user_sender: ", user_sender);
+                let isNotificacion = false;
                 navigation.push('SpecificChat', { chatID:  chatID, 
                   user_sender: user_sender, 
-                  user_receiver: user_receiver});
+                  user_receiver: user_receiver, 
+                  isNotificacion: isNotificacion});
               } else {
                 // No messages found
                 // navigation.push('SpecificChat', { chatID: chatID });
@@ -71,10 +73,11 @@ export default NewChat = () => {
                 console.log("chatID: ", chatID);
                 console.log("user_receiver: ", user_receiver);
                 console.log("user_sender: ", user_sender);
-                
+                let isNotificacion = false;
                 navigation.push('SpecificChat', { chatID:  chatID, 
                   user_sender: user_sender, 
-                  user_receiver: user_receiver});
+                  user_receiver: user_receiver,
+                  isNotificacion: isNotificacion});
                 }
             })
             .catch((error) => {
@@ -101,9 +104,10 @@ export default NewChat = () => {
               console.log("chatID: ", chatID);
               console.log("user_receiver: ", item.email);
               console.log("user_sender: ", loggedInUser.email);
+              let isNotificacion = false;
               navigation.push('SpecificChat', { chatID:  chatID, 
                 user_sender: loggedInUser.email, 
-                user_receiver: item.email});
+                user_receiver: item.email, isNotificacion: isNotificacion});
             }).catch((error) => {
               console.log("hubo un error al crear la conver!!");
               // Handle the error

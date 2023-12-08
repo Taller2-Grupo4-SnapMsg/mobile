@@ -134,7 +134,8 @@ const MainNavigator = () => {
         console.log("user_receiver: ", user_receiver);
         console.log("user_sender: ", user_sender);
         markNotificationAsRead(response.notification.request.identifier, user_receiver);
-        navigation.navigate('Chat', { chatID, user_receiver, user_sender });
+        let isNotificacion = true;
+        navigation.navigate('Chat', { chatID, user_receiver, user_sender, isNotificacion });
       }
       if (route === 'mention') {
         const user_receiver = response.notification.request.content.data.user_sender;

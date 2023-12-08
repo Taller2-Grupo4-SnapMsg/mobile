@@ -24,6 +24,7 @@ export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const [chatID, setChatID] = useState(route.params.chatID);
   const [isChatIDChange, setIsChatIDChange] = useState(false);
+  const isNotificacion = route.params.isNotificacion;
   //const chatID = route.params.chatID;
   const email_user_sender = route.params.user_sender;
   const email_user_receiver = route.params.user_receiver;
@@ -56,8 +57,8 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
-      print("newMessage.timestamp : ", newMessage.timestamp);
-      print("Latest timestamp: ", latestTimestamp);
+      console.log("newMessage.timestamp : ", newMessage.timestamp);
+      console.log("Latest timestamp: ", latestTimestamp);
       if (newMessage.timestamp > latestTimestamp) {
         setLatestTimestamp(newMessage.timestamp);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -88,10 +89,13 @@ export default SpecificChat = ({ route }) => {
         const snapshot = await get(messageQuery);
         if (snapshot.exists()) {
           let newest_messages = Object.values(snapshot.val());
+          if (isNotificacion){
+            newest_messages = newest_messages.slice(0, newest_messages.length - 1);
+          }
           setMessages(newest_messages);
           
           setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
-          print("Latest timestamp: ", latestTimestamp);
+          console.log("Latest timestamp: ", latestTimestamp);
           setOldestTimestamp(newest_messages[0].timestamp);
           
           if (flatListRef.current) {
