@@ -25,6 +25,10 @@ export default SpecificChat = ({ route }) => {
   const chatID = route.params.chatID;
   const email_user_sender = route.params.user_sender;
   const email_user_receiver = route.params.user_receiver;
+  console.log("\n\nEN SPECIFIC CHAT")
+  console.log("chatID: ", chatID);
+  console.log("user_receiver: ", user_receiver);
+  console.log("user_sender: ", user_sender);
   const [messages, setMessages] = useState([]);
   const [latestTimestamp, setLatestTimestamp] = useState(0);
   const [oldestTimestamp, setOldestTimestamp] = useState(0);
