@@ -62,7 +62,7 @@ export default SpecificChat = ({ route }) => {
       }
     }
   };
-
+  
   useEffect(() => {
     const unsubscribe = onChildAdded(messagesRef, onChildAddedCallback);
 
@@ -78,51 +78,15 @@ export default SpecificChat = ({ route }) => {
         const messageQuery = query(
           messagesRef,
           orderByChild('timestamp'),
-          limitToLast(AMOUNT_MSGS_BEGINNING + 1)  // Aumenta la cantidad de mensajes solicitados en 1
-        );
-  
-        const snapshot = await get(messageQuery);
-        if (snapshot.exists()) {
-          const all_messages = Object.values(snapshot.val());
-          
-          // Excluye el último mensaje de la lista
-          const newest_messages = all_messages.slice(0, all_messages.length - 1);
-  
-          setMessages(newest_messages);
-          setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
-          setOldestTimestamp(newest_messages[0].timestamp);
-  
-          if (flatListRef.current) {
-            flatListRef.current.scrollToEnd({ animated: true });
-          }
-        } else {
-          setMessages([]);
-          setLatestTimestamp(0);
-          setOldestTimestamp(0);
-        }
-      } catch (error) {
-        // Manejar el error
-      }
-    };
-  
-    fetchData();
-  }, [chatID]);
-  
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const messagesRef = ref(db, `chats/${chatID}/messages`);
-        const messageQuery = query(
-          messagesRef,
-          orderByChild('timestamp'),
           limitToLast(AMOUNT_MSGS_BEGINNING)
         );
   
         const snapshot = await get(messageQuery);
         if (snapshot.exists()) {
-          const newest_messages = Object.values(snapshot.val());
+          let newest_messages = Object.values(snapshot.val());
+          // if (isChatIDChange) {
+          //   newest_messages = newest_messages.slice(0, newest_messages.length - 1);
+          // }
           setMessages(newest_messages);
           
           setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
@@ -142,7 +106,7 @@ export default SpecificChat = ({ route }) => {
     };
   
     fetchData();
-  }, []);
+  }, [chatID]);
   
   const handleGetOlderMsgs = async () => {
     if (refreshing) return;
