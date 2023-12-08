@@ -56,7 +56,7 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
-      if (newMessage.timestamp > latestTimestamp && !isChatIDChange) {
+      if (newMessage.timestamp > latestTimestamp) {
         setLatestTimestamp(newMessage.timestamp);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
@@ -70,6 +70,44 @@ export default SpecificChat = ({ route }) => {
       off(messagesRef, 'child_added', onChildAddedCallback);
     };
   }, [messages]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const messagesRef = ref(db, `chats/${chatID}/messages`);
+        const messageQuery = query(
+          messagesRef,
+          orderByChild('timestamp'),
+          limitToLast(AMOUNT_MSGS_BEGINNING + 1)  // Aumenta la cantidad de mensajes solicitados en 1
+        );
+  
+        const snapshot = await get(messageQuery);
+        if (snapshot.exists()) {
+          const all_messages = Object.values(snapshot.val());
+          
+          // Excluye el último mensaje de la lista
+          const newest_messages = all_messages.slice(0, all_messages.length - 1);
+  
+          setMessages(newest_messages);
+          setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
+          setOldestTimestamp(newest_messages[0].timestamp);
+  
+          if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+          }
+        } else {
+          setMessages([]);
+          setLatestTimestamp(0);
+          setOldestTimestamp(0);
+        }
+      } catch (error) {
+        // Manejar el error
+      }
+    };
+  
+    fetchData();
+  }, [chatID]);
+  
 
 
   useEffect(() => {
