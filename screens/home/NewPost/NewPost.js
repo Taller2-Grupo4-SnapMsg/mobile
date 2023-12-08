@@ -52,6 +52,7 @@ export default function NewPost() {
     setIsLoading(true);
 
     if (selectedImage) {
+      const { setRefreshing } = route.params;
       const timestamp = new Date().getTime();
       const uniqueFileName = `image_${timestamp}.jpg`;
       const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
@@ -80,7 +81,6 @@ export default function NewPost() {
       }
       await SendNotification([emails[i]], `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
     }
-    
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');

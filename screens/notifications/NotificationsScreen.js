@@ -83,7 +83,7 @@ const NotificationsScreen = () => {
         renderItem={({ item }) => (
           <View style={styles.notificationContainer}>
             {item.type === 'message' ? (
-              <NotificationMessage message={item.body} data={item.data} read={item.read}/>
+              <NotificationMessage message={item.body} data={item.data} read={item.read} />
             ) : item.type === 'mention' ? (
               <NotificationMention message={item.body} data={item.data} read={item.read} />
             ) : null}

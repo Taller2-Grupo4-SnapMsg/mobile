@@ -21,22 +21,15 @@ const RepostPost = async (post_id, navigation) => {
       });
       if (response.status === 200) {
         return 200;
-      } else if (response.status === USER_BLOCKED) {
-        console.log('User blocked');
-        Alert.alert('User blocked', 'You have been blocked by an administrator');
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'SignIn' }],
-        });
-      } else if (response.status === OTHER_USER_BLOCKED) {
-        Alert.alert('Sorry, you cannot repost this post', 'The user who posted this is blocked');
-      } else if (response.status === USER_NOT_FOUND) {
-        Alert.alert('Session expired', 'Your session has expired, please log in again');
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'SignIn' }],
-        });
-    }
+      } else if (response.status === 422) {
+        throw new Error('Validación fallida');
+      } else if (response.status === 403) {
+        return 403;
+      } else if (response.status === 409) {
+        return 409;
+      } else {
+        throw new Error('Error desconocido');
+      }
     } catch (error) {
       const message =
         error.response?.data?.error ||

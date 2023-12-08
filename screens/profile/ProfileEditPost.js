@@ -111,24 +111,24 @@ const ProfileEditPost = ({ route }) => {
     setNewMentions(updatedMentions);
   };
 
-const fetchImageURL = async () => {
-  try {
-    if (!post.image) {
-      return;
-    }
-    const decoded_file_route = decodeURIComponent(post.image);
-    const storageRef = ref(storage, decoded_file_route);
-    const url = await getDownloadURL(storageRef);
-    setNewImage(url);
-  } catch (error) {
-    console.error('Error fetching image URL:', error);
-  }
-};
+// const fetchImageURL = async () => {
+//   try {
+//     if (!post.image) {
+//       return;
+//     }
+//     const decoded_file_route = decodeURIComponent(post.image);
+//     const storageRef = ref(storage, decoded_file_route);
+//     const url = await getDownloadURL(storageRef);
+//     setNewImage(url);
+//   } catch (error) {
+//     console.error('Error fetching image URL:', error);
+//   }
+// };
 
-// Call the function when the component mounts
-useEffect(() => {
-  fetchImageURL();
-}, []);
+// // Call the function when the component mounts
+// useEffect(() => {
+//   fetchImageURL();
+// }, []);
 
 
   return (

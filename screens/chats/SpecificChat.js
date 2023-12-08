@@ -22,9 +22,20 @@ AMOUNT_MSGS_BEGINNING = 10
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
-  const chatID = route.params.chatID;
+  const [chatID, setChatID] = useState(route.params.chatID);
+  const [isChatIDChange, setIsChatIDChange] = useState(false);
+  const isNotificacion = route.params.isNotificacion;
+  //const chatID = route.params.chatID;
   const email_user_sender = route.params.user_sender;
   const email_user_receiver = route.params.user_receiver;
+  console.log("\n\nEN SPECIFIC CHAT")
+  console.log("chatID: ", chatID);
+  console.log("user_receiver: ", email_user_receiver);
+  console.log("user_sender: ", email_user_sender);
+  useEffect(() => {
+    setChatID(() => route.params.chatID);
+    setIsChatIDChange(() => true);
+  }, [route.params.chatID]);
   const [messages, setMessages] = useState([]);
   const [latestTimestamp, setLatestTimestamp] = useState(0);
   const [oldestTimestamp, setOldestTimestamp] = useState(0);
@@ -46,23 +57,25 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
-      if (newMessage.timestamp > latestTimestamp) {
-        setLatestTimestamp(newMessage.timestamp);
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      }
+      console.log("newMessage.timestamp: ", newMessage);
+  
+      // Update state with the latest message without losing the message history
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     }
   };
-
+  
   useEffect(() => {
+    const callback = (snapshot) => onChildAddedCallback(snapshot);
     const unsubscribe = onChildAdded(messagesRef, onChildAddedCallback);
-
+  
     return () => {
-      off(messagesRef, 'child_added', onChildAddedCallback);
+      off(messagesRef, 'child_added', callback);
     };
-  }, [messages]);
-
+  }, []);
 
   useEffect(() => {
+    setMessages([]);
+
     const fetchData = async () => {
       try {
         const messagesRef = ref(db, `chats/${chatID}/messages`);
@@ -74,10 +87,11 @@ export default SpecificChat = ({ route }) => {
   
         const snapshot = await get(messageQuery);
         if (snapshot.exists()) {
-          const newest_messages = Object.values(snapshot.val());
+          let newest_messages = Object.values(snapshot.val());
           setMessages(newest_messages);
           
           setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
+          console.log("Latest timestamp: ", latestTimestamp);
           setOldestTimestamp(newest_messages[0].timestamp);
           
           if (flatListRef.current) {
@@ -94,7 +108,7 @@ export default SpecificChat = ({ route }) => {
     };
   
     fetchData();
-  }, []);
+  }, [chatID]);
   
   const handleGetOlderMsgs = async () => {
     if (refreshing) return;

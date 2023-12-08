@@ -7,6 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 
 const PostDetailed = ({ route }) => {
   const post_id = route.params.post_id;
+  const [refreshing, setRefreshing] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alerMessageColor, setAlertMessageColor] = useState(true);
   const [post, setPost] = useState(null);
   const [isFetchingPost, setIsFetchingPost] = useState(false);
   const navigation = useNavigation();
@@ -37,7 +40,7 @@ const PostDetailed = ({ route }) => {
     );
   }
   if (post){
-    return <Post post={post[0]}/>
+    return <Post post={post[0]} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor} setRefreshing={setRefreshing}/>
   }
 };
 

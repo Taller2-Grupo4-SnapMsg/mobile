@@ -18,7 +18,7 @@ import {
 } from '@react-navigation/native';
 import getUserByUsername from '../../handlers/getUserByUsername';
 
-const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
+const Post = ({ post, setAlertMessage, setAlertMessageColor, setRefreshing}) => {
   if (!post)
     return null;
     
@@ -41,26 +41,32 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   const navigation = useNavigation();
   const [imageURI, setImageURI] = useState(null);
   
-  const fetchImageURL = async () => {
-    try {
-      if (!post.image) {
-        return;
-      }
-      const decoded_file_route = decodeURIComponent(post.image);
-      const storageRef = ref(storage, decoded_file_route);
-      const url = await getDownloadURL(storageRef);
-      setImageURI(url);
-    } catch (error) {
-      console.error('Error fetching image URL:', error);
-    }
-  };
+  // const fetchImageURL = async () => {
+  //   try {
+  //     if (!post.image) {
+  //       return;
+  //     }
+  //     const decoded_file_route = decodeURIComponent(post.image);
+  //     const storageRef = ref(storage, decoded_file_route);
+  //     const url = await getDownloadURL(storageRef);
+  //     setImageURI(url);
+  //   } catch (error) {
+  //     console.error('Error fetching image URL:', error);
+  //   }
+  // };
   
-  // Call the function when the component mounts
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchImageURL();
-    }, [])
-  );
+  // // Call the function when the component mounts
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchImageURL();
+  //   }, [])
+  // );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchImageURL();
+  //   }, [post])
+  // );
 
   function formatDate(dateString) {
     // Split the date and time parts
@@ -75,7 +81,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   }
 
   const handlePressPost = () => {
-    navigation.navigate('PostDetailed', { post_id: post.post_id });
+    //navigation.navigate('PostDetailed', { post_id: post.post_id, setRefreshing: setRefreshing });
     return;
   };
 
@@ -156,11 +162,12 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
             setAlertMessage={setAlertMessage}
             setAlertMessageColor={setAlertMessageColor}
             disabled={user_creator.email === loggedInUser.email}
+            setRefreshing={setRefreshing}
           />
           
-          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
+          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} setRefreshing={setRefreshing} />
 
-          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} />
+          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} setRefreshing={setRefreshing}/>
         </View>
             </View>
         </Pressable>

@@ -283,7 +283,7 @@ function ProfileUser({ user }) {
           if (item.user_poster && (item.user_poster.email == item.user_creator.email)) {
             return (
               <View style={{ flexDirection: 'row' , justifyContent: 'space-between', alignItems: 'flex-start'}}>
-                <Post post={item} style={{ flex: 1}}/>
+                <Post post={item} setMessageRepost={setAlertMessage} setMessageRepostColor={setAlertMessageColor} setRefreshing={setRefreshing} style={{ flex: 1}}/>
                 {user.email == loggedInUser.email && (
                 <View style={{ position: 'absolute', right: 0, top: 0 , marginRight: 10 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -317,7 +317,7 @@ function ProfileUser({ user }) {
         } else {
           return (
             <View>
-              <Repost post={item} style={{ flex: 1}}/>
+              <Repost post={item} setMessageRepost={setAlertMessage} setMessageRepostColor={setAlertMessageColor} setRefreshing={setRefreshing} style={{ flex: 1}}/>
               {/*{user.email == loggedInUser.email && (
               <View style={{ position: 'absolute', right: 0, top: 0, marginRight: 10}}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

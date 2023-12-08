@@ -82,9 +82,9 @@ export default function Home({}) {
         data={postsFeed}
         renderItem={({ item }) => {
           if (item.user_poster.email == item.user_creator.email) {
-            return <Post post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>;
+            return <Post post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor} setRefreshing={setRefreshing}/>;
           } else {
-            return <Repost post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor}/>;
+            return <Repost post={item} setAlertMessage={setAlertMessage} setAlertMessageColor={setAlertMessageColor} setRefreshing={setRefreshing}/>;
           }
         }}
         refreshControl={
