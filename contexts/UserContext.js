@@ -82,6 +82,7 @@ export function UserProvider({ children }) {
         };
         const notificationId = identifier;
         const notifRef = ref(db, `notifications/${generateUserEmailID(user_receiver)}/${notificationId}`);
+        console.log(notifRef);
 
         get(notifRef)
           .then(() => {

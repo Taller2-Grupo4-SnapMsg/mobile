@@ -41,26 +41,32 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   const navigation = useNavigation();
   const [imageURI, setImageURI] = useState(null);
   
-  const fetchImageURL = async () => {
-    try {
-      if (!post.image) {
-        return;
-      }
-      const decoded_file_route = decodeURIComponent(post.image);
-      const storageRef = ref(storage, decoded_file_route);
-      const url = await getDownloadURL(storageRef);
-      setImageURI(url);
-    } catch (error) {
-      console.error('Error fetching image URL:', error);
-    }
-  };
+  // const fetchImageURL = async () => {
+  //   try {
+  //     if (!post.image) {
+  //       return;
+  //     }
+  //     const decoded_file_route = decodeURIComponent(post.image);
+  //     const storageRef = ref(storage, decoded_file_route);
+  //     const url = await getDownloadURL(storageRef);
+  //     setImageURI(url);
+  //   } catch (error) {
+  //     console.error('Error fetching image URL:', error);
+  //   }
+  // };
   
-  // Call the function when the component mounts
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchImageURL();
-    }, [])
-  );
+  // // Call the function when the component mounts
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchImageURL();
+  //   }, [])
+  // );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchImageURL();
+  //   }, [post])
+  // );
 
   function formatDate(dateString) {
     // Split the date and time parts
