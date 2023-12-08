@@ -17,6 +17,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 import LoginWithBiometrics from '../../handlers/LoginWithBiometrics';
 import SignInWithBiometricsButton from '../../components/SignInWithBiometricsButton'; 
+import getUserByToken from '../../handlers/getUserByToken';
 WebBrowser.maybeCompleteAuthSession();
 
 const SignInScreen = ({ navigation }) => {
@@ -124,8 +125,11 @@ const SignInScreen = ({ navigation }) => {
         if (result.success) {
           const biometricToken = await SecureStore.getItemAsync('biometricToken');
           if (biometricToken) {
-            const response = await LoginWithBiometrics(biometricToken);
-            if (response) {
+            const token = await LoginWithBiometrics(biometricToken);
+            const new_user = await getUserByToken(token);
+            console.log(new_user);
+            setLoggedInUser(new_user);
+            if (token) {
               navigation.navigate("MainNavigator");
             }
           }
