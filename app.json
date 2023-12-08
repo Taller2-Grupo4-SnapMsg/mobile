@@ -2,7 +2,7 @@
   "expo": {
     "name": "AwesomeProject",
     "slug": "AwesomeProject",
-    "scheme": "AwesomeProject",
+    "scheme": "awesome-project",
     "version": "1.0.0",
     "icon": "./assets/icon_notification.png",
     "orientation": "portrait",
@@ -17,10 +17,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "permissions": {
-        "PHOTOS": "Allow access to your photos"
-      },
-      "bundleIdentifier": "com.nathencinoza.AwesomeProject"
+      "bundleIdentifier": "com.nathencinoza.AwesomeProject",
     },
     "android": {
       "adaptiveIcon": {
