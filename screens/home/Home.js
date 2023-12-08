@@ -71,11 +71,9 @@ export default function Home({}) {
       }
     };
 
-    useFocusEffect(
-      React.useCallback(() => {
-        handleGetMorePosts((new Date()).toISOString(), true);
-      }, [])
-    );
+    useEffect(() => {  
+      handleGetMorePosts((new Date()).toISOString(), true)
+     }, []);
 
    return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DarkTheme}>

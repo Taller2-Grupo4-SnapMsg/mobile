@@ -59,7 +59,7 @@ export default function UserSearchFlatList(
                 style={styles.showMoreButton}
                 onPress={handleShowMoreButton}
               >
-                <Text>Show More</Text>
+                <Text style={{ color: 'white' }}>Show More</Text>
               </TouchableOpacity>
             )
           )}
@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         backgroundColor: '#6B5A8E',
         borderRadius: 50,
-        width: 100,
         marginTop: 20,
         marginBottom: 40,
       },

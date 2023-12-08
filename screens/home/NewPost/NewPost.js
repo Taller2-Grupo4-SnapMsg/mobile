@@ -190,6 +190,7 @@ export default function NewPost() {
             selectedMentions={selectedMentions}
             setSelectedMentions={setSelectedMentions}
             in_followers={true}
+            onlyUsernames={false}
           />
 
         <Modal

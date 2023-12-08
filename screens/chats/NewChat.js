@@ -1,7 +1,3 @@
-// Quiero un search bar para buscar por username (endpoint hecho)
-// y abajo que aparezca automáticamente un listado de la gente a la que yo sigo, como un easy access
-// el tema es que este segundo endpoint no está, ver ese tema
-
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, 
@@ -9,44 +5,20 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList,
 import { useNavigation } from '@react-navigation/native';
 import SearchBar from '../../components/SearchBar';
 import searchUserByUsername from '../../handlers/searchUserByUsername';
-import getFollowings from '../../handlers/getFollowings';
 import { useUser } from '../../contexts/UserContext';
 import { db } from '../../firebase';
 import { ref } from 'firebase/database';
 import { query, orderByChild, limitToLast, get, set, serverTimestamp } from 'firebase/database';
 
-
+const AMOUNT_USERS = 5;
 
 export default NewChat = () => { 
     const navigation = useNavigation();
     const { loggedInUser } = useUser();
     const [usernameSearched, setUsernameSearched] = useState("");
     const [users, setUsers] = useState([]);
-
-    // Para levantar los users que inicialmente se van a mostrar.
-    // Me gustaría que fuesen aquellos a los que sigo, pero la Historia de Usuario no dice nada al respecto
-    useEffect(() => {
-      const fetchInitialUsers = async () => {
-        try {
-          const followingsData = await getFollowings(loggedInUser.email);
-  
-          const simplifiedData = followingsData.map(following => ({
-            email: following.email,
-            username: following.username,
-            avatar: following.avatar,
-          }));
-  
-          setUsers(simplifiedData);
-        } catch (error) {
-          // Handle any errors here
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchInitialUsers(); // Call the async function immediately
-  
-    }, []);
-  
+    const [offset, setOffset] = useState(0);
+    const [showMore, setShowMore] = useState(false); 
 
     function generateChatID(user1, user2) {
       // Sort user IDs alphabetically to ensure consistency
@@ -130,45 +102,63 @@ export default NewChat = () => {
     );
   };
 
-  const handleSearchButtonFunction = async () => {
-    Keyboard.dismiss();
-    user_data = await searchUserByUsername(usernameSearched, 0, 10, navigation);
-    // Create a copy of the current users array
-    const updatedUsers = [...users];
+  const handleSearchByUsername = async (offset_param, prevUsers) => {
 
-    // Add the new data from user_data to the copy
+    user_data = await searchUserByUsername(usernameSearched, offset_param, AMOUNT_USERS, false, navigation);
+    setOffset(offset_param);
+
     const newUsers = [];
 
     user_data.forEach((userData) => {
-      // Create a new user with the correct format
-      const newUser = {
+      const newUser = { 
         email: userData.email,
         username: userData.username,
         avatar: userData.avatar,
       };
 
-      // Add the new user to the array
       newUsers.push(newUser);
     });
 
-    // Set the 'users' state with the new array of users
-    setUsers(newUsers);
+    if (newUsers.length < AMOUNT_USERS) {
+      setShowMore(false);
+    } else {
+      setShowMore(true);
+    }
+
+    setUsers(prevUsers.concat(newUsers));
+  }
+
+  const handleSearchButtonFunction = async () => {
+    Keyboard.dismiss();
+    await handleSearchByUsername(0, []);
   };
    
+  const handleSearchMoreButton = async () => {
+    Keyboard.dismiss();
+    await handleSearchByUsername(offset + AMOUNT_USERS, users);
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <SearchBar
-        searchText={usernameSearched} // Replace with your actual searchText value
-        setSearchText={setUsernameSearched} // Replace with your actual setSearchText function
-        handleSearchButton={handleSearchButtonFunction} // Replace with your actual handleSearchButton function
+        searchText={usernameSearched}
+        setSearchText={setUsernameSearched}
+        handleSearchButton={handleSearchButtonFunction}
       />
       <FlatList
         data={users}
-        keyExtractor={item => {
-          return item.email; // Make sure to convert the ID to a string
-        }}
-        renderItem={renderItem} // Use the renderItem function directly
+        keyExtractor={(item) => item.email}
+        renderItem={renderItem}
+        ListFooterComponent={() => (
+          showMore ? (
+            <TouchableOpacity
+              style={styles.showMoreButton}
+              onPress={handleSearchMoreButton}
+            >
+              <Text style={{ color: 'white' }}>Show More</Text>
+            </TouchableOpacity>
+          ) : null
+        )}
       />
     </View>
     
@@ -189,6 +179,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: 60,
     height: 60,
+  },
+  showMoreButton: {
+    alignSelf: 'center', 
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+    backgroundColor: '#6B5A8E',
+    borderRadius: 50,
+    marginTop: 20,
+    marginBottom: 40,
   },
   nameContainer: {
     flexDirection: 'row',

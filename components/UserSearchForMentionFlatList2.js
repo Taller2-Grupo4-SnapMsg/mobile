@@ -3,49 +3,42 @@ import { StyleSheet, FlatList, TouchableOpacity, Text, View } from "react-native
 import Avatar from "./Avatar";
 import { MaterialIcons } from "@expo/vector-icons"; // Import the checkmark icon from a suitable library
 
-export default function UserSearchForMentionFlatList({
+export default function UserSearchForMentionFlatList2({
   users,
   showMoreVisible,
   handleShowMoreButton,
   selectedMentions,
   setSelectedMentions,
-  onlyUsernames,
 }) {
   const handleUserSelection = (selectedUser) => {
-    if (onlyUsernames) {
-      if (selectedMentions.includes(selectedUser.username)) {
-        setSelectedMentions(selectedMentions.filter((user) => user !== selectedUser.username));
-      } else {
-        setSelectedMentions([...selectedMentions, selectedUser.username]);
-      }    
+    console.log("handleUserSelection")
+    console.log(selectedMentions)
+    console.log(selectedUser)
+    if (selectedMentions.includes(selectedUser)) {
+      console.log("selectedMentions.includes(selectedUser)");
+      console.log(selectedMentions)
+      setSelectedMentions(selectedMentions.filter((user) => user !== selectedUser));
     } else {
-      if (selectedMentions.includes(selectedUser)) {
-        setSelectedMentions(selectedMentions.filter((user) => user !== selectedUser));
-      } else {
-        setSelectedMentions([...selectedMentions, selectedUser]);
-      }    
-    } 
+      setSelectedMentions([...selectedMentions, selectedUser]);
+    }
   }
-
 
   return (
     <FlatList
       data={users}
       keyExtractor={(item) => item.email}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => handleUserSelection(item.username)}>
           <Avatar user={item} />
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>{item.name}</Text>
             <Text style={styles.usernameText}>@{item.username}</Text>
           </View>
-          {onlyUsernames && selectedMentions.includes(item.username) ? (
-              <MaterialIcons name="check" size={24} color="#6B5A8E" />
-            ) : (!onlyUsernames && selectedMentions.includes(item) ? (
-              <MaterialIcons name="check" size={24} color="#6B5A8E" />
-            ) : null)}
-             </TouchableOpacity>
+          {selectedMentions.includes(item) && ( 
+            <MaterialIcons name="check" size={24} color="#6B5A8E" />
           )}
+        </TouchableOpacity>
+      )}
       ListFooterComponent={() => (
         showMoreVisible && (
           <TouchableOpacity

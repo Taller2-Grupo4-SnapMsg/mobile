@@ -6,7 +6,7 @@ const USER_NOT_FOUND = 404
 
 URL_POST_BACK = "https://postsback.onrender.com"
     
-const editPostHandler = async (post_id, image, content, hashtags, navigation) => {
+const editPostHandler = async (post_id, image, content, hashtags, mentions, navigation) => {
     const token = await AsyncStorage.getItem('token');
     if (token){
         try {
@@ -20,6 +20,7 @@ const editPostHandler = async (post_id, image, content, hashtags, navigation) =>
                 content: content,
                 image: encodedImage,
                 hashtags: hashtags,
+                mentions: mentions,
             };
     
             const response = await fetch(`${URL_POST_BACK}/posts/${post_id}`, {

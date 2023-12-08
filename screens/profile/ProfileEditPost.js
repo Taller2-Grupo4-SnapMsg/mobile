@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Image, Text, Button, StyleSheet, Alert} from 'react-native';
+import { View, TextInput, Image, Text, Button, StyleSheet, Alert, ScrollView } from 'react-native';
 import editPostHandler from '../../handlers/posts/editPost';
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from '../../firebase';
@@ -8,6 +8,8 @@ import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../contexts/UserContext';
+import MentionModal from '../../components/MentionModal';
+import { MaterialIcons } from '@expo/vector-icons';
 
 TIMEOUT_ALERT_EDIT = 1500
 DEFAULT_IMAGE = "https://us.123rf.com/450wm/surfupvector/surfupvector1908/surfupvector190802662/129243509-icono-de-l%C3%ADnea-de-arte-denegado-censura-no-hay-foto-no-hay-imagen-disponible-rechazar-o-cancelar.jpg"
@@ -20,11 +22,18 @@ const ProfileEditPost = ({ route }) => {
   const [newText, setNewText] = useState(post.text);
   const [newImage, setNewImage] = useState(null);
   const [newHashtags, setNewHashtags] = useState(post.hashtags);
+  const [newMentions, setNewMentions] = useState(post.mentions);
   const [isSaving, setIsSaving] = useState(false);
   const [tagInput, setTagInput] = useState('');
+  const [mentionInput, setMentionInput] = useState('');
   const [changeImage, setChangeImage] = useState(false);
+  const [mentionsModalVisible, setMentionsModalVisible] = useState(false);
 
-const handleSelectImage = async () => {
+  const handleMentionModal = () => {
+    setMentionsModalVisible(!mentionsModalVisible);
+  }
+
+  const handleSelectImage = async () => {
 
   try {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -54,7 +63,7 @@ const handleSelectImage = async () => {
           const blob = await response.blob();
           await uploadBytes(storageRef, blob);
         }
-        await editPostHandler(post.post_id, decodeURIComponent(post.image), newText, newHashtags, navigation);
+        await editPostHandler(post.post_id, decodeURIComponent(post.image), newText, newHashtags, newMentions, navigation);
       } else {
         file_route = '';
         if (changeImage) {
@@ -67,7 +76,7 @@ const handleSelectImage = async () => {
           const blob = await response.blob();
           await uploadBytes(storageRef, blob);
         }
-        await editPostHandler(post.post_id, file_route, newText, newHashtags, navigation);
+        await editPostHandler(post.post_id, file_route, newText, newHashtags, newMentions, navigation);
       } 
       navigation.navigate('Profile');
       Alert.alert('Alert', 'Post edited successfully');
@@ -85,9 +94,21 @@ const handleSelectImage = async () => {
     }
   };
 
+  const addMention = () => {
+    if (mentionInput.trim() !== '') {
+      setNewMentions([...newMentions, mentionInput.trim()]);
+      setMentionInput('');
+    }
+  };
+
   const removeTag = (tagToRemove) => {
     const updatedHashtags = newHashtags.filter((tag) => tag !== tagToRemove);
     setNewHashtags(updatedHashtags);
+  };
+
+  const removeMention = (mentionToRemove) => {
+    const updatedMentions = newMentions.filter((mention) => mention !== mentionToRemove);
+    setNewMentions(updatedMentions);
   };
 
 const fetchImageURL = async () => {
@@ -111,6 +132,7 @@ useEffect(() => {
 
 
   return (
+    <ScrollView style={styles.container}>
     <View style={styles.container}>
 
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -150,7 +172,7 @@ useEffect(() => {
           ))}
         </View>
 
-      <View style={styles.tagInputContainer}>
+        <View style={styles.tagInputContainer}>
           <TextInput
             value={tagInput}
             onChangeText={setTagInput}
@@ -162,17 +184,48 @@ useEffect(() => {
           </Pressable>
         </View>
 
+        <Text style={styles.sectionLabel}>Mentions of the Post</Text>
+
+        <View style={styles.tagsContainer}>
+          <View style={styles.tagsContainer}>
+            {newMentions.map((mention) => (
+              <View style={styles.tag} key={mention}>
+                <Text style={styles.tagName}>@{mention}</Text>
+                <Pressable onPress={() => removeMention(mention)} style={styles.removeTagButton}>
+                  <Text style={styles.removeTagButtonText}>x</Text>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+
+          <Pressable onPress={handleMentionModal} style={styles.imagePicker}>
+              <MaterialIcons name="alternate-email" size={24} color="#6B5A8E" />
+              <Text style={{ marginLeft: 5, marginRight: 15,color: '#6B5A8E', }}>Add mention</Text>
+          </Pressable>
+        </View>
+
+        <MentionModal
+            isVisible={mentionsModalVisible}
+            onClose={handleMentionModal}
+            selectedMentions={newMentions}
+            setSelectedMentions={setNewMentions}
+            in_followers={true}
+            onlyUsernames={true}
+          />
+
+
       <View style={styles.saveButtonContainer}>
         <Button title={isSaving ? 'Save...' : 'Save'} onPress={handleSave} disabled={isSaving} color="#6B5A8E"/>
       </View>
     </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
   },
   imageContainer: {
     position: "relative",
@@ -180,8 +233,8 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 15,
-    marginTop: 15,
+    marginBottom: 10,
+    marginTop: 10,
   }, 
   container_edit: {
     flexDirection: 'row',
@@ -201,20 +254,20 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 8,
     padding: 8,
-    marginBottom: 12,
+    marginBottom: 9,
   },
   tagInput: {
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 8,
-    padding: 8,
-    marginBottom: 12,
+    padding: 4,
+    marginBottom: 8,
   },
   image: {
     width: '100%',
     aspectRatio: 16 / 9,
     borderRadius: 15,
-    marginVertical: 10,
+    marginVertical: 7,
   },
   tagsContainer: {
     marginTop: 10,
@@ -242,6 +295,12 @@ const styles = StyleSheet.create({
   },
   removeTagButtonText: {
     color: 'white',
+  },
+  imagePicker: {
+    marginLeft: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
   },
   tagInputContainer: {
     marginTop: 20,
@@ -271,6 +330,9 @@ const styles = StyleSheet.create({
   },
   saveButtonContainer: {
     borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingBottom: 20,
   }
 });
 
