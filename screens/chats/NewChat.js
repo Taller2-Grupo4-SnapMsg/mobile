@@ -18,7 +18,7 @@ export default NewChat = () => {
     const [usernameSearched, setUsernameSearched] = useState("");
     const [users, setUsers] = useState([]);
     const [offset, setOffset] = useState(0);
-    const [showMore, setShowMore] = useState(false); 
+    const [showMore, setShowMore] = useState(false);
 
     function generateChatID(user1, user2) {
       // Sort user IDs alphabetically to ensure consistency
@@ -44,13 +44,38 @@ export default NewChat = () => {
             // The chat already exists; handle it as needed
             get(messageQuery)
             .then((snapshot) => {
+              if (loggedInUser.email == item.user1Email){
+                user_sender = loggedInUser.email;
+                user_receiver = item.user2Email;
+              }
+              if (loggedInUser.email == item.user2Email){
+                user_sender = loggedInUser.email;
+                user_receiver = item.user1Email;
+              }
               if (snapshot.exists()) {
                 const messages = Object.values(snapshot.val());
-                navigation.push('SpecificChat', { chatID: chatID });
+                // navigation.push('SpecificChat', { chatID: chatID });
+                 
+            console.log("\n\nEN NEW CHAT")
+            console.log("chatID: ", chatID);
+            console.log("user_receiver: ", user_receiver);
+            console.log("user_sender: ", user_sender);
+                navigation.push('SpecificChat', { chatID:  chatID, 
+                  user_sender: user_sender, 
+                  user_receiver: user_receiver});
               } else {
                 // No messages found
-                navigation.push('SpecificChat', { chatID: chatID });
-              }
+                // navigation.push('SpecificChat', { chatID: chatID });
+ 
+                console.log("\n\nEN NEW CHAT")
+                console.log("chatID: ", chatID);
+                console.log("user_receiver: ", user_receiver);
+                console.log("user_sender: ", user_sender);
+                
+                navigation.push('SpecificChat', { chatID:  chatID, 
+                  user_sender: user_sender, 
+                  user_receiver: user_receiver});
+                }
             })
             .catch((error) => {
               console.error("hubo un error al crear la conver3!! ", error);
