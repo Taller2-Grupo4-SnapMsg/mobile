@@ -158,11 +158,19 @@ const Statistics = () => {
     if (!isGettingStatistics) {
       if (toDate && fromDate) {
         setIsGettingStatistics(true);
-        const toDate_date = new Date(toDate);
         const fromDate_date = new Date(fromDate);
+
+        let toDate_date = new Date(toDate);
+      
+        // Add one day to toDate_date
+        toDate_date.setDate(toDate_date.getDate() + 1);
+
+        // Format the updated toDate_date as an ISO string
+        const updatedToDate = toDate_date.toISOString();
+
   
         if (toDate_date.getTime() > fromDate_date.getTime()) {
-          stats = await getStatistics(formatDate(fromDate), formatDate(toDate), navigation);
+          stats = await getStatistics(formatDate(fromDate), formatDate(updatedToDate), navigation);
           transformedStats = setStats(0, 0, 0, 0);
           if (stats) {
             transformedStats = setStats(stats.my_posts_count, stats.likes_count, stats.my_reposts_count, stats.others_reposts_count);
