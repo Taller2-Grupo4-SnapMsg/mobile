@@ -20,7 +20,6 @@ const UndoRepostPost = async () => {
         method: 'DELETE',
         headers: headers,
       });
-
       if (response.status === 200) {
         return;
       } else if (response.status === 422) {

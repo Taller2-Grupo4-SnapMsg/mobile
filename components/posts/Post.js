@@ -46,10 +46,10 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
       if (!post.image) {
         return;
       }
-      const decoded_file_route = decodeURIComponent(post.image);
-      const storageRef = ref(storage, decoded_file_route);
-      const url = await getDownloadURL(storageRef);
-      setImageURI(url);
+    //  const decoded_file_route = decodeURIComponent(post.image);
+   //   const storageRef = ref(storage, decoded_file_route);
+     // const url = await getDownloadURL(storageRef);
+    //  setImageURI(url);
     } catch (error) {
       console.error('Error fetching image URL:', error);
     }

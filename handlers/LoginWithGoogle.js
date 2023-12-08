@@ -8,6 +8,7 @@ const PASSWORD_DOESNT_MATCH = 401
 const USER_BLOCKED = 403
 
   const LoginWithGoogle = async (firebase_id_token) => {
+    console.log(firebase_id_token);
     const headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json;charset=utf-8',
@@ -20,6 +21,7 @@ const USER_BLOCKED = 403
         headers: headers,
       });
       const responseData = await response.json();
+      console.log(response.status);
       switch (response.status) {
         case OK:
             const token = responseData.token;

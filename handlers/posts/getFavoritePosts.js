@@ -26,7 +26,6 @@ const getFavoritePosts = async (mail, oldest_date, n, navigation, loggedInUserMa
                 return post;
             } else if (response.status === OTHER_USER_BLOCKED) {
                 if (loggedInUserMail === mail) {
-                    console.log('User blocked');
                     Alert.alert('User blocked', 'You have been blocked by an administrator');
                     navigation.reset({
                         index: 0,

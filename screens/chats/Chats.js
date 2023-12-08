@@ -63,8 +63,7 @@ export default Chats = () => {
 
     // Navigate to the 'messages' node
     // Retrieve the 20 most recent messages for the selected chat
-    const chatID = item.chatID;
-
+    const chatID = item.chatID
     if (loggedInUser.email == item.user1Email){
       user_sender = loggedInUser.email;
       user_receiver = item.user2Email;

@@ -127,8 +127,8 @@ const MainNavigator = () => {
       const route = response.notification.request.content.data.route;
       if (route === 'message') {
         const chatID = response.notification.request.content.data.chatID;
-        const user_receiver = response.notification.request.content.data.user_sender;
-        const user_sender = response.notification.request.content.data.user_receiver;
+        const user_receiver = response.notification.request.content.data.user_receiver;
+        const user_sender = response.notification.request.content.data.user_sender;
         markNotificationAsRead(response.notification.request.identifier, user_receiver);
         navigation.navigate('Chat', { chatID, user_receiver, user_sender });
       }

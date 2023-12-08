@@ -116,10 +116,10 @@ const fetchImageURL = async () => {
     if (!post.image) {
       return;
     }
-    const decoded_file_route = decodeURIComponent(post.image);
-    const storageRef = ref(storage, decoded_file_route);
-    const url = await getDownloadURL(storageRef);
-    setNewImage(url);
+  //  const decoded_file_route = decodeURIComponent(post.image);
+  //  const storageRef = ref(storage, decoded_file_route);
+  //  const url = await getDownloadURL(storageRef);
+  //  setNewImage(url);
   } catch (error) {
     console.error('Error fetching image URL:', error);
   }

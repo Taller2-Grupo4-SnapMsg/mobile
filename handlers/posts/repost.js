@@ -8,6 +8,7 @@ URL_POST_BACK = "https://postsback.onrender.com"
 
 const RepostPost = async (post_id, navigation) => {
   const token = await AsyncStorage.getItem('token');
+  console.log(post_id);
   if (token) {
     try {
       headers = {
@@ -19,15 +20,12 @@ const RepostPost = async (post_id, navigation) => {
         method: 'POST',
         headers: headers,
       });
+      console.log(response.status);
+
       if (response.status === 200) {
         return 200;
       } else if (response.status === USER_BLOCKED) {
-        console.log('User blocked');
-        Alert.alert('User blocked', 'You have been blocked by an administrator');
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'SignIn' }],
-        });
+        return;
       } else if (response.status === OTHER_USER_BLOCKED) {
         Alert.alert('Sorry, you cannot repost this post', 'The user who posted this is blocked');
       } else if (response.status === USER_NOT_FOUND) {
