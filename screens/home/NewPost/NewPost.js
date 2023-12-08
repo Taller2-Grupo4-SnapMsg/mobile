@@ -52,7 +52,6 @@ export default function NewPost() {
     setIsLoading(true);
 
     if (selectedImage) {
-      const { setRefreshing } = route.params;
       const timestamp = new Date().getTime();
       const uniqueFileName = `image_${timestamp}.jpg`;
       const file_route = `post_images/${loggedInUser.email}/${uniqueFileName}`
