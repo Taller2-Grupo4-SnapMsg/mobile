@@ -6,7 +6,7 @@ const NotificationMessage = ({ message, data, read }) => {
   const navigation = useNavigation();
 
   const handlePressNotification = (data) => {
-    navigation.navigate('SpecificChat', { chatID: data.chatID, user_receiver: data.user_receiver, user_sender: data.user_sender });
+    navigation.navigate('SpecificChat', { chatID: data.chatID, user_receiver: data.user_sender, user_sender: data.user_receiver });
   };
 
   return (
