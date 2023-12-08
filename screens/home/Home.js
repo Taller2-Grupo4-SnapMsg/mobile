@@ -23,7 +23,7 @@ function formatDate(date) {
 
 export default function Home({}) {
     //esta linea no va a ir, es solo para usar endpoint de profile
-    const { loggedInUser } = useUser();
+    const { loggedInUser, refreshingHome, setRefreshingHome } = useUser();
     const colorScheme = useColorScheme();
     const navigation = useNavigation();
     const [postsFeed, setPostsFeed] = useState([]);
@@ -41,6 +41,13 @@ export default function Home({}) {
     const handlePressUserPlus = () => {
       navigation.navigate('User Recommendation');
     };
+
+    useEffect(() => {
+      if (refreshingHome) {
+        handleGetMorePosts((new Date()).toISOString(), true);
+        setRefreshingHome(false);
+      }
+    },[refreshingHome])
 
 
     const handleGetMorePosts = async (date, refresh) => {

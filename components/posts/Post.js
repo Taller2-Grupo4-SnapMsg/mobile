@@ -65,7 +65,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor, setRefreshing}) => 
   // useFocusEffect(
   //   React.useCallback(() => {
   //     fetchImageURL();
-  //   }, [post])
+  //   }, [post.image])
   // );
 
   function formatDate(dateString) {

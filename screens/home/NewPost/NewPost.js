@@ -19,7 +19,7 @@ TIMEOUT_ALERT_POST = 1500
 
 export default function NewPost() {
   const navigation = useNavigation();
-  const { loggedInUser } = useUser();
+  const { loggedInUser, refreshingHome, setRefreshingHome } = useUser();
   const [text, setText] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +81,7 @@ export default function NewPost() {
       }
       await SendNotification([emails[i]], `${loggedInUser.username} mentioned you in a post`, `${text}`, data)
     }
+    setRefreshingHome(true);
     //setAlert("Post created successfully", SOFT_GREEN, TIMEOUT_ALERT)
     setTimeout(() => {
       navigation.navigate('Home');
