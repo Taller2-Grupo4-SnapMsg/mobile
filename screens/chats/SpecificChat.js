@@ -56,6 +56,8 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
+      print("newMessage.timestamp : ", newMessage.timestamp);
+      print("Latest timestamp: ", latestTimestamp);
       if (newMessage.timestamp > latestTimestamp) {
         setLatestTimestamp(newMessage.timestamp);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -72,6 +74,8 @@ export default SpecificChat = ({ route }) => {
   }, [messages]);
 
   useEffect(() => {
+    setMessages([]);
+
     const fetchData = async () => {
       try {
         const messagesRef = ref(db, `chats/${chatID}/messages`);
@@ -84,12 +88,10 @@ export default SpecificChat = ({ route }) => {
         const snapshot = await get(messageQuery);
         if (snapshot.exists()) {
           let newest_messages = Object.values(snapshot.val());
-          // if (isChatIDChange) {
-          //   newest_messages = newest_messages.slice(0, newest_messages.length - 1);
-          // }
           setMessages(newest_messages);
           
           setLatestTimestamp(newest_messages[newest_messages.length - 1].timestamp);
+          print("Latest timestamp: ", latestTimestamp);
           setOldestTimestamp(newest_messages[0].timestamp);
           
           if (flatListRef.current) {
