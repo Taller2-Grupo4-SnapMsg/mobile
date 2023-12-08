@@ -175,7 +175,7 @@ function ProfileUser({ user }) {
           setDeleteButtonsSpinnerYes(true);
           await DeleteRepost(deletePost.post_id, navigation);
         }
-        //setRefreshing(true);
+        setRefreshing(true);
         //console.log("refreshing home")
         setRefreshingHome(true);
         const updatedPosts = posts.filter((p) => p.post_id !== deletePost.post_id);
