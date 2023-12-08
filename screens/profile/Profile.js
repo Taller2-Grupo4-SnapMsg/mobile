@@ -95,7 +95,7 @@ export default function Profile() {
 
 
 function ProfileUser({ user }) {
-  const { loggedInUser } = useUser(); 
+  const { loggedInUser, refreshingHome, setRefreshingHome } = useUser(); 
   const navigation = useNavigation();
   const [followers, setFollowers] = useState(null);
   const [following, setFollowing] = useState(null);
@@ -176,6 +176,8 @@ function ProfileUser({ user }) {
           await DeleteRepost(deletePost.post_id, navigation);
         }
         setRefreshing(true);
+        //console.log("refreshing home")
+        setRefreshingHome(true);
         const updatedPosts = posts.filter((p) => p.post_id !== deletePost.post_id);
         setPosts(updatedPosts);
         setDeleteButtonsSpinnerYes(false);

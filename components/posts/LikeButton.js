@@ -5,10 +5,12 @@ import LikePost from '../../handlers/posts/likePost';
 import UnlikePost from '../../handlers/posts/unlikePost';
 import { useFocusEffect } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../../contexts/UserContext';
 
 const LikeButton = ({ icon, initialLikes, isLiked, post_id, setRefreshing }) => {
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(initialLikes);
+  const { loggedInUser, refreshingHome, setRefreshingHome } = useUser();
   const navigation = useNavigation();
   useFocusEffect(
     React.useCallback(() => {

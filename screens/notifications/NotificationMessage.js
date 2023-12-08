@@ -26,8 +26,8 @@ const NotificationMessage = ({ message, data, read }) => {
           <Image source={{ uri: data.avatarUrl }} style={styles.avatar} />
           <View>
             <Text style={styles.username}>{data.username}</Text>
-            <Text>{message}</Text>
-          </View>
+            <Text style={styles.messageText}>{message}</Text> 
+             </View>
         </View>
       </View>
       </TouchableOpacity>
@@ -67,6 +67,12 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  messageText: {
+    // Style for the message text
+    // For example, you can limit the width or allow wrapping
+    maxWidth: 250, // Adjust as needed
+    overflow: 'hidden',
   },
 });
 

@@ -9,8 +9,9 @@ import { useUser } from '../../contexts/UserContext';
 
 const FavoriteButton = ({ icon,  isFavorited, post_id, setRefreshing }) => {
   const [favorited, setFavorited] = useState(isFavorited);
+  const { loggedInUser, refreshingHome, setRefreshingHome } = useUser();
   const navigation = useNavigation();
-  const { loggedInUser } = useUser();
+  //const { loggedInUser } = useUser();
   useFocusEffect(
     React.useCallback(() => {
       setFavorited(isFavorited);
@@ -18,7 +19,8 @@ const FavoriteButton = ({ icon,  isFavorited, post_id, setRefreshing }) => {
   );
 
   const handleFavoritePress = async () => {
-    setRefreshing(true);
+    //setRefreshing(true);
+    setRefreshingHome(true);
     try {
       if (favorited) {
         setFavorited(false);
