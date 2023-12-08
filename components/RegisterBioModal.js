@@ -9,42 +9,42 @@ import * as SecureStore from 'expo-secure-store';
 export default function RegisterBioModal({ isVisible, setModalVisible, navigation }) {
   const [loadingYes, setLoadingYes] = useState(false);
   const [loadingNo, setLoadingNo] = useState(false);
-  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
+  const [isBiometricAvailable, setIsBiometricAvailable] = useState(true);
+
+
 
   const handleBiometricsRegister = async () => {
-    setLoadingYes(true);
-
     const checkBiometricAvailability = async () => {
       const available = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricAvailable(available);
     };
   
     const handleBiometricAuthentication = async () => {
+      await checkBiometricAvailability();
+      await checkBiometricAvailability();
       if (isBiometricAvailable) {
-        const result = await LocalAuthentication.authenticateAsync({
-          promptMessage: 'Autenticación biométrica requerida',
-        });
-  
-        if (result.success) {
-          const biometricToken = await RegisterBiometrics();
-          await SecureStore.setItemAsync('biometricToken', biometricToken);
-          setLoadingYes(false);
-          setModalVisible(false);
-          navigation.navigate('Interests');      
+          const result = await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Autenticación biométrica requerida',
+          });
+          if (result.success) {
+            const biometricToken = await RegisterBiometrics();
+            await SecureStore.setItemAsync('biometricToken', biometricToken);
+            setLoadingYes(false);
+            setModalVisible(false);
+            navigation.navigate('Interests');      
+          } else {
+            console.log('Autenticación fallida');
+            setLoadingYes(false);
+          } 
         } else {
-          console.log('Autenticación fallida');
+          Alert.alert('Alert', 'Biometric authentication is not available on this device.');
           setLoadingYes(false);
         }
-      } else {
-        Alert.alert('Alert', 'Biometric authentication is not available on this device');
-        setLoadingYes(false);
-        navigation.navigate('Interests');  
-      }
-    };
-  
-    await checkBiometricAvailability();
+      }  
     await handleBiometricAuthentication();
-  };
+};
+
+
 
   const onClose = () => {
     setLoadingNo(true);
