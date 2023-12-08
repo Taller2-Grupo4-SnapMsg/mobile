@@ -22,13 +22,19 @@ AMOUNT_MSGS_BEGINNING = 10
 
 export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
-  const chatID = route.params.chatID;
+  const [chatID, setChatID] = useState(route.params.chatID);
+  const [isChatIDChange, setIsChatIDChange] = useState(false);
+  //const chatID = route.params.chatID;
   const email_user_sender = route.params.user_sender;
   const email_user_receiver = route.params.user_receiver;
   console.log("\n\nEN SPECIFIC CHAT")
   console.log("chatID: ", chatID);
   console.log("user_receiver: ", email_user_receiver);
   console.log("user_sender: ", email_user_sender);
+  useEffect(() => {
+    setChatID(() => route.params.chatID);
+    setIsChatIDChange(() => true);
+  }, [route.params.chatID]);
   const [messages, setMessages] = useState([]);
   const [latestTimestamp, setLatestTimestamp] = useState(0);
   const [oldestTimestamp, setOldestTimestamp] = useState(0);
@@ -50,7 +56,7 @@ export default SpecificChat = ({ route }) => {
   const onChildAddedCallback = (snapshot) => {
     if (snapshot) {
       const newMessage = snapshot.val();
-      if (newMessage.timestamp > latestTimestamp) {
+      if (newMessage.timestamp > latestTimestamp && !isChatIDChange) {
         setLatestTimestamp(newMessage.timestamp);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
