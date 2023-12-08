@@ -157,7 +157,7 @@ export function UserProvider({ children }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+    <UserContext.Provider value={{ loggedInUser, setLoggedInUser, refreshingHome, setRefreshingHome }}>
       {children}
     </UserContext.Provider>
   );
