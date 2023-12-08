@@ -24,7 +24,7 @@ export default SpecificChat = ({ route }) => {
   const { loggedInUser } = useUser();
   const [chatID, setChatID] = useState(route.params.chatID);
   const [isChatIDChange, setIsChatIDChange] = useState(false);
-  const isNotificacion = route.params.isNotificacion;
+  const [isNotificacion, setIsNotificacion] = useState(route.params.isNotificacion);
   //const chatID = route.params.chatID;
   const email_user_sender = route.params.user_sender;
   const email_user_receiver = route.params.user_receiver;
@@ -35,6 +35,7 @@ export default SpecificChat = ({ route }) => {
   useEffect(() => {
     setChatID(() => route.params.chatID);
     setIsChatIDChange(() => true);
+    setIsNotificacion(() => route.params.isNotificacion);
   }, [route.params.chatID]);
   const [messages, setMessages] = useState([]);
   const [latestTimestamp, setLatestTimestamp] = useState(0);
