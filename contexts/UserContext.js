@@ -21,6 +21,7 @@ export function UserProvider({ children }) {
   const notificationListener = useRef();
   const responseListener = useRef();
   const [notificationReceived, setNotificationReceived] = useState(false);
+  const [refreshingHome, setRefreshingHome] = useState(false);
 
   async function registerForPushNotificationsAsync() {
     Notifications.setNotificationHandler({

@@ -6,7 +6,8 @@ import UnFavoritePost from '../../handlers/posts/unfavoritePost';
 import FavoritePost from '../../handlers/posts/favoritePost';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../contexts/UserContext';
-const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
+
+const FavoriteButton = ({ icon,  isFavorited, post_id, setRefreshing }) => {
   const [favorited, setFavorited] = useState(isFavorited);
   const navigation = useNavigation();
   const { loggedInUser } = useUser();
@@ -17,6 +18,7 @@ const FavoriteButton = ({ icon,  isFavorited, post_id }) => {
   );
 
   const handleFavoritePress = async () => {
+    setRefreshing(true);
     try {
       if (favorited) {
         setFavorited(false);

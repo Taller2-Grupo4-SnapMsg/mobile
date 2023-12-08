@@ -5,13 +5,15 @@ import { useFocusEffect } from 'expo-router';
 import RepostPost from '../../handlers/posts/repost';
 import DeleteRepostByPostId from '../../handlers/posts/deleteRepostByPostId';
 import { useNavigation } from '@react-navigation/native';
-const RepostButton = ({ icon, 
+
+const RepostButton = ({ icon,
                         initialReposts, 
-                        isReposted, 
+                        isReposted,
                         post_id, 
                         setAlertMessage,
                         setAlertMessageColor, 
-                        disabled }) => {
+                        disabled,
+                        setRefreshing }) => {
 
   const [reposted, setReposted] = useState(isReposted);
   const [reposts, setReposts] = useState(initialReposts);
@@ -53,6 +55,7 @@ const RepostButton = ({ icon,
           }
         }
       }
+      setRefreshing(true);
     } catch (error) {
       console.error(error);
     }

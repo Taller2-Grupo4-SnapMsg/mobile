@@ -9,7 +9,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 
-const Repost = ({ post, setMessageRepost, setMessageRepostColor }) => {
+const Repost = ({ post, setMessageRepost, setMessageRepostColor, setRefreshing }) => {
   if (!post)
     return null;
 
@@ -52,7 +52,7 @@ const Repost = ({ post, setMessageRepost, setMessageRepostColor }) => {
             </View>
       
         </View>
-          <Post post={post} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor}/>
+          <Post post={post} setMessageRepost={setMessageRepost} setMessageRepostColor={setMessageRepostColor} setRefreshing={setRefreshing}/>
         </View>
       </ThemeProvider>
     );

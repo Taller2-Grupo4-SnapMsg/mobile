@@ -6,7 +6,7 @@ import UnlikePost from '../../handlers/posts/unlikePost';
 import { useFocusEffect } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 
-const LikeButton = ({ icon, initialLikes, isLiked, post_id }) => {
+const LikeButton = ({ icon, initialLikes, isLiked, post_id, setRefreshing }) => {
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(initialLikes);
   const navigation = useNavigation();

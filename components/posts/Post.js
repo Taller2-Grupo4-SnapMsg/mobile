@@ -18,7 +18,7 @@ import {
 } from '@react-navigation/native';
 import getUserByUsername from '../../handlers/getUserByUsername';
 
-const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
+const Post = ({ post, setAlertMessage, setAlertMessageColor, setRefreshing}) => {
   if (!post)
     return null;
     
@@ -81,7 +81,7 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
   }
 
   const handlePressPost = () => {
-    navigation.navigate('PostDetailed', { post_id: post.post_id });
+    //navigation.navigate('PostDetailed', { post_id: post.post_id, setRefreshing: setRefreshing });
     return;
   };
 
@@ -162,11 +162,12 @@ const Post = ({ post, setAlertMessage, setAlertMessageColor}) => {
             setAlertMessage={setAlertMessage}
             setAlertMessageColor={setAlertMessageColor}
             disabled={user_creator.email === loggedInUser.email}
+            setRefreshing={setRefreshing}
           />
           
-          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} />
+          <LikeButton icon="heart" initialLikes={number_likes} isLiked={did_i_like} post_id={post_id} setRefreshing={setRefreshing} />
 
-          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} />
+          <FavoriteButton icon="star" isFavorited={did_i_put_favorite} post_id={post_id} setRefreshing={setRefreshing}/>
         </View>
             </View>
         </Pressable>
