@@ -30,6 +30,7 @@ const LikeButton = ({ icon, initialLikes, isLiked, post_id, setRefreshing }) => 
         setLiked(true);
         response = await LikePost(post_id, navigation);
       }
+      setRefreshingHome(true);
     }catch (error) {
       console.error('Error while liking:', error);
     }

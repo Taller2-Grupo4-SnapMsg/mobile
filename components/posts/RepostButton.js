@@ -51,7 +51,7 @@ const RepostButton = ({ icon,
             setReposts(reposts + 1);
             setReposted(true);
           } else if (response === 403) {
-            setAlert("you can't repost a private post", SOFT_RED, TIMEOUT_ALERT);
+            setAlert("You can't repost from a private user", SOFT_RED, TIMEOUT_ALERT);
           } else if (response === 409) {
             Alert.alert('Alert', 'You cannot repost your own posts');
           }
